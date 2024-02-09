@@ -101,7 +101,7 @@ CREATE TABLE INVIODOCENTE (
 ) ENGINE = INNODB;
 
 CREATE TABLE COMPLETAMENTO (
-	Stato ENUM("Aperto","InCompletamento","Concluso") NOT NULL,  #non credo sia corretto mettere not null 
+	Stato ENUM("Aperto","InCompletamento","Concluso") NOT NULL,  #non credo sia corretto mettere not null,non credo che sia necessario avere questo attributo come chiave primaria(dopo crea casino con le tabelle risposta)
 	TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     DataPrimaRisposta DATETIME,
@@ -187,21 +187,21 @@ CREATE TABLE QUESITOCODICE (
 ) ENGINE = INNODB;
 
 CREATE TABLE RISPOSTA  (
-    StatoCompletamento ENUM('Aperto', 'InCompletamento', 'Concluso') NOT NULL,
+    StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL, 
     TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     Esito BOOLEAN,
     
     PRIMARY KEY (StatoCompletamento, TitoloTest, EmailStudente),
     
-    FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE,
+    #Da Controllare -->FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE,
     FOREIGN KEY(TitoloTest) REFERENCES TEST(Titolo) ON DELETE CASCADE,
     FOREIGN KEY(EmailStudente) REFERENCES STUDENTE(Email) ON DELETE CASCADE
     
 )  ENGINE=INNODB;
 
 CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
-    StatoCompletamento ENUM('Aperto', 'InCompletamento', 'Concluso') NOT NULL,
+    StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     OpzioneScelta VARCHAR(20),
@@ -217,7 +217,7 @@ CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
 )  ENGINE=INNODB;
 
 CREATE TABLE RISPOSTAQUESITOCODICE  (
-    StatoCompletamento ENUM('Aperto', 'InCompletamento', 'Concluso') NOT NULL,
+    StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     Testo VARCHAR(100),
@@ -287,3 +287,256 @@ CREATE TABLE REALIZZAZIONE (
     FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE
 
 ) ENGINE = INNODB;
+
+DELIMITER //
+
+CREATE TRIGGER cambio_stato_incompleto
+AFTER INSERT ON RISPOSTA
+FOR EACH ROW
+BEGIN
+    DECLARE num_risposte_inserite INT;
+
+    -- Conta quante risposte sono state inserite per lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    IF num_risposte_inserite = 1 THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = "InCompletamento"
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER cambio_stato_test
+AFTER INSERT ON RISPOSTA
+FOR EACH ROW
+BEGIN
+    DECLARE num_quesiti_totali INT;
+    DECLARE num_risposte_inserite INT;
+    DECLARE num_risposte_corrette INT;
+
+    -- Conta il numero totale di quesiti per il test
+    SELECT COUNT(*) INTO num_quesiti_totali
+    FROM QUESITO
+    WHERE TitoloTest = NEW.TitoloTest;
+
+    -- Conta il numero di risposte inserite per il test e lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Conta il numero di risposte corrette per lo studente
+    SELECT COUNT(*) INTO num_risposte_corrette
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
+
+    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = 'Concluso'
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER cambio_stato_test_concluso
+AFTER UPDATE ON TEST
+FOR EACH ROW
+BEGIN
+    -- Verifica se il campo VisualizzaRisposte è stato impostato a True
+    IF NEW.VisualizzaRisposte = TRUE THEN
+        -- Aggiorna lo stato del test a 'Concluso' per tutti gli studenti
+        UPDATE COMPLETAMENTO
+        SET Stato = 'Concluso'
+        WHERE TitoloTest = NEW.Titolo;
+    END IF;
+END//
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE VisualizzaTestDisponibili ()
+BEGIN
+    -- Seleziona tutti i test presenti nella tabella Test
+    SELECT * FROM Test;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE VisualizzaQuesitiPerTest (
+    IN p_TitoloTest VARCHAR(20)
+)
+BEGIN
+    -- Seleziona i quesiti corrispondenti al titolo del test specificato
+    SELECT * FROM Quesiti WHERE TitoloTest = p_TitoloTest;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE Autenticazione (
+    IN p_Email VARCHAR(40),
+    OUT p_Autenticato BOOLEAN
+)
+BEGIN
+    -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
+    IF EXISTS (SELECT * FROM Utenti WHERE Email = p_Email) THEN
+        SET p_Autenticato = TRUE;
+    ELSE
+        SET p_Autenticato = FALSE;
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE Registrazione (
+    IN p_Email VARCHAR(40)
+)
+BEGIN
+    -- Verifica se l'email non esiste già nella tabella Utenti
+    IF NOT EXISTS (SELECT * FROM Utenti WHERE Email = p_Email) THEN
+        -- Inserisce l'utente nella tabella Utenti
+        INSERT INTO Utenti (Email) VALUES (p_Email);
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE CreazioneTest (
+    IN p_TitoloTest VARCHAR(50),
+    IN p_DescrizioneTest TEXT,
+    IN p_EmailDocente VARCHAR(40),
+    OUT p_TestCreato BOOLEAN
+)
+BEGIN
+    DECLARE docente_esiste BOOLEAN;
+
+    -- Verifica se il docente esiste nella tabella Docenti
+    SELECT EXISTS(SELECT 1 FROM Docenti WHERE Email = p_EmailDocente) INTO docente_esiste;
+
+    -- Se il docente esiste, crea il nuovo test
+    IF docente_esiste THEN
+        INSERT INTO Test (Titolo, Descrizione, EmailDocente) VALUES (p_TitoloTest, p_DescrizioneTest, p_EmailDocente);
+        SET p_TestCreato = TRUE;
+    ELSE
+        SET p_TestCreato = FALSE;
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE SettaVisualizzazioneRisposte (
+    IN p_TitoloTest VARCHAR(50),
+    IN p_Valore BOOLEAN
+)
+BEGIN
+    -- Imposta il campo VisualizzaRisposte al valore specificato per il test specificato
+    UPDATE Test SET VisualizzaRisposte = p_Valore WHERE Titolo = p_TitoloTest;
+END //
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE InserisciMessaggioDocente(
+    IN p_TitoloTest VARCHAR(20),
+    IN p_TitoloMessaggio VARCHAR(20),
+    IN p_CampoTesto VARCHAR(60),
+    IN p_Data DATETIME
+)
+BEGIN
+    -- Inserimento del messaggio
+    INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
+    VALUES (p_TitoloTest, p_TitoloMessaggio, p_CampoTesto, p_Data);
+    
+    -- Invio del messaggio a tutti gli studenti
+    INSERT INTO RICEZIONESTUDENTE (TitoloTest, TitoloMessaggio, CampoTesto, Data)
+    VALUES (p_TitoloTest, p_TitoloMessaggio, p_CampoTesto, p_Data);
+END//
+
+DELIMITER ;
+
+
+ #Test(da cancellare)
+DELIMITER //
+
+CREATE PROCEDURE inserisci_dati(
+    IN p_TitoloTest VARCHAR(20),
+    IN p_EmailStudente VARCHAR(40),
+    IN p_NomeStudente VARCHAR(20),
+    IN p_CognomeStudente VARCHAR(20),
+    IN p_RecapitoTelefonicoStudente INT,
+    IN p_AnnoImmatricolazione INT,
+    IN p_CodiceAlfaNumericoStudente CHAR(16),
+    IN p_EmailDocente VARCHAR(40),
+    IN p_NomeDocente VARCHAR(20),
+    IN p_CognomeDocente VARCHAR(20),
+    IN p_RecapitoTelefonicoDocente INT,
+    IN p_NomeDipartimentoDocente VARCHAR(20),
+    IN p_NomeCorsoDocente VARCHAR(20)
+)
+BEGIN
+    -- Inserimento del docente
+    INSERT INTO DOCENTE (Email, Nome, Cognome, RecapitoTelefonico, NomeDipartimento, NomeCorso)
+    VALUES (p_EmailDocente, p_NomeDocente, p_CognomeDocente, p_RecapitoTelefonicoDocente, p_NomeDipartimentoDocente, p_NomeCorsoDocente);
+
+    -- Inserimento dello studente
+    INSERT INTO STUDENTE (Email, Nome, Cognome, RecapitoTelefonico, AnnoImmatricolazione, CodiceAlfaNumerico)
+    VALUES (p_EmailStudente, p_NomeStudente, p_CognomeStudente, p_RecapitoTelefonicoStudente, p_AnnoImmatricolazione, p_CodiceAlfaNumericoStudente);
+
+    -- Inserimento del test
+    INSERT INTO TEST (Titolo, DataCreazione, VisualizzaRisposte, EmailDocente)
+    VALUES (p_TitoloTest, NOW(), FALSE, p_EmailDocente);
+
+    -- Inserimento del completamento
+    INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente)
+    VALUES ("Aperto", p_TitoloTest, p_EmailStudente);
+END//
+DELIMITER ;
+
+CALL inserisci_dati(
+    'Titolo del Test',
+    'email@studente.com',
+    'Nome Studente',
+    'Cognome Studente',
+    1234567890, -- Recapito telefonico studente
+    2022, -- Anno immatricolazione studente
+    'ABCDE1234567890', -- Codice alfanumerico studente
+    'docente2@email.com',
+    'Nome Docente',
+    'Cognome Docente',
+    987654321, -- Recapito telefonico docente
+    'Nome Dipartimento',
+    'Nome Corso'
+);
+
+
+DELIMITER //
+CREATE PROCEDURE inserisci_risposta(
+    IN p_TitoloTest VARCHAR(20),
+    IN p_EmailStudente VARCHAR(40),
+    In p_Stato ENUM("Aperto","InCompletamento","Concluso")
+)
+BEGIN
+    -- Inserisci una nuova riga nella tabella RISPOSTA con i parametri forniti
+    INSERT INTO RISPOSTA (StatoCompletamento, TitoloTest, EmailStudente)
+    VALUES (p_Stato, p_TitoloTest, p_EmailStudente);
+END//
+DELIMITER ;
+
+CALL inserisci_risposta("Titolo del Test", "email@studente.com","Aperto");
+
+#Test per il terzo trigger da implementare
+SELECT * FROM TEST WHERE Titolo = 'Titolo del Test';
+SELECT * FROM COMPLETAMENTO WHERE TitoloTest = 'Titolo del Test';
+UPDATE TEST SET VisualizzaRisposte = True WHERE Titolo = 'Titolo del Test';
+SELECT * FROM TEST WHERE Titolo = 'Titolo del Test';
+SELECT * FROM COMPLETAMENTO WHERE TitoloTest = 'Titolo del Test';
+
+#Test per il secondo trigger(devo inserire dei dati nella tabella Quesito)
+
+#test per la procedure SettaVisualizzazioneRisposte
+CALL SettaVisualizzazioneRisposte('Titolo del Test', True);
+SELECT VisualizzaRisposte FROM Test WHERE Titolo = 'Titolo del Test';
