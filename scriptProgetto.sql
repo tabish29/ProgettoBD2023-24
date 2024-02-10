@@ -8,7 +8,7 @@ CREATE TABLE DOCENTE (
 	Email VARCHAR(40) PRIMARY KEY,
     Nome VARCHAR (20) NOT NULL,
     Cognome VARCHAR (20) NOT NULL,
-    RecapitoTelefonico INT,
+    RecapitoTelefonicoDocente INT,
     NomeDipartimento VARCHAR(20),
     NomeCorso VARCHAR(20)
     
@@ -18,7 +18,7 @@ CREATE TABLE STUDENTE (
 	Email VARCHAR(40) PRIMARY KEY,
     Nome VARCHAR (20) NOT NULL,
     Cognome VARCHAR (20) NOT NULL,
-    RecapitoTelefonico INT,
+    RecapitoTelefonicoStudente INT,
     AnnoImmatricolazione INT,
     CodiceAlfaNumerico CHAR(16)
     
