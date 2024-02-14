@@ -186,32 +186,19 @@ CREATE TABLE QUESITOCODICE (
 
 ) ENGINE = INNODB;
 
-CREATE TABLE RISPOSTA  (
-    StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL, 
-    TitoloTest VARCHAR(20) NOT NULL,
-    EmailStudente VARCHAR(40) NOT NULL,
-    Esito BOOLEAN,
-    
-    PRIMARY KEY (StatoCompletamento, TitoloTest, EmailStudente),
-    
-    #Da Controllare -->FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE,
-    FOREIGN KEY(TitoloTest) REFERENCES TEST(Titolo) ON DELETE CASCADE,
-    FOREIGN KEY(EmailStudente) REFERENCES STUDENTE(Email) ON DELETE CASCADE
-    
-)  ENGINE=INNODB;
-
 CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
     StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     OpzioneScelta VARCHAR(20),
     NumeroProgressivoQuesito INT,
+    Esito BOOLEAN,
     
     PRIMARY KEY (StatoCompletamento , TitoloTest , EmailStudente),
     
-    FOREIGN KEY(StatoCompletamento) REFERENCES RISPOSTA(StatoCompletamento) ON DELETE CASCADE,
-    FOREIGN KEY(TitoloTest) REFERENCES RISPOSTA(TitoloTest) ON DELETE CASCADE,
-    FOREIGN KEY(EmailStudente) REFERENCES RISPOSTA(TitoloTest) ON DELETE CASCADE,
+    FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE,
+    FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
+    FOREIGN KEY(EmailStudente) REFERENCES COMPLETAMENTO(EmailStudente) ON DELETE CASCADE,
 	FOREIGN KEY(NumeroProgressivoQuesito) REFERENCES QUESITORISPOSTACHIUSA(NumeroProgressivo) ON DELETE CASCADE
     
 )  ENGINE=INNODB;
@@ -222,12 +209,13 @@ CREATE TABLE RISPOSTAQUESITOCODICE  (
     EmailStudente VARCHAR(40) NOT NULL,
     Testo VARCHAR(100),
     NumeroProgressivoQuesito INT,
+    Esito BOOLEAN,
     
     PRIMARY KEY (StatoCompletamento , TitoloTest , EmailStudente),
     
-    FOREIGN KEY(StatoCompletamento) REFERENCES RISPOSTA(StatoCompletamento) ON DELETE CASCADE,
-    FOREIGN KEY(TitoloTest) REFERENCES RISPOSTA(TitoloTest) ON DELETE CASCADE,
-    FOREIGN KEY(EmailStudente) REFERENCES RISPOSTA(TitoloTest) ON DELETE CASCADE,
+    FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE,
+    FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
+    FOREIGN KEY(EmailStudente) REFERENCES COMPLETAMENTO(EmailStudente) ON DELETE CASCADE,
     FOREIGN KEY(NumeroProgressivoQuesito) REFERENCES QUESITOCODICE(NumeroProgressivo) ON DELETE CASCADE
     
 )  ENGINE=INNODB;
@@ -479,11 +467,11 @@ CREATE PROCEDURE inserisci_dati(
 )
 BEGIN
     -- Inserimento del docente
-    INSERT INTO DOCENTE (Email, Nome, Cognome, RecapitoTelefonico, NomeDipartimento, NomeCorso)
+    INSERT INTO DOCENTE (Email, Nome, Cognome, RecapitoTelefonicoDocente, NomeDipartimento, NomeCorso)
     VALUES (p_EmailDocente, p_NomeDocente, p_CognomeDocente, p_RecapitoTelefonicoDocente, p_NomeDipartimentoDocente, p_NomeCorsoDocente);
 
     -- Inserimento dello studente
-    INSERT INTO STUDENTE (Email, Nome, Cognome, RecapitoTelefonico, AnnoImmatricolazione, CodiceAlfaNumerico)
+    INSERT INTO STUDENTE (Email, Nome, Cognome, RecapitoTelefonicoStudente, AnnoImmatricolazione, CodiceAlfaNumerico)
     VALUES (p_EmailStudente, p_NomeStudente, p_CognomeStudente, p_RecapitoTelefonicoStudente, p_AnnoImmatricolazione, p_CodiceAlfaNumericoStudente);
 
     -- Inserimento del test
