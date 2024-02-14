@@ -276,10 +276,13 @@ CREATE TABLE REALIZZAZIONE (
 
 ) ENGINE = INNODB;
 
-DELIMITER //
 
-CREATE TRIGGER cambio_stato_incompleto
-AFTER INSERT ON RISPOSTA
+
+
+
+DELIMITER //
+CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
+AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
 FOR EACH ROW
 BEGIN
     DECLARE num_risposte_inserite INT;
@@ -299,8 +302,30 @@ END//
 DELIMITER ;
 
 DELIMITER //
-CREATE TRIGGER cambio_stato_test
-AFTER INSERT ON RISPOSTA
+CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitocodice
+AFTER INSERT ON RISPOSTAQUESITOCODICE
+FOR EACH ROW
+BEGIN
+    DECLARE num_risposte_inserite INT;
+
+    -- Conta quante risposte sono state inserite per lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    IF num_risposte_inserite = 1 THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = "InCompletamento"
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER cambio_stato_test_rispostaquesitorispostachiusa
+AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
 FOR EACH ROW
 BEGIN
     DECLARE num_quesiti_totali INT;
@@ -331,6 +356,41 @@ BEGIN
 END//
 DELIMITER ;
 
+
+DELIMITER //
+CREATE TRIGGER cambio_stato_test_rispostaquesitocodice
+AFTER INSERT ON RISPOSTAQUESITOCODICE
+FOR EACH ROW
+BEGIN
+    DECLARE num_quesiti_totali INT;
+    DECLARE num_risposte_inserite INT;
+    DECLARE num_risposte_corrette INT;
+
+    -- Conta il numero totale di quesiti per il test
+    SELECT COUNT(*) INTO num_quesiti_totali
+    FROM QUESITO
+    WHERE TitoloTest = NEW.TitoloTest;
+
+    -- Conta il numero di risposte inserite per il test e lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Conta il numero di risposte corrette per lo studente
+    SELECT COUNT(*) INTO num_risposte_corrette
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
+
+    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = 'Concluso'
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
+
+
 DELIMITER //
 CREATE TRIGGER cambio_stato_test_concluso
 AFTER UPDATE ON TEST
@@ -345,6 +405,7 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
 
 DELIMITER //
 CREATE PROCEDURE VisualizzaTestDisponibili ()
@@ -500,21 +561,6 @@ CALL inserisci_dati(
     'Nome Corso'
 );
 
-
-DELIMITER //
-CREATE PROCEDURE inserisci_risposta(
-    IN p_TitoloTest VARCHAR(20),
-    IN p_EmailStudente VARCHAR(40),
-    In p_Stato ENUM("Aperto","InCompletamento","Concluso")
-)
-BEGIN
-    -- Inserisci una nuova riga nella tabella RISPOSTA con i parametri forniti
-    INSERT INTO RISPOSTA (StatoCompletamento, TitoloTest, EmailStudente)
-    VALUES (p_Stato, p_TitoloTest, p_EmailStudente);
-END//
-DELIMITER ;
-
-CALL inserisci_risposta("Titolo del Test", "email@studente.com","Aperto");
 
 #Test per il terzo trigger da implementare
 SELECT * FROM TEST WHERE Titolo = 'Titolo del Test';
