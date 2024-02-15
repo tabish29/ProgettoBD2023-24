@@ -224,7 +224,7 @@ CREATE TABLE OPZIONERISPOSTA  (
     TitoloTest VARCHAR(20) NOT NULL,
     NumeroProgressivoQuesito INT NOT NULL,
     NumeroProgressivoOpzione INT NOT NULL,
-    CampoTesto CHAR,
+    CampoTesto VARCHAR(2000),
     
     PRIMARY KEY (NumeroProgressivoQuesito, TitoloTest, NumeroProgressivoOpzione),
     
@@ -279,7 +279,7 @@ CREATE TABLE REALIZZAZIONE (
 
 
 
-
+/*
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
@@ -507,7 +507,172 @@ END//
 
 DELIMITER ;
 
+*/
+DELIMITER //
 
+CREATE PROCEDURE inserisciRisposta(
+    IN statoCompletamentoTemp ENUM('Aperto','InCompletamento','Concluso'),
+    IN titoloTestTemp VARCHAR(20),
+    IN emailStudenteTemp VARCHAR(40),
+    IN valoreRispostaTemp VARCHAR(20),
+    IN numeroQuesitoTemp INT
+)
+BEGIN
+
+    DECLARE tipoRispostaChiusa BOOLEAN;
+    DECLARE tipoRispostaAperta BOOLEAN;
+    DECLARE numRispostaChiusa INT;
+    DECLARE numRispostaAperta INT;
+    DECLARE esitoRisposta BOOLEAN;
+    DECLARE rispostaCorretta VARCHAR(40);
+    
+	
+	-- Controlla se è una risposta a quesito chiuso
+    SELECT COUNT(*) INTO numRispostaChiusa
+    FROM QUESITORISPOSTACHIUSA 
+    WHERE NumeroProgressivo = numeroQuesitoTemp;
+    
+	IF numRispostaChiusa = 1 THEN
+        SET tipoRispostaChiusa = TRUE;
+    ELSE
+        SET tipoRispostaChiusa = FALSE;
+    END IF;
+    
+	-- Controlla se è una risposta a quesito aperto
+    SELECT COUNT(*) INTO numRispostaAperta
+    FROM QUESITOCODICE
+    WHERE NumeroProgressivo = numeroQuesitoTemp;
+
+    IF numRispostaAperta = 1 THEN
+        SET tipoRispostaAperta = TRUE;
+    ELSE
+        SET tipoRispostaAperta = FALSE;
+    END IF;
+    
+    SET esitoRisposta = FALSE;
+    
+    IF tipoRispostaChiusa THEN
+		SELECT CampoTesto INTO RispostaCorretta
+		FROM OPZIONERISPOSTA
+		WHERE OPZIONERISPOSTA.NumeroProgressivoQuesito = numeroQuesitoTemp;
+        
+        IF (valoreRispostaTemp = rispostaCorretta) THEN
+			SET esitoRisposta = TRUE;
+		END IF;
+		
+        INSERT INTO RISPOSTAQUESITORISPOSTACHIUSA(StatoCompletamento,TitoloTest,EmailStudente, OpzioneScelta, NumeroProgressivoQuesito,Esito) VALUES (statoCompletamentoTemp, titoloTestTemp, emailStudenteTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+    END IF;
+    
+    IF tipoRispostaAperta THEN
+		SELECT Soluzione INTO rispostaCorretta
+		FROM QUESITOCODICE
+		WHERE NumeroProgressivo = numeroQuesitoTemp;
+        
+        IF (valoreRispostaTemp = rispostaCorretta) THEN
+			SET esitoRisposta = TRUE;
+		END IF;
+		
+        INSERT INTO RISPOSTAQUESITOCODICE(StatoCompletamento, TitoloTest,EmailStudente,Testo, NumeroProgressivoQuesito,Esito) VALUES (statoCompletamentoTemp, titoloTestTemp, emailStudenteTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+    END IF;
+    
+END//
+
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE visualizzaEsitoRisposta(
+	IN statoTemp ENUM("Aperto","InCompletamento","Concluso"),
+    IN titoloTestTemp VARCHAR(20),
+    IN emailTemp VARCHAR(40),
+    IN numQuesito INT,
+    OUT esitoRisposta BOOLEAN
+)
+BEGIN
+	
+    IF(EXISTS(SELECT * FROM RISPOSTAQUESITORISPOSTACHIUSA WHERE (numQuesito = NumeroProgressivoQuesito))) THEN
+		(SELECT esito INTO esitoRisposta
+		FROM RISPOSTAQUESITORISPOSTACHIUSA
+		WHERE (numQuesito = NumeroProgressivoQuesito));
+    END IF;
+    
+    IF(EXISTS(SELECT * FROM RISPOSTAQUESITOCODICE WHERE (numQuesito = NumeroProgressivoQuesito))) THEN
+		(SELECT esito INTO esitoRisposta
+		FROM RISPOSTAQUESITOCODICE
+		WHERE (numQuesito = NumeroProgressivoQuesito));
+    END IF;
+
+END//
+
+DELIMITER ;
+
+
+
+DELIMITER //
+
+CREATE PROCEDURE inserisciMessaggioStudente(
+	IN emailStudenteTemp VARCHAR(40),
+    IN emailDocenteTemp VARCHAR(40),
+    IN titoloTestTemp VARCHAR(20),
+    IN titoloMess VARCHAR(20),
+    IN testoMess VARCHAR(60)
+)
+BEGIN
+	DECLARE IDMess INT;
+    
+    INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
+    VALUES (titoloTestTemp, titoloMess, testoMess, NOW());
+    
+    -- salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
+    SELECT Id INTO IDMess
+    FROM MESSAGGIO
+    WHERE (TitoloTest=titoloTestTemp) AND (TitoloMessaggio = titoloMess) AND (testoMess = CampoTesto);
+    
+    -- Invio del messaggio a tutti i docenti
+    INSERT INTO RICEZIONEDOCENTE VALUES (IDMess, titoloTestTemp, emailDocenteTemp);
+    
+    -- Aggiornamento tabella INVIOSTUDENTE
+    INSERT INTO INVIOSTUDENTE VALUES(IDMess, titoloTestTemp, emailStudenteTemp);
+END//
+
+DELIMITER ;
+
+
+-- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
+INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
+INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
+INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
+INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
+INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
+INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
+INSERT INTO QUESITOCODICE VALUES(1, "provaNr1","rispostaCorretta");
+INSERT INTO QUESITORISPOSTACHIUSA VALUES(2, "provaNr1");
+INSERT INTO OPZIONERISPOSTA VALUES("provaNr1",2,2,"rispostaCorretta");
+
+-- CALL inserisciRisposta("Aperto","provaNr1","studente@gmail.com", "rispostaCorretta", 2);
+-- CALL inserisciRisposta("Aperto","provaNr1","studente@gmail.com", "rispostaSbagliata", 1);
+
+-- CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 2, @esitoRispostaScelta);
+-- SELECT @esitoRispostaScelta;
+
+-- CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 1, @esitoRispostaCodice);
+-- SELECT @esitoRispostaCodice;
+
+-- CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
+
+-- Fine test 
+
+
+
+
+
+
+
+
+
+
+/*
  #Test(da cancellare)
 DELIMITER //
 
@@ -573,4 +738,4 @@ SELECT * FROM COMPLETAMENTO WHERE TitoloTest = 'Titolo del Test';
 
 #test per la procedure SettaVisualizzazioneRisposte
 CALL SettaVisualizzazioneRisposte('Titolo del Test', True);
-SELECT VisualizzaRisposte FROM Test WHERE Titolo = 'Titolo del Test';
+SELECT VisualizzaRisposte FROM Test WHERE Titolo = 'Titolo del Test';*/
