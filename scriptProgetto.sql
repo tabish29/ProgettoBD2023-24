@@ -806,35 +806,20 @@ END
 
 
 
-/*
+
+
 
 -- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
+
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
 INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
 INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
-INSERT INTO QUESITOCODICE VALUES(1, "provaNr1","rispostaCorretta");
+INSERT INTO QUESITOCODICE VALUES(1, "provaNr1");
 INSERT INTO QUESITORISPOSTACHIUSA VALUES(2, "provaNr1");
 INSERT INTO OPZIONERISPOSTA VALUES("provaNr1",2,2,"rispostaCorretta");
-
--- CALL inserisciRisposta("Aperto","provaNr1","studente@gmail.com", "rispostaCorretta", 2);
--- CALL inserisciRisposta("Aperto","provaNr1","studente@gmail.com", "rispostaSbagliata", 1);
-
--- CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 2, @esitoRispostaScelta);
--- SELECT @esitoRispostaScelta;
-
--- CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 1, @esitoRispostaCodice);
--- SELECT @esitoRispostaCodice;
-
--- CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
-
--- Fine test 
-
-
-
--- Test classificaTestCompletati
 INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
 INSERT INTO STUDENTE VALUES("tabish@gmail.com", "Tabish", "Ghazanfar", 8654678, 2010,"gdhdnbgdtjhjklmk");
 INSERT INTO STUDENTE VALUES("lorenzo@gmail.com", "Lorenzo", "Maini", 475875983,2010, "llllllllllllllll");
@@ -848,9 +833,7 @@ INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
-*/
 
--- Fine Test
 
 
 
@@ -869,73 +852,3 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 
 
 
-
-
-
-/*
- #Test(da cancellare)
-DELIMITER //
-
-CREATE PROCEDURE inserisci_dati(
-    IN p_TitoloTest VARCHAR(20),
-    IN p_EmailStudente VARCHAR(40),
-    IN p_NomeStudente VARCHAR(20),
-    IN p_CognomeStudente VARCHAR(20),
-    IN p_RecapitoTelefonicoStudente INT,
-    IN p_AnnoImmatricolazione INT,
-    IN p_CodiceAlfaNumericoStudente CHAR(16),
-    IN p_EmailDocente VARCHAR(40),
-    IN p_NomeDocente VARCHAR(20),
-    IN p_CognomeDocente VARCHAR(20),
-    IN p_RecapitoTelefonicoDocente INT,
-    IN p_NomeDipartimentoDocente VARCHAR(20),
-    IN p_NomeCorsoDocente VARCHAR(20)
-)
-BEGIN
-    -- Inserimento del docente
-    INSERT INTO DOCENTE (Email, Nome, Cognome, RecapitoTelefonicoDocente, NomeDipartimento, NomeCorso)
-    VALUES (p_EmailDocente, p_NomeDocente, p_CognomeDocente, p_RecapitoTelefonicoDocente, p_NomeDipartimentoDocente, p_NomeCorsoDocente);
-
-    -- Inserimento dello studente
-    INSERT INTO STUDENTE (Email, Nome, Cognome, RecapitoTelefonicoStudente, AnnoImmatricolazione, CodiceAlfaNumerico)
-    VALUES (p_EmailStudente, p_NomeStudente, p_CognomeStudente, p_RecapitoTelefonicoStudente, p_AnnoImmatricolazione, p_CodiceAlfaNumericoStudente);
-
-    -- Inserimento del test
-    INSERT INTO TEST (Titolo, DataCreazione, VisualizzaRisposte, EmailDocente)
-    VALUES (p_TitoloTest, NOW(), FALSE, p_EmailDocente);
-
-    -- Inserimento del completamento
-    INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente)
-    VALUES ("Aperto", p_TitoloTest, p_EmailStudente);
-END//
-DELIMITER ;
-
-CALL inserisci_dati(
-    'Titolo del Test',
-    'email@studente.com',
-    'Nome Studente',
-    'Cognome Studente',
-    1234567890, -- Recapito telefonico studente
-    2022, -- Anno immatricolazione studente
-    'ABCDE1234567890', -- Codice alfanumerico studente
-    'docente2@email.com',
-    'Nome Docente',
-    'Cognome Docente',
-    987654321, -- Recapito telefonico docente
-    'Nome Dipartimento',
-    'Nome Corso'
-);
-
-
-#Test per il terzo trigger da implementare
-SELECT * FROM TEST WHERE Titolo = 'Titolo del Test';
-SELECT * FROM COMPLETAMENTO WHERE TitoloTest = 'Titolo del Test';
-UPDATE TEST SET VisualizzaRisposte = True WHERE Titolo = 'Titolo del Test';
-SELECT * FROM TEST WHERE Titolo = 'Titolo del Test';
-SELECT * FROM COMPLETAMENTO WHERE TitoloTest = 'Titolo del Test';
-
-#Test per il secondo trigger(devo inserire dei dati nella tabella Quesito)
-
-#test per la procedure SettaVisualizzazioneRisposte
-CALL SettaVisualizzazioneRisposte('Titolo del Test', True);
-SELECT VisualizzaRisposte FROM Test WHERE Titolo = 'Titolo del Test';*/
