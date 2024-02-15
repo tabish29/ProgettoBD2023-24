@@ -289,11 +289,6 @@ CREATE TABLE REALIZZAZIONE (
 
 
 
-
-
-
-
-
 /*
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
@@ -530,9 +525,9 @@ BEGIN
     END IF;
     
     IF tipoRispostaAperta THEN
-		SELECT Soluzione INTO rispostaCorretta
-		FROM QUESITOCODICE
-		WHERE NumeroProgressivo = numeroQuesitoTemp;
+		SELECT TestoSoluzione INTO rispostaCorretta
+		FROM QUESITOCODICE, SOLUZIONE
+		WHERE (QUESITOCODICE.NumeroProgressivo = SOLUZIONE.NumeroProgressivo) AND (SOLUZIONE.NumeroProgressivo = numeroQuesitoTemp);
         
         IF (valoreRispostaTemp = rispostaCorretta) THEN
 			SET esitoRisposta = TRUE;
@@ -601,6 +596,15 @@ BEGIN
 
 END//
 DELIMITER ;
+
+
+
+
+
+
+
+
+
 
 
 # solo per docente
@@ -804,20 +808,38 @@ END
 
 
 
+CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
+	SELECT
+		CodiceAlfaNumerico,
+		COUNT(*) AS num_test_completati
+	FROM STUDENTE, COMPLETAMENTO AS C1, COMPLETAMENTO AS C2
+	WHERE
+		(Email = C1.EmailStudente) AND (Email = C2.EmailStudente) AND (C1.TitoloTest <> C2.TitoloTest) AND (C1.Stato = "Concluso")
+	GROUP BY
+		STUDENTE.CodiceAlfaNumerico
+	ORDER BY
+		num_test_completati DESC;
 
 
 
 
 
+-- AREA PER I TEST
+
+
+/*
 -- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
+INSERT INTO STUDENTE VALUES("studente2@gmail.com", "nano", "ciao", 3333, 2010, 2234567891234567);
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
+INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "studente2@gmail.com", NULL, NULL);
 INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
 INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
 INSERT INTO QUESITOCODICE VALUES(1, "provaNr1");
+INSERT INTO SOLUZIONE VALUES(1, "provaNr1","rispostaCorretta");
 INSERT INTO QUESITORISPOSTACHIUSA VALUES(2, "provaNr1");
 INSERT INTO OPZIONERISPOSTA VALUES("provaNr1",2,2,"rispostaCorretta");
 INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
@@ -833,22 +855,45 @@ INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
+CALL inserisciRisposta("Aperto","provaNr1","studente@gmail.com", "rispostaCorretta", 2);
+CALL inserisciRisposta("Aperto","provaNr1","studente2@gmail.com", "rispostaNonCorretta", 1);
+
+CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 2, @esitoRispostaScelta);
+SELECT @esitoRispostaScelta;
+
+CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 1, @esitoRispostaCodice);
+SELECT @esitoRispostaCodice;
+
+CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
+
+-- Fine test
+*/
+
+
+/*
+-- Test classificaTestCompletati
+INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
+INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
+INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
+INSERT INTO STUDENTE VALUES("tabish@gmail.com", "Tabish", "Ghazanfar", 8654678, 2010,"gdhdnbgdtjhjklmk");
+INSERT INTO STUDENTE VALUES("lorenzo@gmail.com", "Lorenzo", "Maini", 475875983,2010, "llllllllllllllll");
+INSERT INTO STUDENTE VALUES("alex@gmail.com","Alex", "Ranaulo",35111111,2010,  "aaaaaaaaaaaaaaaa");
+INSERT INTO STUDENTE VALUES("davide@gmail.com", "Davide", "De Rosa", 1211212,2010,  "dddddddddddddddd");
+INSERT INTO TEST VALUES("provaNr2", '2024-02-09 14:30:00', NULL ,true, "docente@gmail.com");
+INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "alessia@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "alessia@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr1", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
+
+
+--Fine test
+*/
 
 
 
 
-
-CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
-	SELECT
-		CodiceAlfaNumerico,
-		COUNT(*) AS num_test_completati
-	FROM STUDENTE, COMPLETAMENTO AS C1, COMPLETAMENTO AS C2
-	WHERE
-		(Email = C1.EmailStudente) AND (Email = C2.EmailStudente) AND (C1.TitoloTest <> C2.TitoloTest) AND (C1.Stato = "Concluso")
-	GROUP BY
-		STUDENTE.CodiceAlfaNumerico
-	ORDER BY
-		num_test_completati DESC;
 
 
 
