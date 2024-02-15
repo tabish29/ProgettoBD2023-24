@@ -177,12 +177,23 @@ CREATE TABLE QUESITORISPOSTACHIUSA (
 CREATE TABLE QUESITOCODICE (
 	NumeroProgressivo INT,
     TitoloTest VARCHAR(20) NOT NULL,
-    Soluzione VARCHAR(40),
     
 	PRIMARY KEY(TitoloTest, NumeroProgressivo),
     
    FOREIGN KEY(TitoloTest) REFERENCES QUESITO(TitoloTest) ON DELETE CASCADE,
    FOREIGN KEY(NumeroProgressivo) REFERENCES QUESITO(NumeroProgressivo) ON DELETE CASCADE
+
+) ENGINE = INNODB;
+
+CREATE TABLE SOLUZIONE (
+	NumeroProgressivo INT,
+    TitoloTest VARCHAR(20) NOT NULL,
+    TestoSoluzione VARCHAR(40),
+    
+	PRIMARY KEY(TitoloTest, NumeroProgressivo, TestoSoluzione),
+    
+   FOREIGN KEY(TitoloTest) REFERENCES QUESITOCODICE(TitoloTest) ON DELETE CASCADE,
+   FOREIGN KEY(NumeroProgressivo) REFERENCES QUESITOCODICE(NumeroProgressivo) ON DELETE CASCADE
 
 ) ENGINE = INNODB;
 
@@ -275,6 +286,10 @@ CREATE TABLE REALIZZAZIONE (
     FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE
 
 ) ENGINE = INNODB;
+
+
+
+
 
 
 
@@ -453,63 +468,14 @@ BEGIN
 END //
 DELIMITER ;
 
-DELIMITER //
-CREATE PROCEDURE CreazioneTest (
-    IN p_TitoloTest VARCHAR(50),
-    IN p_DescrizioneTest TEXT,
-    IN p_EmailDocente VARCHAR(40),
-    OUT p_TestCreato BOOLEAN
-)
-BEGIN
-    DECLARE docente_esiste BOOLEAN;
-
-    -- Verifica se il docente esiste nella tabella Docenti
-    SELECT EXISTS(SELECT 1 FROM Docenti WHERE Email = p_EmailDocente) INTO docente_esiste;
-
-    -- Se il docente esiste, crea il nuovo test
-    IF docente_esiste THEN
-        INSERT INTO Test (Titolo, Descrizione, EmailDocente) VALUES (p_TitoloTest, p_DescrizioneTest, p_EmailDocente);
-        SET p_TestCreato = TRUE;
-    ELSE
-        SET p_TestCreato = FALSE;
-    END IF;
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE SettaVisualizzazioneRisposte (
-    IN p_TitoloTest VARCHAR(50),
-    IN p_Valore BOOLEAN
-)
-BEGIN
-    -- Imposta il campo VisualizzaRisposte al valore specificato per il test specificato
-    UPDATE Test SET VisualizzaRisposte = p_Valore WHERE Titolo = p_TitoloTest;
-END //
-DELIMITER ;
-
-DELIMITER //
-
-CREATE PROCEDURE InserisciMessaggioDocente(
-    IN p_TitoloTest VARCHAR(20),
-    IN p_TitoloMessaggio VARCHAR(20),
-    IN p_CampoTesto VARCHAR(60),
-    IN p_Data DATETIME
-)
-BEGIN
-    -- Inserimento del messaggio
-    INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
-    VALUES (p_TitoloTest, p_TitoloMessaggio, p_CampoTesto, p_Data);
-    
-    -- Invio del messaggio a tutti gli studenti
-    INSERT INTO RICEZIONESTUDENTE (TitoloTest, TitoloMessaggio, CampoTesto, Data)
-    VALUES (p_TitoloTest, p_TitoloMessaggio, p_CampoTesto, p_Data);
-END//
-
-DELIMITER ;
-
 */
-DELIMITER //
 
+
+
+
+
+
+DELIMITER //
 CREATE PROCEDURE inserisciRisposta(
     IN statoCompletamentoTemp ENUM('Aperto','InCompletamento','Concluso'),
     IN titoloTestTemp VARCHAR(20),
@@ -576,7 +542,6 @@ BEGIN
     END IF;
     
 END//
-
 DELIMITER ;
 
 
@@ -610,7 +575,6 @@ DELIMITER ;
 
 
 DELIMITER //
-
 CREATE PROCEDURE inserisciMessaggioStudente(
 	IN emailStudenteTemp VARCHAR(40),
     IN emailDocenteTemp VARCHAR(40),
@@ -634,10 +598,215 @@ BEGIN
     
     -- Aggiornamento tabella INVIOSTUDENTE
     INSERT INTO INVIOSTUDENTE VALUES(IDMess, titoloTestTemp, emailStudenteTemp);
-END//
 
+END//
 DELIMITER ;
 
+
+# solo per docente
+DELIMITER //
+CREATE PROCEDURE CreazioneTabellaEsercizio (
+    IN nomeTabella VARCHAR(20),
+    IN dataCreazione DATETIME,
+    IN numRighe INT,
+    IN emailDocente VARCHAR(40)
+)
+BEGIN
+
+# controllo che la tabella non esista già e che esista il docente
+DECLARE tabellaNonEsistente INT DEFAULT 0;
+DECLARE docenteEsistente INT DEFAULT 0;
+SET tabellaNonEsistente = ( SELECT COUNT(*) FROM TABELLADIESERCIZIO WHERE (nomeTabella=TABELLADIESERCIZIO.Nome) );
+SET docenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (emailDocente = DOCENTE.Email) );
+
+# se non esiste la tabella ed esiste il docente la inserisco
+IF (TabellaNonEsistente = 0 AND docenteEsistente=1) THEN 
+INSERT INTO TABELLADIESERCIZIO VALUES(NomeTabella, dataCreazione, numRighe, emailDocente);
+END IF;
+
+END
+// DELIMITER ;
+
+
+
+
+DELIMITER //
+CREATE PROCEDURE ModificaVisualizzazioneRisposte (
+    IN p_TitoloTest VARCHAR(50),
+    IN p_Valore BOOLEAN
+)
+BEGIN
+    # Imposta il campo VisualizzaRisposte al valore specificato per il test specificato
+    UPDATE Test SET VisualizzaRisposte = p_Valore WHERE Titolo = p_TitoloTest;
+END 
+// DELIMITER ;
+
+
+
+
+# solo per docente 
+DELIMITER //
+CREATE PROCEDURE CreazioneTest (
+    IN TitoloTest VARCHAR(50),
+    IN DataCreazione datetime,
+    IN Foto VARCHAR(20),
+    IN VisualizzaRisposte BOOLEAN,
+    IN EmailDocente VARCHAR(40)
+)
+BEGIN
+
+    DECLARE docenteEsistente INT DEFAULT 0;
+    DECLARE TestNonEsistente INT DEFAULT 0;
+    SET docenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (EmailDocente=DOCENTE.Email));
+	SET TestNonEsistente = ( SELECT COUNT(*) FROM Test WHERE (TitoloTest=TEST.Titolo));
+    
+# se il docente esiste, e il test non esiste, inserisce i dati
+IF (docenteEsistente = 1 AND TestNonEsistente = 0) THEN
+	INSERT INTO TEST VALUES (TitoloTest, DataCreazione, Foto, VisualizzaRisposte, EmailDocente);
+END IF;
+
+END 
+// DELIMITER ;
+
+
+# solo per docente
+// DELIMITER 
+CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
+    IN TitoloTest_t VARCHAR(20),
+    IN LivelloDifficolta_t ENUM("Basso","Medio","Alto"),
+    IN Descrizione_t VARCHAR(50),
+    IN NumeroRisposte_t INT
+)
+BEGIN
+
+DECLARE TestEsistente INT DEFAULT 0;
+SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+
+IF (TestEsistente = 1) THEN
+INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
+VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
+INSERT INTO QUESITORISPOSTACHIUSA(TitoloTest) VALUES (TitoloTest_t);
+END IF;
+
+END 
+// DELIMITER ;
+
+
+
+# solo per docente
+// DELIMITER 
+CREATE PROCEDURE CreazioneQuesitoCodice (
+    IN TitoloTest_t VARCHAR(20),
+    IN LivelloDifficolta_t ENUM("Basso","Medio","Alto"),
+    IN Descrizione_t VARCHAR(50),
+    IN NumeroRisposte_t INT
+)
+BEGIN
+
+DECLARE TestEsistente INT DEFAULT 0;
+SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+
+IF (TestEsistente = 1) THEN
+INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
+VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
+INSERT INTO QUESITOCODICE(TitoloTest) VALUES (TitoloTest_t);
+END IF;
+
+END 
+// DELIMITER ;
+
+
+
+# solo per docente
+// DELIMITER 
+CREATE PROCEDURE InserimentoSoluzione (
+    IN TitoloTest_t VARCHAR(20),
+    IN TestoSoluzione_t VARCHAR(40)
+)
+BEGIN
+
+DECLARE TestEsistente INT DEFAULT 0;
+SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+
+IF (TestEsistente = 1) THEN
+INSERT INTO SOLUZIONE(TitoloTest, TestoSoluzione) VALUES (TitoloTest_t, TestoSoluzione_t);
+END IF;
+
+END 
+// DELIMITER ;
+
+
+
+
+# solo per docente
+// DELIMITER 
+CREATE PROCEDURE InserimentoOpzioneRisposta (
+    IN TitoloTest_t VARCHAR(20),
+    IN NumeroProgressivoQuesito_t INT,
+    IN NumeroProgressivoOpzione_t INT,
+    IN CampoTesto_t VARCHAR(2000),
+)
+BEGIN
+
+DECLARE TestEsistente INT DEFAULT 0;
+DECLARE ProgressivoQuesitoEsistente INT DEFAULT 0;
+DECLARE ProgressiviETestEsistenti INT DEFAULT 0;
+SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+SET ProgressivoQuesitoEsistente = (SELECT COUNT(*) FROM QUESITORISPOSTACHIUSA WHERE (NumeroProgressivoQuesito_t=NumeroProgressivo));
+SET ProgressivoETestEsistenti = (SELECT COUNT(*) INTO ProgressiviETestEsistenti FROM OPZIONERISPOSTA WHERE TitoloTest = TitoloTest_t 
+									AND NumeroProgressivoQuesito = NumeroProgressivoQuesito_t 
+                                    AND NumeroProgressivoOpzione = NumeroProgressivoOpzione_t;);
+
+IF (TestEsistente = 1 AND ProgressivoQuesitoEsistente = 1 AND ProgressivoETestEsistenti = 0) THEN
+INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, NumeroProgressivoOpzione, CampoTesto) 
+VALUES (TitoloTest_t, NumeroProgressivoQuesito_t, NumeroProgressivoOpzione_t, CampoTesto_t);
+END IF;
+
+END 
+// DELIMITER ;
+
+
+
+
+# solo per docente
+// DELIMITER 
+CREATE PROCEDURE InserimentoMessaggioDocente(
+	IN TitoloTest_t VARCHAR(20),
+    IN TitoloMessaggio_t VARCHAR(20),
+    IN CampoTesto_t VARCHAR(60),
+    IN Data_t DATETIME,
+    IN EmailDocenteMittente_t VARCHAR(40)
+)
+BEGIN
+
+DECLARE TestEsistente INT DEFAULT 0;
+DECLARE DocenteEsistente INT DEFAULT 0;
+SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+SET DocenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (EmailDocente=DOCENTE.Email));
+
+IF (TestEsistente = 1 AND DocenteEsistente = 1) THEN
+
+# Inserisce il messaggio nella tabella MESSAGGIO
+INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data) VALUES (TitoloTest_t, TitoloMessaggio_t, CampoTesto_t, Data_t);
+
+# Ottiene l'ID del messaggio appena inserito
+SELECT LAST_INSERT_ID() INTO IdMessaggio;
+
+# Inserisce il messaggio nella tabella INVIODOCENTE per ogni docente
+INSERT INTO INVIODOCENTE (Id, TitoloTest, EmailDocenteMittente) VALUES (IdMessaggio, TitoloTest_t, EmailDocenteMittente_t)
+
+# DA AGGIUNGERE TUTTE LE RICEZIONI DEGLI STUDENTI -> COME FACCIO A METTERLI TUTTI ?
+
+END IF;
+
+END
+// DELIMITER ;
+
+
+
+
+
+/*
 
 -- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
@@ -678,6 +847,8 @@ INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr1", "tabish@gmail.com", NOW
 INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
+
+*/
 
 -- Fine Test
 
