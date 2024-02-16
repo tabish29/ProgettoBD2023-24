@@ -27,7 +27,7 @@ CREATE TABLE STUDENTE (
 CREATE TABLE TEST (
 	Titolo VARCHAR(20) PRIMARY KEY,
     DataCreazione DATETIME,
-    Foto VARCHAR(20),											# HELP COME METTIAMO LA FOTO
+    Foto BLOB,											# METTIAMO BLOB
     VisualizzaRisposte BOOLEAN,
     EmailDocente VARCHAR(40),
     
@@ -289,7 +289,12 @@ CREATE TABLE REALIZZAZIONE (
 
 
 
+
+
+
 /*
+
+
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
@@ -297,12 +302,12 @@ FOR EACH ROW
 BEGIN
     DECLARE num_risposte_inserite INT;
 
-    -- Conta quante risposte sono state inserite per lo studente
+    # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
     IF num_risposte_inserite = 1 THEN
         UPDATE COMPLETAMENTO
         SET Stato = "InCompletamento"
@@ -310,6 +315,10 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+
+
+
 
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitocodice
@@ -318,12 +327,12 @@ FOR EACH ROW
 BEGIN
     DECLARE num_risposte_inserite INT;
 
-    -- Conta quante risposte sono state inserite per lo studente
+    # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
     IF num_risposte_inserite = 1 THEN
         UPDATE COMPLETAMENTO
         SET Stato = "InCompletamento"
@@ -331,6 +340,9 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+
+
 
 
 DELIMITER //
@@ -342,22 +354,22 @@ BEGIN
     DECLARE num_risposte_inserite INT;
     DECLARE num_risposte_corrette INT;
 
-    -- Conta il numero totale di quesiti per il test
+    # Conta il numero totale di quesiti per il test
     SELECT COUNT(*) INTO num_quesiti_totali
     FROM QUESITO
     WHERE TitoloTest = NEW.TitoloTest;
 
-    -- Conta il numero di risposte inserite per il test e lo studente
+    # Conta il numero di risposte inserite per il test e lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    -- Conta il numero di risposte corrette per lo studente
+    # Conta il numero di risposte corrette per lo studente
     SELECT COUNT(*) INTO num_risposte_corrette
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
 
-    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    # Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
     IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
@@ -365,6 +377,9 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+
+
 
 
 DELIMITER //
@@ -376,22 +391,22 @@ BEGIN
     DECLARE num_risposte_inserite INT;
     DECLARE num_risposte_corrette INT;
 
-    -- Conta il numero totale di quesiti per il test
+    # Conta il numero totale di quesiti per il test
     SELECT COUNT(*) INTO num_quesiti_totali
     FROM QUESITO
     WHERE TitoloTest = NEW.TitoloTest;
 
-    -- Conta il numero di risposte inserite per il test e lo studente
+    # Conta il numero di risposte inserite per il test e lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    -- Conta il numero di risposte corrette per lo studente
+    # Conta il numero di risposte corrette per lo studente
     SELECT COUNT(*) INTO num_risposte_corrette
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
 
-    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    # Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
     IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
@@ -401,14 +416,17 @@ END//
 DELIMITER ;
 
 
+
+
+
 DELIMITER //
 CREATE TRIGGER cambio_stato_test_concluso
 AFTER UPDATE ON TEST
 FOR EACH ROW
 BEGIN
-    -- Verifica se il campo VisualizzaRisposte è stato impostato a True
+    # Verifica se il campo VisualizzaRisposte è stato impostato a True
     IF NEW.VisualizzaRisposte = TRUE THEN
-        -- Aggiorna lo stato del test a 'Concluso' per tutti gli studenti
+        # Aggiorna lo stato del test a 'Concluso' per tutti gli studenti
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
         WHERE TitoloTest = NEW.Titolo;
@@ -417,13 +435,19 @@ END//
 DELIMITER ;
 
 
+
+
+
 DELIMITER //
 CREATE PROCEDURE VisualizzaTestDisponibili ()
 BEGIN
-    -- Seleziona tutti i test presenti nella tabella Test
+    # Seleziona tutti i test presenti nella tabella Test
     SELECT * FROM Test;
 END //
 DELIMITER ;
+
+
+
 
 
 DELIMITER //
@@ -431,10 +455,14 @@ CREATE PROCEDURE VisualizzaQuesitiPerTest (
     IN p_TitoloTest VARCHAR(20)
 )
 BEGIN
-    -- Seleziona i quesiti corrispondenti al titolo del test specificato
+    # Seleziona i quesiti corrispondenti al titolo del test specificato
     SELECT * FROM Quesiti WHERE TitoloTest = p_TitoloTest;
 END //
 DELIMITER ;
+
+
+
+
 
 DELIMITER //
 CREATE PROCEDURE AutenticazioneDocente (
@@ -442,7 +470,7 @@ CREATE PROCEDURE AutenticazioneDocente (
     OUT p_Autenticato BOOLEAN
 )
 BEGIN
-    -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
+    # Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
     IF EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
         SET p_Autenticato = TRUE;
     ELSE
@@ -451,13 +479,16 @@ BEGIN
 END //
 DELIMITER ;
 
+
+
+
 DELIMITER //
 CREATE PROCEDURE AutenticazioneStudente (
     IN p_Email VARCHAR(40),
     OUT p_Autenticato BOOLEAN
 )
 BEGIN
-    -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
+    # Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
     IF EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
         SET p_Autenticato = TRUE;
     ELSE
@@ -466,19 +497,25 @@ BEGIN
 END //
 DELIMITER ;
 
+
+
+
 #Da mettere gli altri attributi della tabella docente
 DELIMITER //
 CREATE PROCEDURE RegistrazioneDocente (
     IN p_Email VARCHAR(40)
 )
 BEGIN
-    -- Verifica se l'email non esiste già nella tabella Docente
+    # Verifica se l'email non esiste già nella tabella Docente
     IF NOT EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
-        -- Inserisce l'utente nella tabella Utenti
+        # Inserisce l'utente nella tabella Utenti
         INSERT INTO Docente (Email) VALUES (p_Email);
     END IF;
 END //
 DELIMITER ;
+
+
+
 
 #Da mettere gli altri attributi della tabella Studente
 DELIMITER //
@@ -486,13 +523,15 @@ CREATE PROCEDURE RegistrazioneStudente (
     IN p_Email VARCHAR(40)
 )
 BEGIN
-    -- Verifica se l'email non esiste già nella tabella Utenti
+    # Verifica se l'email non esiste già nella tabella Utenti
     IF NOT EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
-        -- Inserisce l'utente nella tabella Utenti
+        # Inserisce l'utente nella tabella Utenti
         INSERT INTO Studente (Email) VALUES (p_Email);
     END IF;
 END //
 DELIMITER ;
+
+
 
 */
 
@@ -519,7 +558,7 @@ BEGIN
     DECLARE rispostaCorretta VARCHAR(40);
     
 	
-	-- Controlla se è una risposta a quesito chiuso
+	# Controlla se è una risposta a quesito chiuso
     SELECT COUNT(*) INTO numRispostaChiusa
     FROM QUESITORISPOSTACHIUSA 
     WHERE NumeroProgressivo = numeroQuesitoTemp;
@@ -530,7 +569,7 @@ BEGIN
         SET tipoRispostaChiusa = FALSE;
     END IF;
     
-	-- Controlla se è una risposta a quesito aperto
+	# Controlla se è una risposta a quesito aperto
     SELECT COUNT(*) INTO numRispostaAperta
     FROM QUESITOCODICE
     WHERE NumeroProgressivo = numeroQuesitoTemp;
@@ -567,8 +606,8 @@ BEGIN
         INSERT INTO RISPOSTAQUESITOCODICE(StatoCompletamento, TitoloTest,EmailStudente,Testo, NumeroProgressivoQuesito,Esito) VALUES (statoCompletamentoTemp, titoloTestTemp, emailStudenteTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
     END IF;
     
-END//
-DELIMITER ;
+END
+// DELIMITER ;
 
 
 
@@ -614,19 +653,19 @@ BEGIN
     INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
     VALUES (titoloTestTemp, titoloMess, testoMess, NOW());
     
-    -- salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
+    # salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
     SELECT Id INTO IDMess
     FROM MESSAGGIO
     WHERE (TitoloTest=titoloTestTemp) AND (TitoloMessaggio = titoloMess) AND (testoMess = CampoTesto);
     
-    -- Invio del messaggio a tutti i docenti
+    # Invio del messaggio a tutti i docenti
     INSERT INTO RICEZIONEDOCENTE VALUES (IDMess, titoloTestTemp, emailDocenteTemp);
     
-    -- Aggiornamento tabella INVIOSTUDENTE
+    # Aggiornamento tabella INVIOSTUDENTE
     INSERT INTO INVIOSTUDENTE VALUES(IDMess, titoloTestTemp, emailStudenteTemp);
 
-END//
-DELIMITER ;
+END
+// DELIMITER ;
 
 
 
@@ -667,12 +706,12 @@ END
 
 DELIMITER //
 CREATE PROCEDURE ModificaVisualizzazioneRisposte (
-    IN p_TitoloTest VARCHAR(50),
-    IN p_Valore BOOLEAN
+    IN TitoloTest_t VARCHAR(50),
+    IN Valore_t BOOLEAN
 )
 BEGIN
     # Imposta il campo VisualizzaRisposte al valore specificato per il test specificato
-    UPDATE Test SET VisualizzaRisposte = p_Valore WHERE Titolo = p_TitoloTest;
+    UPDATE Test SET VisualizzaRisposte = Valore_t WHERE Titolo = TitoloTest_t;
 END 
 // DELIMITER ;
 
@@ -684,7 +723,7 @@ DELIMITER //
 CREATE PROCEDURE CreazioneTest (
     IN TitoloTest VARCHAR(50),
     IN DataCreazione datetime,
-    IN Foto VARCHAR(20),
+    IN Foto BLOB,
     IN VisualizzaRisposte BOOLEAN,
     IN EmailDocente VARCHAR(40)
 )
@@ -855,11 +894,11 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 
 
 
--- AREA PER I TEST
+# AREA PER I TEST
 
 
-/*
--- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
+
+# Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
@@ -897,12 +936,12 @@ SELECT @esitoRispostaCodice;
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 
--- Fine test
-*/
+# Fine test
+
 
 
 /*
--- Test classificaTestCompletati
+# Test classificaTestCompletati
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
 INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
@@ -919,9 +958,8 @@ INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(
 INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
 
---Fine test
+#Fine test
 */
-
 
 
 
