@@ -304,7 +304,7 @@ BEGIN
 
     # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
+    FROM RISPOSTAQUESITORISPOSTACHIUSA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
     # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
@@ -329,7 +329,7 @@ BEGIN
 
     # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
+    FROM RISPOSTAQUESITOCODICE
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
     # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
@@ -344,7 +344,7 @@ DELIMITER ;
 
 
 
-
+#trigger n-2
 DELIMITER //
 CREATE TRIGGER cambio_stato_test_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
@@ -381,7 +381,7 @@ DELIMITER ;
 
 
 
-
+#trigger n-2
 DELIMITER //
 CREATE TRIGGER cambio_stato_test_rispostaquesitocodice
 AFTER INSERT ON RISPOSTAQUESITOCODICE
@@ -459,9 +459,6 @@ BEGIN
     SELECT * FROM Quesiti WHERE TitoloTest = p_TitoloTest;
 END //
 DELIMITER ;
-
-
-
 
 
 DELIMITER //
