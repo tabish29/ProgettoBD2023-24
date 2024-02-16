@@ -304,7 +304,7 @@ BEGIN
 
     # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITORISPOSTACHIUSA
+    FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
     # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
@@ -313,8 +313,8 @@ BEGIN
         SET Stato = "InCompletamento"
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END//
-DELIMITER ;
+END 
+// DELIMITER ;
 
 
 
@@ -329,7 +329,7 @@ BEGIN
 
     # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITOCODICE
+    FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
     # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
@@ -338,13 +338,13 @@ BEGIN
         SET Stato = "InCompletamento"
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END//
-DELIMITER ;
+END
+// DELIMITER ;
 
 
 
 
-#trigger n-2
+
 DELIMITER //
 CREATE TRIGGER cambio_stato_test_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
@@ -375,13 +375,13 @@ BEGIN
         SET Stato = 'Concluso'
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END//
-DELIMITER ;
+END
+// DELIMITER ;
 
 
 
 
-#trigger n-2
+
 DELIMITER //
 CREATE TRIGGER cambio_stato_test_rispostaquesitocodice
 AFTER INSERT ON RISPOSTAQUESITOCODICE
@@ -412,8 +412,8 @@ BEGIN
         SET Stato = 'Concluso'
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END//
-DELIMITER ;
+END
+// DELIMITER ;
 
 
 
@@ -431,8 +431,8 @@ BEGIN
         SET Stato = 'Concluso'
         WHERE TitoloTest = NEW.Titolo;
     END IF;
-END//
-DELIMITER ;
+END
+// DELIMITER ;
 
 
 
@@ -457,8 +457,11 @@ CREATE PROCEDURE VisualizzaQuesitiPerTest (
 BEGIN
     # Seleziona i quesiti corrispondenti al titolo del test specificato
     SELECT * FROM Quesiti WHERE TitoloTest = p_TitoloTest;
-END //
-DELIMITER ;
+END 
+// DELIMITER ;
+
+
+
 
 
 DELIMITER //
@@ -491,8 +494,8 @@ BEGIN
     ELSE
         SET p_Autenticato = FALSE;
     END IF;
-END //
-DELIMITER ;
+END 
+// DELIMITER ;
 
 
 
