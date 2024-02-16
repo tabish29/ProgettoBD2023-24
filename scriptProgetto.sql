@@ -425,6 +425,7 @@ BEGIN
 END //
 DELIMITER ;
 
+
 DELIMITER //
 CREATE PROCEDURE VisualizzaQuesitiPerTest (
     IN p_TitoloTest VARCHAR(20)
@@ -436,13 +437,13 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE Autenticazione (
+CREATE PROCEDURE AutenticazioneDocente (
     IN p_Email VARCHAR(40),
     OUT p_Autenticato BOOLEAN
 )
 BEGIN
     -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
-    IF EXISTS (SELECT * FROM Utenti WHERE Email = p_Email) THEN
+    IF EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
         SET p_Autenticato = TRUE;
     ELSE
         SET p_Autenticato = FALSE;
@@ -451,14 +452,44 @@ END //
 DELIMITER ;
 
 DELIMITER //
-CREATE PROCEDURE Registrazione (
+CREATE PROCEDURE AutenticazioneStudente (
+    IN p_Email VARCHAR(40),
+    OUT p_Autenticato BOOLEAN
+)
+BEGIN
+    -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
+    IF EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
+        SET p_Autenticato = TRUE;
+    ELSE
+        SET p_Autenticato = FALSE;
+    END IF;
+END //
+DELIMITER ;
+
+#Da mettere gli altri attributi della tabella docente
+DELIMITER //
+CREATE PROCEDURE RegistrazioneDocente (
+    IN p_Email VARCHAR(40)
+)
+BEGIN
+    -- Verifica se l'email non esiste già nella tabella Docente
+    IF NOT EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
+        -- Inserisce l'utente nella tabella Utenti
+        INSERT INTO Docente (Email) VALUES (p_Email);
+    END IF;
+END //
+DELIMITER ;
+
+#Da mettere gli altri attributi della tabella Studente
+DELIMITER //
+CREATE PROCEDURE RegistrazioneStudente (
     IN p_Email VARCHAR(40)
 )
 BEGIN
     -- Verifica se l'email non esiste già nella tabella Utenti
-    IF NOT EXISTS (SELECT * FROM Utenti WHERE Email = p_Email) THEN
+    IF NOT EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
         -- Inserisce l'utente nella tabella Utenti
-        INSERT INTO Utenti (Email) VALUES (p_Email);
+        INSERT INTO Studente (Email) VALUES (p_Email);
     END IF;
 END //
 DELIMITER ;
