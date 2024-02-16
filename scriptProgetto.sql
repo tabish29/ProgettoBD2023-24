@@ -125,6 +125,13 @@ CREATE TABLE TABELLADIESERCIZIO (
 
 ) ENGINE = INNODB;
 
+CREATE TABLE RIGA(
+	Testo VARCHAR(100),
+    NomeTabella VARCHAR(20),
+    
+    PRIMARY KEY(Testo,NomeTabella),
+    FOREIGN KEY(NomeTabella) REFERENCES TABELLADIESERCIZIO(Nome) ON DELETE CASCADE
+);
 
 CREATE TABLE ATTRIBUTO (
 	NomeTabella VARCHAR(20) NOT NULL,
@@ -313,8 +320,8 @@ BEGIN
         SET Stato = "InCompletamento"
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END 
-// DELIMITER ;
+END//
+DELIMITER ;
 
 
 
@@ -338,8 +345,8 @@ BEGIN
         SET Stato = "InCompletamento"
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END
-// DELIMITER ;
+END//
+DELIMITER ;
 
 
 
@@ -375,8 +382,8 @@ BEGIN
         SET Stato = 'Concluso'
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END
-// DELIMITER ;
+END//
+DELIMITER ;
 
 
 
@@ -412,27 +419,8 @@ BEGIN
         SET Stato = 'Concluso'
         WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
     END IF;
-END
-// DELIMITER ;
-
-
-
-
-
-DELIMITER //
-CREATE TRIGGER cambio_stato_test_concluso
-AFTER UPDATE ON TEST
-FOR EACH ROW
-BEGIN
-    # Verifica se il campo VisualizzaRisposte è stato impostato a True
-    IF NEW.VisualizzaRisposte = TRUE THEN
-        # Aggiorna lo stato del test a 'Concluso' per tutti gli studenti
-        UPDATE COMPLETAMENTO
-        SET Stato = 'Concluso'
-        WHERE TitoloTest = NEW.Titolo;
-    END IF;
-END
-// DELIMITER ;
+END//
+DELIMITER ;
 
 
 
@@ -457,8 +445,8 @@ CREATE PROCEDURE VisualizzaQuesitiPerTest (
 BEGIN
     # Seleziona i quesiti corrispondenti al titolo del test specificato
     SELECT * FROM Quesiti WHERE TitoloTest = p_TitoloTest;
-END 
-// DELIMITER ;
+END //
+DELIMITER ;
 
 
 
@@ -494,8 +482,8 @@ BEGIN
     ELSE
         SET p_Autenticato = FALSE;
     END IF;
-END 
-// DELIMITER ;
+END //
+DELIMITER ;
 
 
 
@@ -535,7 +523,33 @@ DELIMITER ;
 
 */
 
+# TRIGGER
 
+DELIMITER //
+CREATE TRIGGER testConclusoVisualizzaRisposte
+AFTER UPDATE ON TEST
+FOR EACH ROW
+BEGIN
+    IF NEW.VisualizzaRisposte = TRUE THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = 'Concluso'
+        WHERE TitoloTest = NEW.Titolo;
+    END IF;
+END
+// DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER incrementaNumRighe
+BEFORE INSERT ON RIGA
+FOR EACH ROW
+BEGIN
+    UPDATE TABELLADIESERCIZIO
+    SET num_righe = num_righe + 1
+    WHERE Nome = NEW.NomeTabella;
+END 
+
+//DELIMITER ;
 
 
 
@@ -897,7 +911,7 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 # AREA PER I TEST
 
 
-
+/*
 # Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
@@ -937,10 +951,10 @@ SELECT @esitoRispostaCodice;
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 
 # Fine test
+*/
 
 
 
-/*
 # Test classificaTestCompletati
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
@@ -959,10 +973,29 @@ INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(
 
 
 #Fine test
+
+
+/*
+# Test per Trigger testConclusoVisualizzaRisposte
+UPDATE TEST
+SET VisualizzaRisposte = TRUE
+WHERE Titolo = 'provaNr2';
+
+# Fine Test
 */
 
+/*
+# Test per Trigger incrementaNumRighe
+INSERT INTO TABELLADIESERCIZIO VALUES ("TabellaNR1",NOW(), 0, 'docente@gmail.com');
+INSERT INTO RIGA VALUES("primariga","TabellaNR1");
+INSERT INTO RIGA VALUES("secondariga","TabellaNR1");
+INSERT INTO RIGA VALUES("terzariga","TabellaNR1");
 
-
+INSERT INTO TABELLADIESERCIZIO VALUES ("TabellaNR2",NOW(), 0, 'docente@gmail.com');
+INSERT INTO RIGA VALUES("primariga","TabellaNR2");
+INSERT INTO RIGA VALUES("secondariga","TabellaNR2");
+# Fine Test
+*/
 
 
 
