@@ -304,7 +304,7 @@ BEGIN
 
     # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
+    FROM RISPOSTAQUESITORISPOSTACHIUSA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
     # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
@@ -326,7 +326,7 @@ BEGIN
 
     # Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
+    FROM RISPOSTAQUESITOCODICE
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
     # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
@@ -405,8 +405,9 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+*/
 
-
+#Procedure di tutti gli utenti
 DELIMITER //
 CREATE PROCEDURE VisualizzaTestDisponibili ()
 BEGIN
@@ -418,7 +419,6 @@ DELIMITER //
 CREATE PROCEDURE VisualizzaQuesitiPerTest (
     IN p_TitoloTest VARCHAR(20)
     )
-
 BEGIN
     # Seleziona i quesiti corrispondenti al titolo del test specificato
     SELECT * FROM QUESITO WHERE TitoloTest = p_TitoloTest;
@@ -494,9 +494,6 @@ BEGIN
 END //
 DELIMITER ;
 
-
-
-*/
 
 # TRIGGER
 
@@ -655,15 +652,6 @@ BEGIN
 
 END
 // DELIMITER ;
-
-
-
-
-
-
-
-
-
 
 
 # solo per docente
