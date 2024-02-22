@@ -294,14 +294,7 @@ CREATE TABLE REALIZZAZIONE (
 
 ) ENGINE = INNODB;
 
-
-
-
-
-
 /*
-
-
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
@@ -324,9 +317,6 @@ END//
 DELIMITER ;
 
 
-
-
-
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitocodice
 AFTER INSERT ON RISPOSTAQUESITOCODICE
@@ -347,9 +337,6 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
-
-
-
 
 
 DELIMITER //
@@ -386,9 +373,6 @@ END//
 DELIMITER ;
 
 
-
-
-
 DELIMITER //
 CREATE TRIGGER cambio_stato_test_rispostaquesitocodice
 AFTER INSERT ON RISPOSTAQUESITOCODICE
@@ -423,33 +407,23 @@ END//
 DELIMITER ;
 
 
-
-
-
 DELIMITER //
 CREATE PROCEDURE VisualizzaTestDisponibili ()
 BEGIN
-    # Seleziona tutti i test presenti nella tabella Test
-    SELECT * FROM Test;
+    SELECT * FROM TEST;
 END //
 DELIMITER ;
-
-
-
-
 
 DELIMITER //
 CREATE PROCEDURE VisualizzaQuesitiPerTest (
     IN p_TitoloTest VARCHAR(20)
-)
+    )
+
 BEGIN
     # Seleziona i quesiti corrispondenti al titolo del test specificato
-    SELECT * FROM Quesiti WHERE TitoloTest = p_TitoloTest;
+    SELECT * FROM QUESITO WHERE TitoloTest = p_TitoloTest;
 END //
 DELIMITER ;
-
-
-
 
 
 DELIMITER //
@@ -459,15 +433,13 @@ CREATE PROCEDURE AutenticazioneDocente (
 )
 BEGIN
     # Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
-    IF EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
+    IF EXISTS (SELECT * FROM DOCENTE WHERE Email = p_Email) THEN
         SET p_Autenticato = TRUE;
     ELSE
         SET p_Autenticato = FALSE;
     END IF;
 END //
 DELIMITER ;
-
-
 
 
 DELIMITER //
@@ -477,7 +449,7 @@ CREATE PROCEDURE AutenticazioneStudente (
 )
 BEGIN
     # Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
-    IF EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
+    IF EXISTS (SELECT * FROM STUDENTE WHERE Email = p_Email) THEN
         SET p_Autenticato = TRUE;
     ELSE
         SET p_Autenticato = FALSE;
@@ -486,35 +458,39 @@ END //
 DELIMITER ;
 
 
-
-
-#Da mettere gli altri attributi della tabella docente
 DELIMITER //
 CREATE PROCEDURE RegistrazioneDocente (
     IN p_Email VARCHAR(40)
+    IN Nome VARCHAR (20),
+    IN Cognome VARCHAR (20),
+    IN RecapitoTelefonicoDocente INT,
+    IN NomeDipartimento VARCHAR(20),
+    IN NomeCorso VARCHAR(20)
 )
 BEGIN
     # Verifica se l'email non esiste già nella tabella Docente
     IF NOT EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
         # Inserisce l'utente nella tabella Utenti
-        INSERT INTO Docente (Email) VALUES (p_Email);
+        INSERT INTO Docente (Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (p_Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
+        Email,
     END IF;
 END //
 DELIMITER ;
 
-
-
-
-#Da mettere gli altri attributi della tabella Studente
 DELIMITER //
 CREATE PROCEDURE RegistrazioneStudente (
-    IN p_Email VARCHAR(40)
+    IN p_Email VARCHAR(40),
+    IN Nome VARCHAR (20),
+    IN Cognome VARCHAR (20),
+    IN RecapitoTelefonicoStudente INT,
+    IN AnnoImmatricolazione INT,
+    IN CodiceAlfaNumerico CHAR(16)
 )
 BEGIN
     # Verifica se l'email non esiste già nella tabella Utenti
     IF NOT EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
         # Inserisce l'utente nella tabella Utenti
-        INSERT INTO Studente (Email) VALUES (p_Email);
+        INSERT INTO STUDENTE (Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico) VALUES (p_Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico);
     END IF;
 END //
 DELIMITER ;
@@ -996,6 +972,3 @@ INSERT INTO RIGA VALUES("primariga","TabellaNR2");
 INSERT INTO RIGA VALUES("secondariga","TabellaNR2");
 # Fine Test
 */
-
-
-
