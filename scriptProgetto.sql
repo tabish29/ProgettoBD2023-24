@@ -460,7 +460,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE RegistrazioneDocente (
-    IN p_Email VARCHAR(40)
+    IN p_Email VARCHAR(40),
     IN Nome VARCHAR (20),
     IN Cognome VARCHAR (20),
     IN RecapitoTelefonicoDocente INT,
@@ -472,7 +472,6 @@ BEGIN
     IF NOT EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
         # Inserisce l'utente nella tabella Utenti
         INSERT INTO Docente (Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (p_Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
-        Email,
     END IF;
 END //
 DELIMITER ;
