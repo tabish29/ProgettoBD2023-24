@@ -107,7 +107,7 @@ CREATE TABLE COMPLETAMENTO (
     DataPrimaRisposta DATETIME,
     DataUltimaRisposta DATETIME,
     
-    PRIMARY KEY(NumeroProgressivo, TitoloTest, EmailStudente),
+    PRIMARY KEY(NumeroProgressivo),
     
 	FOREIGN KEY(TitoloTest) REFERENCES TEST(Titolo) ON DELETE CASCADE,
     FOREIGN KEY(EmailStudente) REFERENCES STUDENTE(Email) ON DELETE CASCADE
@@ -148,7 +148,7 @@ CREATE TABLE VINCOLODIINTEGRITA (
 	NomeTabella VARCHAR(20) NOT NULL,
     NomeAttributo VARCHAR(20) NOT NULL,
     EmailDocente VARCHAR(40),
-    
+    -- Referenziata e referente
     PRIMARY KEY(NomeTabella, NomeAttributo),
     
     FOREIGN KEY(NomeTabella) REFERENCES ATTRIBUTO(NomeTabella) ON DELETE CASCADE,
@@ -206,34 +206,26 @@ CREATE TABLE SOLUZIONE (
 
 CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
     NumeroProgressivoCompletamento INT NOT NULL,
-    TitoloTest VARCHAR(20) NOT NULL,
-    EmailStudente VARCHAR(40) NOT NULL,
     OpzioneScelta VARCHAR(20),
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
-    PRIMARY KEY (NumeroProgressivoCompletamento , TitoloTest , EmailStudente),
+    PRIMARY KEY (NumeroProgressivoCompletamento),
     
     FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE,
-    FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
-    FOREIGN KEY(EmailStudente) REFERENCES COMPLETAMENTO(EmailStudente) ON DELETE CASCADE,
 	FOREIGN KEY(NumeroProgressivoQuesito) REFERENCES QUESITORISPOSTACHIUSA(NumeroProgressivo) ON DELETE CASCADE
     
 )  ENGINE=INNODB;
 
 CREATE TABLE RISPOSTAQUESITOCODICE  (
     NumeroProgressivoCompletamento INT NOT NULL,
-    TitoloTest VARCHAR(20) NOT NULL,
-    EmailStudente VARCHAR(40) NOT NULL,
     Testo VARCHAR(100),
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
-    PRIMARY KEY (NumeroProgressivoCompletamento , TitoloTest , EmailStudente),
+    PRIMARY KEY (NumeroProgressivoCompletamento),
     
     FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE,
-    FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
-    FOREIGN KEY(EmailStudente) REFERENCES COMPLETAMENTO(EmailStudente) ON DELETE CASCADE,
     FOREIGN KEY(NumeroProgressivoQuesito) REFERENCES QUESITOCODICE(NumeroProgressivo) ON DELETE CASCADE
     
 )  ENGINE=INNODB;
@@ -283,13 +275,10 @@ CREATE TABLE APPARTENENZA  (
 
 CREATE TABLE REALIZZAZIONE (
 	EmailStudente VARCHAR(40) NOT NULL,
-    TitoloTest VARCHAR(20) NOT NULL,
     NumeroProgressivoCompletamento INT NOT NULL,
     
-    PRIMARY KEY (EmailStudente, TitoloTest, NumeroProgressivoCompletamento),
-    
+    PRIMARY KEY(EmailStudente, NumeroProgressivoCompletamento),
     FOREIGN KEY(EmailStudente) REFERENCES STUDENTE(Email) ON DELETE CASCADE,
-    FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
     FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE
 
 ) ENGINE = INNODB;
@@ -407,7 +396,7 @@ END//
 DELIMITER ;
 */
 
---Procedure di tutti gli utenti
+-- PROCEDURE PER TUTTI GLI UTENTI
 DELIMITER //
 CREATE PROCEDURE VisualizzaTestDisponibili ()
 BEGIN
@@ -417,26 +406,26 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE VisualizzaQuesitiPerTest (
-    IN p_TitoloTest VARCHAR(20)
+    IN TitoloTestTemp VARCHAR(20)
     )
 BEGIN
     -- Seleziona i quesiti corrispondenti al titolo del test specificato
-    SELECT * FROM QUESITO WHERE TitoloTest = p_TitoloTest;
+    SELECT * FROM QUESITO WHERE TitoloTest = TitoloTestTemp;
 END //
 DELIMITER ;
 
 
 DELIMITER //
 CREATE PROCEDURE AutenticazioneDocente (
-    IN p_Email VARCHAR(40),
-    OUT p_Autenticato BOOLEAN
+    IN EmailTemp VARCHAR(40),
+    OUT AutenticatoTemp BOOLEAN
 )
 BEGIN
     -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
-    IF EXISTS (SELECT * FROM DOCENTE WHERE Email = p_Email) THEN
-        SET p_Autenticato = TRUE;
+    IF EXISTS (SELECT * FROM DOCENTE WHERE Email = EmailTemp) THEN
+        SET AutenticatoTemp = TRUE;
     ELSE
-        SET p_Autenticato = FALSE;
+        SET AutenticatoTemp = FALSE;
     END IF;
 END //
 DELIMITER ;
@@ -444,15 +433,15 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE AutenticazioneStudente (
-    IN p_Email VARCHAR(40),
-    OUT p_Autenticato BOOLEAN
+    IN EmailTemp VARCHAR(40),
+    OUT AutenticatoTemp BOOLEAN
 )
 BEGIN
     -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
-    IF EXISTS (SELECT * FROM STUDENTE WHERE Email = p_Email) THEN
-        SET p_Autenticato = TRUE;
+    IF EXISTS (SELECT * FROM STUDENTE WHERE Email = EmailTemp) THEN
+        SET AutenticatoTemp = TRUE;
     ELSE
-        SET p_Autenticato = FALSE;
+        SET AutenticatoTemp = FALSE;
     END IF;
 END //
 DELIMITER ;
@@ -460,7 +449,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE RegistrazioneDocente (
-    IN p_Email VARCHAR(40),
+    IN EmailTemp VARCHAR(40),
     IN Nome VARCHAR (20),
     IN Cognome VARCHAR (20),
     IN RecapitoTelefonicoDocente INT,
@@ -469,9 +458,9 @@ CREATE PROCEDURE RegistrazioneDocente (
 )
 BEGIN
     -- Verifica se l'email non esiste già nella tabella Docente
-    IF NOT EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
+    IF NOT EXISTS (SELECT * FROM Docente WHERE Email = EmailTemp) THEN
         -- Inserisce l'utente nella tabella Utenti
-        INSERT INTO Docente (Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (p_Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
+        INSERT INTO Docente (Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (EmailTemp,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
     ELSE
      -- Se l'email esiste già, restituisci un messaggio di errore
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Docente";
@@ -481,7 +470,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE RegistrazioneStudente (
-    IN p_Email VARCHAR(40),
+    IN EmailTemp VARCHAR(40),
     IN Nome VARCHAR (20),
     IN Cognome VARCHAR (20),
     IN RecapitoTelefonicoStudente INT,
@@ -490,9 +479,9 @@ CREATE PROCEDURE RegistrazioneStudente (
 )
 BEGIN
     -- Verifica se l'email non esiste già nella tabella Utenti
-    IF NOT EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
+    IF NOT EXISTS (SELECT * FROM Studente WHERE Email = EmailTemp) THEN
         -- Inserisce l'utente nella tabella Utenti
-        INSERT INTO STUDENTE (Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico) VALUES (p_Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico);
+        INSERT INTO STUDENTE (Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico) VALUES (EmailTemp,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico);
     ELSE
      -- Se l'email esiste già, restituisci un messaggio di errore
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Studente";
@@ -501,166 +490,8 @@ END //
 DELIMITER ;
 
 
--- TRIGGER
 
-DELIMITER //
-CREATE TRIGGER testConclusoVisualizzaRisposte
-AFTER UPDATE ON TEST
-FOR EACH ROW
-BEGIN
-    IF NEW.VisualizzaRisposte = TRUE THEN
-        UPDATE COMPLETAMENTO
-        SET Stato = 'Concluso'
-        WHERE TitoloTest = NEW.Titolo;
-    END IF;
-END
-// DELIMITER ;
-
-
-DELIMITER //
-CREATE TRIGGER incrementaNumRighe
-BEFORE INSERT ON RIGA
-FOR EACH ROW
-BEGIN
-    UPDATE TABELLADIESERCIZIO
-    SET num_righe = num_righe + 1
-    WHERE Nome = NEW.NomeTabella;
-END 
-
-//DELIMITER ;
-
-
-
-
-DELIMITER //
-CREATE PROCEDURE inserisciRisposta(
-    IN statoCompletamentoTemp ENUM('Aperto','InCompletamento','Concluso'),
-    IN titoloTestTemp VARCHAR(20),
-    IN emailStudenteTemp VARCHAR(40),
-    IN valoreRispostaTemp VARCHAR(20),
-    IN numeroQuesitoTemp INT
-)
-BEGIN
-
-    DECLARE tipoRispostaChiusa BOOLEAN;
-    DECLARE tipoRispostaAperta BOOLEAN;
-    DECLARE numRispostaChiusa INT;
-    DECLARE numRispostaAperta INT;
-    DECLARE esitoRisposta BOOLEAN;
-    DECLARE rispostaCorretta VARCHAR(40);
-    
-	
-	-- Controlla se è una risposta a quesito chiuso
-    SELECT COUNT(*) INTO numRispostaChiusa
-    FROM QUESITORISPOSTACHIUSA 
-    WHERE NumeroProgressivo = numeroQuesitoTemp;
-    
-	IF numRispostaChiusa = 1 THEN
-        SET tipoRispostaChiusa = TRUE;
-    ELSE
-        SET tipoRispostaChiusa = FALSE;
-    END IF;
-    
-	-- Controlla se è una risposta a quesito aperto
-    SELECT COUNT(*) INTO numRispostaAperta
-    FROM QUESITOCODICE
-    WHERE NumeroProgressivo = numeroQuesitoTemp;
-
-    IF numRispostaAperta = 1 THEN
-        SET tipoRispostaAperta = TRUE;
-    ELSE
-        SET tipoRispostaAperta = FALSE;
-    END IF;
-    
-    SET esitoRisposta = FALSE;
-    
-    IF tipoRispostaChiusa THEN
-		SELECT CampoTesto INTO RispostaCorretta
-		FROM OPZIONERISPOSTA
-		WHERE OPZIONERISPOSTA.NumeroProgressivoQuesito = numeroQuesitoTemp;
-        
-        IF (valoreRispostaTemp = rispostaCorretta) THEN
-			SET esitoRisposta = TRUE;
-		END IF;
-		
-        INSERT INTO RISPOSTAQUESITORISPOSTACHIUSA(StatoCompletamento,TitoloTest,EmailStudente, OpzioneScelta, NumeroProgressivoQuesito,Esito) VALUES (statoCompletamentoTemp, titoloTestTemp, emailStudenteTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
-    END IF;
-    
-    IF tipoRispostaAperta THEN
-		SELECT TestoSoluzione INTO rispostaCorretta
-		FROM QUESITOCODICE, SOLUZIONE
-		WHERE (QUESITOCODICE.NumeroProgressivo = SOLUZIONE.NumeroProgressivo) AND (SOLUZIONE.NumeroProgressivo = numeroQuesitoTemp);
-        
-        IF (valoreRispostaTemp = rispostaCorretta) THEN
-			SET esitoRisposta = TRUE;
-		END IF;
-		
-        INSERT INTO RISPOSTAQUESITOCODICE(StatoCompletamento, TitoloTest,EmailStudente,Testo, NumeroProgressivoQuesito,Esito) VALUES (statoCompletamentoTemp, titoloTestTemp, emailStudenteTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
-    END IF;
-    
-END
-// DELIMITER ;
-
-
-
-DELIMITER //
-CREATE PROCEDURE visualizzaEsitoRisposta(
-	IN statoTemp ENUM("Aperto","InCompletamento","Concluso"),
-    IN titoloTestTemp VARCHAR(20),
-    IN emailTemp VARCHAR(40),
-    IN numQuesito INT,
-    OUT esitoRisposta BOOLEAN
-)
-BEGIN
-	
-    IF(EXISTS(SELECT * FROM RISPOSTAQUESITORISPOSTACHIUSA WHERE (numQuesito = NumeroProgressivoQuesito))) THEN
-		(SELECT esito INTO esitoRisposta
-		FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE (numQuesito = NumeroProgressivoQuesito));
-    END IF;
-    
-    IF(EXISTS(SELECT * FROM RISPOSTAQUESITOCODICE WHERE (numQuesito = NumeroProgressivoQuesito))) THEN
-		(SELECT esito INTO esitoRisposta
-		FROM RISPOSTAQUESITOCODICE
-		WHERE (numQuesito = NumeroProgressivoQuesito));
-    END IF;
-
-END//
-
-DELIMITER ;
-
-
-
-DELIMITER //
-CREATE PROCEDURE inserisciMessaggioStudente(
-	IN emailStudenteTemp VARCHAR(40),
-    IN emailDocenteTemp VARCHAR(40),
-    IN titoloTestTemp VARCHAR(20),
-    IN titoloMess VARCHAR(20),
-    IN testoMess VARCHAR(60)
-)
-BEGIN
-	DECLARE IDMess INT;
-    
-    INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
-    VALUES (titoloTestTemp, titoloMess, testoMess, NOW());
-    
-    -- salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
-    SELECT Id INTO IDMess
-    FROM MESSAGGIO
-    WHERE (TitoloTest=titoloTestTemp) AND (TitoloMessaggio = titoloMess) AND (testoMess = CampoTesto);
-    
-    -- Invio del messaggio a tutti i docenti
-    INSERT INTO RICEZIONEDOCENTE VALUES (IDMess, titoloTestTemp, emailDocenteTemp);
-    
-    -- Aggiornamento tabella INVIOSTUDENTE
-    INSERT INTO INVIOSTUDENTE VALUES(IDMess, titoloTestTemp, emailStudenteTemp);
-
-END
-// DELIMITER ;
-
-
--- solo per docente
+-- PROCEDURE PER I DOCENTI
 DELIMITER //
 CREATE PROCEDURE CreazioneTabellaEsercizio (
     IN nomeTabella VARCHAR(20),
@@ -726,7 +557,6 @@ END
 // DELIMITER ;
 
 
--- solo per docente
 // DELIMITER 
 CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
     IN TitoloTest_t VARCHAR(20),
@@ -750,7 +580,6 @@ END
 
 
 
--- solo per docente
 // DELIMITER 
 CREATE PROCEDURE CreazioneQuesitoCodice (
     IN TitoloTest_t VARCHAR(20),
@@ -774,7 +603,6 @@ END
 
 
 
--- solo per docente
 // DELIMITER 
 CREATE PROCEDURE InserimentoSoluzione (
     IN TitoloTest_t VARCHAR(20),
@@ -795,7 +623,6 @@ END
 
 
 
--- solo per docente
 // DELIMITER 
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTest_t VARCHAR(20),
@@ -824,8 +651,6 @@ END
 
 
 
-
--- solo per docente
 // DELIMITER 
 CREATE PROCEDURE InserimentoMessaggioDocente(
 	IN TitoloTest_t VARCHAR(20),
@@ -860,6 +685,161 @@ END
 // DELIMITER ;
 
 
+-- PROCEDURE PER GLI STUDENTI
+
+DELIMITER //
+CREATE PROCEDURE inserisciRisposta(
+    IN idCompletamentoTemp INT,
+    IN valoreRispostaTemp VARCHAR(20),
+    IN numeroQuesitoTemp INT
+)
+BEGIN
+
+    DECLARE tipoRispostaChiusa BOOLEAN;
+    DECLARE tipoRispostaAperta BOOLEAN;
+    DECLARE numRispostaChiusa INT;
+    DECLARE numRispostaAperta INT;
+    DECLARE esitoRisposta BOOLEAN;
+    DECLARE rispostaCorretta VARCHAR(40);
+    
+	
+	-- Controlla se è una risposta a quesito chiuso
+    SELECT COUNT(*) INTO numRispostaChiusa
+    FROM QUESITORISPOSTACHIUSA 
+    WHERE NumeroProgressivo = numeroQuesitoTemp;
+    
+	IF numRispostaChiusa = 1 THEN
+        SET tipoRispostaChiusa = TRUE;
+    ELSE
+        SET tipoRispostaChiusa = FALSE;
+    END IF;
+    
+	-- Controlla se è una risposta a quesito aperto
+    SELECT COUNT(*) INTO numRispostaAperta
+    FROM QUESITOCODICE
+    WHERE NumeroProgressivo = numeroQuesitoTemp;
+
+    IF numRispostaAperta = 1 THEN
+        SET tipoRispostaAperta = TRUE;
+    ELSE
+        SET tipoRispostaAperta = FALSE;
+    END IF;
+    
+    SET esitoRisposta = FALSE;
+    
+    IF tipoRispostaChiusa THEN
+		SELECT CampoTesto INTO RispostaCorretta
+		FROM OPZIONERISPOSTA
+		WHERE OPZIONERISPOSTA.NumeroProgressivoQuesito = numeroQuesitoTemp;
+        
+        IF (valoreRispostaTemp = rispostaCorretta) THEN
+			SET esitoRisposta = TRUE;
+		END IF;
+		
+        INSERT INTO RISPOSTAQUESITORISPOSTACHIUSA(NumeroProgressivoCompletamento, OpzioneScelta, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp,valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+    END IF;
+    
+    IF tipoRispostaAperta THEN
+		SELECT TestoSoluzione INTO rispostaCorretta
+		FROM QUESITOCODICE, SOLUZIONE
+		WHERE (QUESITOCODICE.NumeroProgressivo = SOLUZIONE.NumeroProgressivo) AND (SOLUZIONE.NumeroProgressivo = numeroQuesitoTemp);
+        
+        IF (valoreRispostaTemp = rispostaCorretta) THEN
+			SET esitoRisposta = TRUE;
+		END IF;
+		
+        INSERT INTO RISPOSTAQUESITOCODICE(NumeroProgressivoCompletamento,Testo, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp,valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+    END IF;
+    
+END
+// DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE visualizzaEsitoRisposta(
+--	IN idCompletamentoTemp INT,
+    IN numQuesito INT,
+    OUT esitoRisposta BOOLEAN
+)
+BEGIN
+	
+    IF(EXISTS(SELECT * FROM RISPOSTAQUESITORISPOSTACHIUSA WHERE (numQuesito = NumeroProgressivoQuesito))) THEN
+		(SELECT esito INTO esitoRisposta
+		FROM RISPOSTAQUESITORISPOSTACHIUSA
+		WHERE (numQuesito = NumeroProgressivoQuesito));
+    END IF;
+    
+    IF(EXISTS(SELECT * FROM RISPOSTAQUESITOCODICE WHERE (numQuesito = NumeroProgressivoQuesito))) THEN
+		(SELECT esito INTO esitoRisposta
+		FROM RISPOSTAQUESITOCODICE
+		WHERE (numQuesito = NumeroProgressivoQuesito));
+    END IF;
+
+END//
+
+DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE inserisciMessaggioStudente(
+	IN emailStudenteTemp VARCHAR(40),
+    IN emailDocenteTemp VARCHAR(40),
+    IN titoloTestTemp VARCHAR(20),
+    IN titoloMess VARCHAR(20),
+    IN testoMess VARCHAR(60)
+)
+BEGIN
+	DECLARE IDMess INT;
+    
+    INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
+    VALUES (titoloTestTemp, titoloMess, testoMess, NOW());
+    
+    -- salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
+    SELECT Id INTO IDMess
+    FROM MESSAGGIO
+    WHERE (TitoloTest=titoloTestTemp) AND (TitoloMessaggio = titoloMess) AND (testoMess = CampoTesto);
+    
+    -- Invio del messaggio a tutti i docenti
+    INSERT INTO RICEZIONEDOCENTE VALUES (IDMess, titoloTestTemp, emailDocenteTemp);
+    
+    -- Aggiornamento tabella INVIOSTUDENTE
+    INSERT INTO INVIOSTUDENTE VALUES(IDMess, titoloTestTemp, emailStudenteTemp);
+
+END
+// DELIMITER ;
+
+
+
+-- TRIGGER
+
+DELIMITER //
+CREATE TRIGGER testConclusoVisualizzaRisposte
+AFTER UPDATE ON TEST
+FOR EACH ROW
+BEGIN
+    IF NEW.VisualizzaRisposte = TRUE THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = 'Concluso'
+        WHERE TitoloTest = NEW.Titolo;
+    END IF;
+END
+// DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER incrementaNumRighe
+BEFORE INSERT ON RIGA
+FOR EACH ROW
+BEGIN
+    UPDATE TABELLADIESERCIZIO
+    SET num_righe = num_righe + 1
+    WHERE Nome = NEW.NomeTabella;
+END 
+
+//DELIMITER ;
+
 
 CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 	SELECT
@@ -880,9 +860,9 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 -- AREA PER I TEST
 
 
-/*
--- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 
+-- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
+/*
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
 INSERT INTO STUDENTE VALUES("studente2@gmail.com", "nano", "ciao", 3333, 2010, 2234567891234567);
@@ -908,13 +888,13 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
-CALL inserisciRisposta("Aperto","provaNr1","studente@gmail.com", "rispostaCorretta", 2);
-CALL inserisciRisposta("Aperto","provaNr1","studente2@gmail.com", "rispostaNonCorretta", 1);
+CALL inserisciRisposta(1, "rispostaCorretta", 2);
+CALL inserisciRisposta(2, "rispostaNonCorretta", 1);
 
-CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 2, @esitoRispostaScelta);
+CALL visualizzaEsitoRisposta(2, @esitoRispostaScelta);
 SELECT @esitoRispostaScelta;
 
-CALL visualizzaEsitoRisposta('Aperto', 'provaNr1', 'studente@gmail.com', 1, @esitoRispostaCodice);
+CALL visualizzaEsitoRisposta(1, @esitoRispostaCodice);
 SELECT @esitoRispostaCodice;
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
@@ -923,7 +903,7 @@ CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "prov
 */
 
 
-
+/*
 -- Test classificaTestCompletati
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
@@ -942,7 +922,7 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 
 
 -- Fine test
-
+*/
 
 /*
 -- Test per Trigger testConclusoVisualizzaRisposte
