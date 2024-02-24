@@ -854,6 +854,59 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 		num_test_completati DESC;
 
 
+DELIMITER //
+
+-- TRIGGER PER CAMBIARE L'ATTRIBUTO NUMERORISPOSTE DELLA TAVELLA QUESITO(IN RISPOSTA CI DOVREBBE ESSERE ANCHE IL TITOLO DEL TEST DATO CHE SOLO IL NUMERO PROGRESSIVO DEL QUESITO NON è SUFFICIENTE PER INDENTIFICARLO DALLA TABELLA RIPSOSTA )
+CREATE TRIGGER AggiornaNumeroRisposteQuesitoAfterInsert
+AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
+FOR EACH ROW
+BEGIN
+    UPDATE QUESITO
+    SET NumeroRisposte = NumeroRisposte + 1
+    WHERE NumeroProgressivo = NEW.NumeroProgressivoQuesito;
+END;
+//
+
+CREATE TRIGGER AggiornaNumeroRisposteQuesitoAfterDelete
+AFTER DELETE ON RISPOSTAQUESITORISPOSTACHIUSA
+FOR EACH ROW
+BEGIN
+    UPDATE QUESITO
+    SET NumeroRisposte = NumeroRisposte - 1
+    WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito;
+END;
+//
+
+CREATE TRIGGER AggiornaNumeroRisposteQuesitoCodiceAfterInsert
+AFTER INSERT ON RISPOSTAQUESITOCODICE
+FOR EACH ROW
+BEGIN
+    UPDATE QUESITO
+    SET NumeroRisposte = NumeroRisposte + 1
+    WHERE NumeroProgressivo = NEW.NumeroProgressivoQuesito;
+END;
+//
+
+CREATE TRIGGER AggiornaNumeroRisposteQuesitoCodiceAfterDelete
+AFTER DELETE ON RISPOSTAQUESITOCODICE
+FOR EACH ROW
+BEGIN
+    UPDATE QUESITO
+    SET NumeroRisposte = NumeroRisposte - 1
+    WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito;
+END;
+//
+
+DELIMITER ;
+
+CREATE VIEW ClassificaQuesitiPerRisposte AS
+SELECT  QUESITO.NumeroProgressivo,QUESITO.TitoloTest,COUNT(RC.NumeroProgressivoCompletamento) + COUNT(RCC.NumeroProgressivoCompletamento) AS NumeroTotaleRisposte
+FROM QUESITO 
+     JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.NumeroProgressivoQuesito
+     JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito
+GROUP BY QUESITO.NumeroProgressivo, QUESITO.TitoloTest
+ORDER BY NumeroTotaleRisposte DESC;
+
 
 
 
