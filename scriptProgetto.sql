@@ -101,13 +101,14 @@ CREATE TABLE INVIODOCENTE (
 ) ENGINE = INNODB;
 
 CREATE TABLE COMPLETAMENTO (
+	NumeroProgressivo INT auto_increment,
 	Stato ENUM("Aperto","InCompletamento","Concluso") NOT NULL,  #non credo sia corretto mettere not null,non credo che sia necessario avere questo attributo come chiave primaria(dopo crea casino con le tabelle risposta)
 	TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     DataPrimaRisposta DATETIME,
     DataUltimaRisposta DATETIME,
     
-    PRIMARY KEY(Stato, TitoloTest, EmailStudente),
+    PRIMARY KEY(NumeroProgressivo, TitoloTest, EmailStudente),
     
 	FOREIGN KEY(TitoloTest) REFERENCES TEST(Titolo) ON DELETE CASCADE,
     FOREIGN KEY(EmailStudente) REFERENCES STUDENTE(Email) ON DELETE CASCADE
@@ -205,16 +206,16 @@ CREATE TABLE SOLUZIONE (
 ) ENGINE = INNODB;
 
 CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
-    StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL,
+    NumeroProgressivoCompletamento INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     OpzioneScelta VARCHAR(20),
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
-    PRIMARY KEY (StatoCompletamento , TitoloTest , EmailStudente),
+    PRIMARY KEY (NumeroProgressivoCompletamento , TitoloTest , EmailStudente),
     
-    FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE,
+    FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE,
     FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
     FOREIGN KEY(EmailStudente) REFERENCES COMPLETAMENTO(EmailStudente) ON DELETE CASCADE,
 	FOREIGN KEY(NumeroProgressivoQuesito) REFERENCES QUESITORISPOSTACHIUSA(NumeroProgressivo) ON DELETE CASCADE
@@ -222,16 +223,16 @@ CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
 )  ENGINE=INNODB;
 
 CREATE TABLE RISPOSTAQUESITOCODICE  (
-    StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL,
+    NumeroProgressivoCompletamento INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     Testo VARCHAR(100),
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
-    PRIMARY KEY (StatoCompletamento , TitoloTest , EmailStudente),
+    PRIMARY KEY (NumeroProgressivoCompletamento , TitoloTest , EmailStudente),
     
-    FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE,
+    FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE,
     FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
     FOREIGN KEY(EmailStudente) REFERENCES COMPLETAMENTO(EmailStudente) ON DELETE CASCADE,
     FOREIGN KEY(NumeroProgressivoQuesito) REFERENCES QUESITOCODICE(NumeroProgressivo) ON DELETE CASCADE
@@ -284,13 +285,13 @@ CREATE TABLE APPARTENENZA  (
 CREATE TABLE REALIZZAZIONE (
 	EmailStudente VARCHAR(40) NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
-    StatoCompletamento ENUM("Aperto","InCompletamento","Concluso") NOT NULL,
+    NumeroProgressivoCompletamento INT NOT NULL,
     
-    PRIMARY KEY (EmailStudente, TitoloTest, StatoCompletamento),
+    PRIMARY KEY (EmailStudente, TitoloTest, NumeroProgressivoCompletamento),
     
     FOREIGN KEY(EmailStudente) REFERENCES STUDENTE(Email) ON DELETE CASCADE,
     FOREIGN KEY(TitoloTest) REFERENCES COMPLETAMENTO(TitoloTest) ON DELETE CASCADE,
-    FOREIGN KEY(StatoCompletamento) REFERENCES COMPLETAMENTO(Stato) ON DELETE CASCADE
+    FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE
 
 ) ENGINE = INNODB;
 
@@ -881,8 +882,8 @@ INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze"
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
 INSERT INTO STUDENTE VALUES("studente2@gmail.com", "nano", "ciao", 3333, 2010, 2234567891234567);
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "studente2@gmail.com", NULL, NULL);
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente2@gmail.com", NULL, NULL);
 INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
 INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
 INSERT INTO QUESITOCODICE VALUES(1, "provaNr1");
@@ -895,12 +896,12 @@ INSERT INTO STUDENTE VALUES("lorenzo@gmail.com", "Lorenzo", "Maini", 475875983,2
 INSERT INTO STUDENTE VALUES("alex@gmail.com","Alex", "Ranaulo",35111111,2010,  "aaaaaaaaaaaaaaaa");
 INSERT INTO STUDENTE VALUES("davide@gmail.com", "Davide", "De Rosa", 1211212,2010,  "dddddddddddddddd");
 INSERT INTO TEST VALUES("provaNr2", '2024-02-09 14:30:00', NULL ,true, "docente@gmail.com");
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "alessia@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "alessia@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr1", "tabish@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "alessia@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr2", "alessia@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr1", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
 CALL inserisciRisposta("Aperto","provaNr1","studente@gmail.com", "rispostaCorretta", 2);
 CALL inserisciRisposta("Aperto","provaNr1","studente2@gmail.com", "rispostaNonCorretta", 1);
@@ -927,12 +928,12 @@ INSERT INTO STUDENTE VALUES("lorenzo@gmail.com", "Lorenzo", "Maini", 475875983,2
 INSERT INTO STUDENTE VALUES("alex@gmail.com","Alex", "Ranaulo",35111111,2010,  "aaaaaaaaaaaaaaaa");
 INSERT INTO STUDENTE VALUES("davide@gmail.com", "Davide", "De Rosa", 1211212,2010,  "dddddddddddddddd");
 INSERT INTO TEST VALUES("provaNr2", '2024-02-09 14:30:00', NULL ,true, "docente@gmail.com");
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "alessia@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "alessia@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr1", "tabish@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "alessia@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr2", "alessia@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr1", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
 
 #Fine test
