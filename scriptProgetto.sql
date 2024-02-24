@@ -1,9 +1,8 @@
-# elimino se esiste, poi ricreo il database 
+-- elimino se esiste, poi ricreo il database 
 DROP DATABASE IF EXISTS ESQL;
 CREATE DATABASE IF NOT EXISTS ESQL;
 USE ESQL;
-
-# Creo le tabelle
+-- Creo le tabelle
 CREATE TABLE DOCENTE (
 	Email VARCHAR(40) PRIMARY KEY,
     Nome VARCHAR (20) NOT NULL,
@@ -27,7 +26,7 @@ CREATE TABLE STUDENTE (
 CREATE TABLE TEST (
 	Titolo VARCHAR(20) PRIMARY KEY,
     DataCreazione DATETIME,
-    Foto BLOB,											# METTIAMO BLOB
+    Foto BLOB,											-- METTIAMO BLOB
     VisualizzaRisposte BOOLEAN,
     EmailDocente VARCHAR(40),
     
@@ -44,7 +43,7 @@ CREATE TABLE MESSAGGIO (
     
     PRIMARY KEY(Id, TitoloTest),
     
-    FOREIGN KEY(TitoloTest) REFERENCES TEST(Titolo) ON DELETE CASCADE 				# BOH IO NON SO HO MESSO CASCADE
+    FOREIGN KEY(TitoloTest) REFERENCES TEST(Titolo) ON DELETE CASCADE 				-- BOH IO NON SO HO MESSO CASCADE
     
 ) ENGINE = INNODB;
 
@@ -102,7 +101,7 @@ CREATE TABLE INVIODOCENTE (
 
 CREATE TABLE COMPLETAMENTO (
 	NumeroProgressivo INT auto_increment,
-	Stato ENUM("Aperto","InCompletamento","Concluso") NOT NULL,  #non credo sia corretto mettere not null,non credo che sia necessario avere questo attributo come chiave primaria(dopo crea casino con le tabelle risposta)
+	Stato ENUM("Aperto","InCompletamento","Concluso") NOT NULL,  -- non credo sia corretto mettere not null,non credo che sia necessario avere questo attributo come chiave primaria(dopo crea casino con le tabelle risposta)
 	TitoloTest VARCHAR(20) NOT NULL,
     EmailStudente VARCHAR(40) NOT NULL,
     DataPrimaRisposta DATETIME,
@@ -139,7 +138,7 @@ CREATE TABLE ATTRIBUTO (
     NomeAttributo VARCHAR(20) NOT NULL,
     Tipo VARCHAR(20) NOT NULL,
     
-    PRIMARY KEY(NomeAttributo, NomeTabella), #Nome attributo va messo nella prima posizione se no dà problema di indicizzazione
+    PRIMARY KEY(NomeAttributo, NomeTabella), -- Nome attributo va messo nella prima posizione se no dà problema di indicizzazione
     
     FOREIGN KEY(NomeTabella) REFERENCES TABELLADIESERCIZIO(Nome) ON DELETE CASCADE
 
@@ -303,12 +302,12 @@ FOR EACH ROW
 BEGIN
     DECLARE num_risposte_inserite INT;
 
-    # Conta quante risposte sono state inserite per lo studente
+    -- Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTAQUESITORISPOSTACHIUSA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
     IF num_risposte_inserite = 1 THEN
         UPDATE COMPLETAMENTO
         SET Stato = "InCompletamento"
@@ -325,12 +324,12 @@ FOR EACH ROW
 BEGIN
     DECLARE num_risposte_inserite INT;
 
-    # Conta quante risposte sono state inserite per lo studente
+    -- Conta quante risposte sono state inserite per lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTAQUESITOCODICE
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    # Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
     IF num_risposte_inserite = 1 THEN
         UPDATE COMPLETAMENTO
         SET Stato = "InCompletamento"
@@ -349,22 +348,22 @@ BEGIN
     DECLARE num_risposte_inserite INT;
     DECLARE num_risposte_corrette INT;
 
-    # Conta il numero totale di quesiti per il test
+    -- Conta il numero totale di quesiti per il test
     SELECT COUNT(*) INTO num_quesiti_totali
     FROM QUESITO
     WHERE TitoloTest = NEW.TitoloTest;
 
-    # Conta il numero di risposte inserite per il test e lo studente
+    -- Conta il numero di risposte inserite per il test e lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    # Conta il numero di risposte corrette per lo studente
+    -- Conta il numero di risposte corrette per lo studente
     SELECT COUNT(*) INTO num_risposte_corrette
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
 
-    # Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
     IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
@@ -383,22 +382,22 @@ BEGIN
     DECLARE num_risposte_inserite INT;
     DECLARE num_risposte_corrette INT;
 
-    # Conta il numero totale di quesiti per il test
+    -- Conta il numero totale di quesiti per il test
     SELECT COUNT(*) INTO num_quesiti_totali
     FROM QUESITO
     WHERE TitoloTest = NEW.TitoloTest;
 
-    # Conta il numero di risposte inserite per il test e lo studente
+    -- Conta il numero di risposte inserite per il test e lo studente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
 
-    # Conta il numero di risposte corrette per lo studente
+    -- Conta il numero di risposte corrette per lo studente
     SELECT COUNT(*) INTO num_risposte_corrette
     FROM RISPOSTA
     WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
 
-    # Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
     IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
@@ -408,7 +407,7 @@ END//
 DELIMITER ;
 */
 
-#Procedure di tutti gli utenti
+--Procedure di tutti gli utenti
 DELIMITER //
 CREATE PROCEDURE VisualizzaTestDisponibili ()
 BEGIN
@@ -421,7 +420,7 @@ CREATE PROCEDURE VisualizzaQuesitiPerTest (
     IN p_TitoloTest VARCHAR(20)
     )
 BEGIN
-    # Seleziona i quesiti corrispondenti al titolo del test specificato
+    -- Seleziona i quesiti corrispondenti al titolo del test specificato
     SELECT * FROM QUESITO WHERE TitoloTest = p_TitoloTest;
 END //
 DELIMITER ;
@@ -433,7 +432,7 @@ CREATE PROCEDURE AutenticazioneDocente (
     OUT p_Autenticato BOOLEAN
 )
 BEGIN
-    # Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
+    -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
     IF EXISTS (SELECT * FROM DOCENTE WHERE Email = p_Email) THEN
         SET p_Autenticato = TRUE;
     ELSE
@@ -449,7 +448,7 @@ CREATE PROCEDURE AutenticazioneStudente (
     OUT p_Autenticato BOOLEAN
 )
 BEGIN
-    # Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
+    -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
     IF EXISTS (SELECT * FROM STUDENTE WHERE Email = p_Email) THEN
         SET p_Autenticato = TRUE;
     ELSE
@@ -469,10 +468,13 @@ CREATE PROCEDURE RegistrazioneDocente (
     IN NomeCorso VARCHAR(20)
 )
 BEGIN
-    # Verifica se l'email non esiste già nella tabella Docente
+    -- Verifica se l'email non esiste già nella tabella Docente
     IF NOT EXISTS (SELECT * FROM Docente WHERE Email = p_Email) THEN
-        # Inserisce l'utente nella tabella Utenti
+        -- Inserisce l'utente nella tabella Utenti
         INSERT INTO Docente (Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (p_Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
+    ELSE
+     -- Se l'email esiste già, restituisci un messaggio di errore
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Docente";
     END IF;
 END //
 DELIMITER ;
@@ -487,16 +489,19 @@ CREATE PROCEDURE RegistrazioneStudente (
     IN CodiceAlfaNumerico CHAR(16)
 )
 BEGIN
-    # Verifica se l'email non esiste già nella tabella Utenti
+    -- Verifica se l'email non esiste già nella tabella Utenti
     IF NOT EXISTS (SELECT * FROM Studente WHERE Email = p_Email) THEN
-        # Inserisce l'utente nella tabella Utenti
+        -- Inserisce l'utente nella tabella Utenti
         INSERT INTO STUDENTE (Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico) VALUES (p_Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico);
+    ELSE
+     -- Se l'email esiste già, restituisci un messaggio di errore
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Studente";
     END IF;
 END //
 DELIMITER ;
 
 
-# TRIGGER
+-- TRIGGER
 
 DELIMITER //
 CREATE TRIGGER testConclusoVisualizzaRisposte
@@ -545,7 +550,7 @@ BEGIN
     DECLARE rispostaCorretta VARCHAR(40);
     
 	
-	# Controlla se è una risposta a quesito chiuso
+	-- Controlla se è una risposta a quesito chiuso
     SELECT COUNT(*) INTO numRispostaChiusa
     FROM QUESITORISPOSTACHIUSA 
     WHERE NumeroProgressivo = numeroQuesitoTemp;
@@ -556,7 +561,7 @@ BEGIN
         SET tipoRispostaChiusa = FALSE;
     END IF;
     
-	# Controlla se è una risposta a quesito aperto
+	-- Controlla se è una risposta a quesito aperto
     SELECT COUNT(*) INTO numRispostaAperta
     FROM QUESITOCODICE
     WHERE NumeroProgressivo = numeroQuesitoTemp;
@@ -640,22 +645,22 @@ BEGIN
     INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
     VALUES (titoloTestTemp, titoloMess, testoMess, NOW());
     
-    # salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
+    -- salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
     SELECT Id INTO IDMess
     FROM MESSAGGIO
     WHERE (TitoloTest=titoloTestTemp) AND (TitoloMessaggio = titoloMess) AND (testoMess = CampoTesto);
     
-    # Invio del messaggio a tutti i docenti
+    -- Invio del messaggio a tutti i docenti
     INSERT INTO RICEZIONEDOCENTE VALUES (IDMess, titoloTestTemp, emailDocenteTemp);
     
-    # Aggiornamento tabella INVIOSTUDENTE
+    -- Aggiornamento tabella INVIOSTUDENTE
     INSERT INTO INVIOSTUDENTE VALUES(IDMess, titoloTestTemp, emailStudenteTemp);
 
 END
 // DELIMITER ;
 
 
-# solo per docente
+-- solo per docente
 DELIMITER //
 CREATE PROCEDURE CreazioneTabellaEsercizio (
     IN nomeTabella VARCHAR(20),
@@ -665,13 +670,13 @@ CREATE PROCEDURE CreazioneTabellaEsercizio (
 )
 BEGIN
 
-# controllo che la tabella non esista già e che esista il docente
+-- controllo che la tabella non esista già e che esista il docente
 DECLARE tabellaNonEsistente INT DEFAULT 0;
 DECLARE docenteEsistente INT DEFAULT 0;
 SET tabellaNonEsistente = ( SELECT COUNT(*) FROM TABELLADIESERCIZIO WHERE (nomeTabella=TABELLADIESERCIZIO.Nome) );
 SET docenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (emailDocente = DOCENTE.Email) );
 
-# se non esiste la tabella ed esiste il docente la inserisco
+-- se non esiste la tabella ed esiste il docente la inserisco
 IF (TabellaNonEsistente = 0 AND docenteEsistente=1) THEN 
 INSERT INTO TABELLADIESERCIZIO VALUES(NomeTabella, dataCreazione, numRighe, emailDocente);
 END IF;
@@ -688,7 +693,7 @@ CREATE PROCEDURE ModificaVisualizzazioneRisposte (
     IN Valore_t BOOLEAN
 )
 BEGIN
-    # Imposta il campo VisualizzaRisposte al valore specificato per il test specificato
+    -- Imposta il campo VisualizzaRisposte al valore specificato per il test specificato
     UPDATE Test SET VisualizzaRisposte = Valore_t WHERE Titolo = TitoloTest_t;
 END 
 // DELIMITER ;
@@ -696,7 +701,7 @@ END
 
 
 
-# solo per docente 
+-- solo per docente 
 DELIMITER //
 CREATE PROCEDURE CreazioneTest (
     IN TitoloTest VARCHAR(50),
@@ -712,7 +717,7 @@ BEGIN
     SET docenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (EmailDocente=DOCENTE.Email));
 	SET TestNonEsistente = ( SELECT COUNT(*) FROM Test WHERE (TitoloTest=TEST.Titolo));
     
-# se il docente esiste, e il test non esiste, inserisce i dati
+-- se il docente esiste, e il test non esiste, inserisce i dati
 IF (docenteEsistente = 1 AND TestNonEsistente = 0) THEN
 	INSERT INTO TEST VALUES (TitoloTest, DataCreazione, Foto, VisualizzaRisposte, EmailDocente);
 END IF;
@@ -721,7 +726,7 @@ END
 // DELIMITER ;
 
 
-# solo per docente
+-- solo per docente
 // DELIMITER 
 CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
     IN TitoloTest_t VARCHAR(20),
@@ -745,7 +750,7 @@ END
 
 
 
-# solo per docente
+-- solo per docente
 // DELIMITER 
 CREATE PROCEDURE CreazioneQuesitoCodice (
     IN TitoloTest_t VARCHAR(20),
@@ -769,7 +774,7 @@ END
 
 
 
-# solo per docente
+-- solo per docente
 // DELIMITER 
 CREATE PROCEDURE InserimentoSoluzione (
     IN TitoloTest_t VARCHAR(20),
@@ -790,7 +795,7 @@ END
 
 
 
-# solo per docente
+-- solo per docente
 // DELIMITER 
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTest_t VARCHAR(20),
@@ -820,7 +825,7 @@ END
 
 
 
-# solo per docente
+-- solo per docente
 // DELIMITER 
 CREATE PROCEDURE InserimentoMessaggioDocente(
 	IN TitoloTest_t VARCHAR(20),
@@ -838,16 +843,16 @@ SET DocenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (EmailDocente=DOCENT
 
 IF (TestEsistente = 1 AND DocenteEsistente = 1) THEN
 
-# Inserisce il messaggio nella tabella MESSAGGIO
+-- Inserisce il messaggio nella tabella MESSAGGIO
 INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data) VALUES (TitoloTest_t, TitoloMessaggio_t, CampoTesto_t, Data_t);
 
-# Ottiene l'ID del messaggio appena inserito
+-- Ottiene l'ID del messaggio appena inserito
 SELECT LAST_INSERT_ID() INTO IdMessaggio;
 
-# Inserisce il messaggio nella tabella INVIODOCENTE per ogni docente
+-- Inserisce il messaggio nella tabella INVIODOCENTE per ogni docente
 INSERT INTO INVIODOCENTE (Id, TitoloTest, EmailDocenteMittente) VALUES (IdMessaggio, TitoloTest_t, EmailDocenteMittente_t)
 
-# DA AGGIUNGERE TUTTE LE RICEZIONI DEGLI STUDENTI -> COME FACCIO A METTERLI TUTTI ?
+-- DA AGGIUNGERE TUTTE LE RICEZIONI DEGLI STUDENTI -> COME FACCIO A METTERLI TUTTI ?
 
 END IF;
 
@@ -872,11 +877,11 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 
 
 
-# AREA PER I TEST
+-- AREA PER I TEST
 
 
 /*
-# Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
+-- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
@@ -914,12 +919,12 @@ SELECT @esitoRispostaCodice;
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 
-# Fine test
+-- Fine test
 */
 
 
 
-# Test classificaTestCompletati
+-- Test classificaTestCompletati
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
 INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
@@ -936,20 +941,20 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
 
-#Fine test
+-- Fine test
 
 
 /*
-# Test per Trigger testConclusoVisualizzaRisposte
+-- Test per Trigger testConclusoVisualizzaRisposte
 UPDATE TEST
 SET VisualizzaRisposte = TRUE
 WHERE Titolo = 'provaNr2';
 
-# Fine Test
+-- Fine Test
 */
 
 /*
-# Test per Trigger incrementaNumRighe
+-- Test per Trigger incrementaNumRighe
 INSERT INTO TABELLADIESERCIZIO VALUES ("TabellaNR1",NOW(), 0, 'docente@gmail.com');
 INSERT INTO RIGA VALUES("primariga","TabellaNR1");
 INSERT INTO RIGA VALUES("secondariga","TabellaNR1");
@@ -958,5 +963,5 @@ INSERT INTO RIGA VALUES("terzariga","TabellaNR1");
 INSERT INTO TABELLADIESERCIZIO VALUES ("TabellaNR2",NOW(), 0, 'docente@gmail.com');
 INSERT INTO RIGA VALUES("primariga","TabellaNR2");
 INSERT INTO RIGA VALUES("secondariga","TabellaNR2");
-# Fine Test
+-- Fine Test
 */
