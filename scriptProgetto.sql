@@ -185,7 +185,7 @@ CREATE TABLE QUESITOCODICE (
 	NumeroProgressivo INT,
     TitoloTest VARCHAR(20) NOT NULL,
     
-	PRIMARY KEY(TitoloTest, NumeroProgressivo),
+    PRIMARY KEY(TitoloTest, NumeroProgressivo),
     
    FOREIGN KEY(TitoloTest) REFERENCES QUESITO(TitoloTest) ON DELETE CASCADE,
    FOREIGN KEY(NumeroProgressivo) REFERENCES QUESITO(NumeroProgressivo) ON DELETE CASCADE
@@ -618,8 +618,10 @@ BEGIN
 	
 	-- Controlla se è una risposta a quesito chiuso
     SELECT COUNT(*) INTO numRispostaChiusa
-    FROM QUESITORISPOSTACHIUSA 
-    WHERE NumeroProgressivo = numeroQuesitoTemp;
+    FROM QUESITORISPOSTACHIUSA  AS QC
+    WHERE (QC.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
+                                                                      FROM COMPLETAMENTO AS C1
+                                                                      WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
     
 	IF numRispostaChiusa = 1 THEN
         SET tipoRispostaChiusa = TRUE;
@@ -629,8 +631,10 @@ BEGIN
     
 	-- Controlla se è una risposta a quesito aperto
     SELECT COUNT(*) INTO numRispostaAperta
-    FROM QUESITOCODICE
-    WHERE NumeroProgressivo = numeroQuesitoTemp;
+    FROM QUESITOCODICE AS QC
+    WHERE (QC.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
+                                                                      FROM COMPLETAMENTO AS C1
+                                                                      WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
 
     IF numRispostaAperta = 1 THEN
         SET tipoRispostaAperta = TRUE;
@@ -641,10 +645,12 @@ BEGIN
     SET esitoRisposta = FALSE;
     
     IF tipoRispostaChiusa THEN
-		SELECT CampoTesto INTO RispostaCorretta
-		FROM OPZIONERISPOSTA
-		WHERE OPZIONERISPOSTA.NumeroProgressivoQuesito = numeroQuesitoTemp;
-        
+		SELECT CampoTesto INTO rispostaCorretta
+		FROM OPZIONERISPOSTA AS OP
+		WHERE (OP.NumeroProgressivoQuesito = numeroQuesitoTemp) AND (OP.TitoloTest IN (SELECT C1.TitoloTest
+                                                                                    FROM COMPLETAMENTO AS C1
+                                                                                    WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
+                        
         IF (valoreRispostaTemp = rispostaCorretta) THEN
 			SET esitoRisposta = TRUE;
 		END IF;
@@ -654,8 +660,10 @@ BEGIN
     
     IF tipoRispostaAperta THEN
 		SELECT TestoSoluzione INTO rispostaCorretta
-		FROM QUESITOCODICE, SOLUZIONE
-		WHERE (QUESITOCODICE.NumeroProgressivo = SOLUZIONE.NumeroProgressivo) AND (SOLUZIONE.NumeroProgressivo = numeroQuesitoTemp);
+		FROM QUESITOCODICE AS QC, SOLUZIONE
+		WHERE (QC.NumeroProgressivo = SOLUZIONE.NumeroProgressivo) AND (SOLUZIONE.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
+                                                                                                                                        FROM COMPLETAMENTO AS C1
+                                                                                                                                        WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
         
         IF (valoreRispostaTemp = rispostaCorretta) THEN
 			SET esitoRisposta = TRUE;
@@ -875,21 +883,6 @@ END
 //DELIMITER ;
 
 
-CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
-	SELECT
-		CodiceAlfaNumerico,
-		COUNT(*) AS num_test_completati
-	FROM STUDENTE, COMPLETAMENTO AS C1, COMPLETAMENTO AS C2
-	WHERE
-		(Email = C1.EmailStudente) AND (Email = C2.EmailStudente) AND (C1.TitoloTest <> C2.TitoloTest) AND (C1.Stato = "Concluso")
-	GROUP BY
-		STUDENTE.CodiceAlfaNumerico
-	ORDER BY
-		num_test_completati DESC;
-
-
-DELIMITER //
-
 -- TRIGGER PER CAMBIARE L'ATTRIBUTO NUMERORISPOSTE DELLA TAVELLA QUESITO(IN RISPOSTA CI DOVREBBE ESSERE ANCHE IL TITOLO DEL TEST DATO CHE SOLO IL NUMERO PROGRESSIVO DEL QUESITO NON è SUFFICIENTE PER INDENTIFICARLO DALLA TABELLA RIPSOSTA )
 CREATE TRIGGER AggiornaNumeroRisposteQuesitoAfterInsert
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
@@ -935,15 +928,16 @@ DELIMITER ;
 CREATE VIEW ClassificaQuesitiPerRisposte AS
 SELECT  QUESITO.NumeroProgressivo,QUESITO.TitoloTest,COUNT(RC.NumeroProgressivoCompletamento) + COUNT(RCC.NumeroProgressivoCompletamento) AS NumeroTotaleRisposte
 FROM QUESITO 
- JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RC.TitoloTest
- JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RCC.TitoloTest
+JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RC.TitoloTest
+JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RCC.TitoloTest
 GROUP BY QUESITO.NumeroProgressivo, QUESITO.TitoloTest
 ORDER BY NumeroTotaleRisposte DESC;
 
--- AREA PER I TEST
 
--- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
+-- AREA PER I TEST
 /*
+-- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
+
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
 INSERT INTO STUDENTE VALUES("studente2@gmail.com", "nano", "ciao", 3333, 2010, 2234567891234567);
@@ -982,6 +976,7 @@ CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "prov
 
 -- Fine test
 */
+
 
 
 /*
