@@ -930,26 +930,15 @@ BEGIN
     WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito;
 END;
 //
-
 DELIMITER ;
-
-
-
-
 
 CREATE VIEW ClassificaQuesitiPerRisposte AS
 SELECT  QUESITO.NumeroProgressivo,QUESITO.TitoloTest,COUNT(RC.NumeroProgressivoCompletamento) + COUNT(RCC.NumeroProgressivoCompletamento) AS NumeroTotaleRisposte
 FROM QUESITO 
-     JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.NumeroProgressivoQuesito
-     JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito
+ JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RC.TitoloTest
+ JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RCC.TitoloTest
 GROUP BY QUESITO.NumeroProgressivo, QUESITO.TitoloTest
 ORDER BY NumeroTotaleRisposte DESC;
-
-
-
-
-
-
 
 -- AREA PER I TEST
 
