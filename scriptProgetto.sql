@@ -230,7 +230,7 @@ CREATE TABLE RISPOSTAQUESITOCODICE  (
     
 )  ENGINE=INNODB;
 
-CREATE TABLE OPZIONERISPOSTA (
+CREATE TABLE OPZIONERISPOSTA  (
     TitoloTest VARCHAR(20) NOT NULL,
     NumeroProgressivoQuesito INT NOT NULL,
     NumeroProgressivoOpzione INT NOT NULL,
@@ -243,7 +243,7 @@ CREATE TABLE OPZIONERISPOSTA (
     
 )  ENGINE=INNODB;
 
-CREATE TABLE COSTITUZIONE (
+CREATE TABLE COSTITUZIONE  (
     TitoloTest VARCHAR(20) NOT NULL,
     NumeroProgressivoQuesito INT NOT NULL,
     NomeTabella VARCHAR(20) NOT NULL,
@@ -283,12 +283,118 @@ CREATE TABLE REALIZZAZIONE (
 
 ) ENGINE = INNODB;
 
+/*
+DELIMITER //
+CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
+AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
+FOR EACH ROW
+BEGIN
+    DECLARE num_risposte_inserite INT;
+
+    -- Conta quante risposte sono state inserite per lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTAQUESITORISPOSTACHIUSA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    IF num_risposte_inserite = 1 THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = "InCompletamento"
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
 
 
+DELIMITER //
+CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitocodice
+AFTER INSERT ON RISPOSTAQUESITOCODICE
+FOR EACH ROW
+BEGIN
+    DECLARE num_risposte_inserite INT;
+
+    -- Conta quante risposte sono state inserite per lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTAQUESITOCODICE
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
+    IF num_risposte_inserite = 1 THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = "InCompletamento"
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
 
 
+DELIMITER //
+CREATE TRIGGER cambio_stato_test_rispostaquesitorispostachiusa
+AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
+FOR EACH ROW
+BEGIN
+    DECLARE num_quesiti_totali INT;
+    DECLARE num_risposte_inserite INT;
+    DECLARE num_risposte_corrette INT;
+
+    -- Conta il numero totale di quesiti per il test
+    SELECT COUNT(*) INTO num_quesiti_totali
+    FROM QUESITO
+    WHERE TitoloTest = NEW.TitoloTest;
+
+    -- Conta il numero di risposte inserite per il test e lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Conta il numero di risposte corrette per lo studente
+    SELECT COUNT(*) INTO num_risposte_corrette
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
+
+    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = 'Concluso'
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
 
 
+DELIMITER //
+CREATE TRIGGER cambio_stato_test_rispostaquesitocodice
+AFTER INSERT ON RISPOSTAQUESITOCODICE
+FOR EACH ROW
+BEGIN
+    DECLARE num_quesiti_totali INT;
+    DECLARE num_risposte_inserite INT;
+    DECLARE num_risposte_corrette INT;
+
+    -- Conta il numero totale di quesiti per il test
+    SELECT COUNT(*) INTO num_quesiti_totali
+    FROM QUESITO
+    WHERE TitoloTest = NEW.TitoloTest;
+
+    -- Conta il numero di risposte inserite per il test e lo studente
+    SELECT COUNT(*) INTO num_risposte_inserite
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+
+    -- Conta il numero di risposte corrette per lo studente
+    SELECT COUNT(*) INTO num_risposte_corrette
+    FROM RISPOSTA
+    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
+
+    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
+    IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
+        UPDATE COMPLETAMENTO
+        SET Stato = 'Concluso'
+        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    END IF;
+END//
+DELIMITER ;
+*/
 
 -- PROCEDURE PER TUTTI GLI UTENTI
 DELIMITER //
@@ -557,8 +663,6 @@ BEGIN
 
 DECLARE TestEsistente INT DEFAULT 0;
 DECLARE DocenteEsistente INT DEFAULT 0;
-DECLARE IdMessaggio INT;
--- mi assicuro che esistano il test e il docente
 SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
 SET DocenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (EmailDocente=DOCENTE.Email));
 
@@ -568,29 +672,12 @@ IF (TestEsistente = 1 AND DocenteEsistente = 1) THEN
 INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data) VALUES (TitoloTest_t, TitoloMessaggio_t, CampoTesto_t, Data_t);
 
 -- Ottiene l'ID del messaggio appena inserito
-SET IdMessaggio = LAST_INSERT_ID();
+SELECT LAST_INSERT_ID() INTO IdMessaggio;
 
 -- Inserisce il messaggio nella tabella INVIODOCENTE per ogni docente
 INSERT INTO INVIODOCENTE (Id, TitoloTest, EmailDocenteMittente) VALUES (IdMessaggio, TitoloTest_t, EmailDocenteMittente_t)
 
--- ciclo per inserire il messaggio nella tabella ricezione studente di ogni studente
-DECLARE done INT DEFAULT FALSE;
-DECLARE student_email VARCHAR(40);
-
--- Cursor per selezionare utti gli studenti
-DECLARE student_cursor CURSOR FOR SELECT Email FROM STUDENTE;
-DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-OPEN student_cursor;
--- Ciclo per inserire il messaggio nella tabella RICEZIONESTUDENTE per ogni studente
-message_loop: LOOP
-FETCH student_cursor INTO student_email;
-IF done THEN
-LEAVE message_loop;
-END IF;
--- Inserisce il messaggio nella tabella RICEZIONESTUDENTE per lo studente corrente
-INSERT INTO RICEZIONESTUDENTE (Id, TitoloTest, EmailStudenteDestinatario) VALUES (IdMessaggio, TitoloTest_t, student_email);
-END LOOP;
-CLOSE student_cursor;
+-- DA AGGIUNGERE TUTTE LE RICEZIONI DEGLI STUDENTI -> COME FACCIO A METTERLI TUTTI ?
 
 END IF;
 
@@ -725,128 +812,7 @@ END
 
 
 
-
-
-
-
-
 -- TRIGGER
-
-/*
-
-DELIMITER //
-CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
-AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
-FOR EACH ROW
-BEGIN
-    DECLARE num_risposte_inserite INT;
-
-    -- Conta quante risposte sono state inserite per lo studente
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITORISPOSTACHIUSA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-
-    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
-    IF num_risposte_inserite = 1 THEN
-        UPDATE COMPLETAMENTO
-        SET Stato = "InCompletamento"
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-    END IF;
-END//
-DELIMITER ;
-
-
-DELIMITER //
-CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitocodice
-AFTER INSERT ON RISPOSTAQUESITOCODICE
-FOR EACH ROW
-BEGIN
-    DECLARE num_risposte_inserite INT;
-
-    -- Conta quante risposte sono state inserite per lo studente
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITOCODICE
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-
-    -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
-    IF num_risposte_inserite = 1 THEN
-        UPDATE COMPLETAMENTO
-        SET Stato = "InCompletamento"
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-    END IF;
-END//
-DELIMITER ;
-
-
-DELIMITER //
-CREATE TRIGGER cambio_stato_concluso_rispostaquesitorispostachiusa
-AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
-FOR EACH ROW
-BEGIN
-    DECLARE num_quesiti_totali INT;
-    DECLARE num_risposte_inserite INT;
-    DECLARE num_risposte_corrette INT;
-
-    -- Conta il numero totale di quesiti per il test
-    SELECT COUNT(*) INTO num_quesiti_totali
-    FROM QUESITO
-    WHERE TitoloTest = NEW.TitoloTest;
-
-    -- Conta il numero di risposte inserite per il test e lo studente
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-
-    -- Conta il numero di risposte corrette per lo studente
-    SELECT COUNT(*) INTO num_risposte_corrette
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
-
-    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
-    IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
-        UPDATE COMPLETAMENTO
-        SET Stato = 'Concluso'
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-    END IF;
-END//
-DELIMITER ;
-
-
-DELIMITER //
-CREATE TRIGGER cambio_stato_concluso_rispostaquesitocodice
-AFTER INSERT ON RISPOSTAQUESITOCODICE
-FOR EACH ROW
-BEGIN
-    DECLARE num_quesiti_totali INT;
-    DECLARE num_risposte_inserite INT;
-    DECLARE num_risposte_corrette INT;
-
-    -- Conta il numero totale di quesiti per il test
-    SELECT COUNT(*) INTO num_quesiti_totali
-    FROM QUESITO
-    WHERE TitoloTest = NEW.TitoloTest;
-
-    -- Conta il numero di risposte inserite per il test e lo studente
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-
-    -- Conta il numero di risposte corrette per lo studente
-    SELECT COUNT(*) INTO num_risposte_corrette
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
-
-    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
-    IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
-        UPDATE COMPLETAMENTO
-        SET Stato = 'Concluso'
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
-    END IF;
-END
-// DELIMITER ;
-
-*/
-
 
 DELIMITER //
 CREATE TRIGGER testConclusoVisualizzaRisposte
@@ -932,26 +898,20 @@ END;
 //
 
 DELIMITER ;
-
-
-
-
-
 CREATE VIEW ClassificaQuesitiPerRisposte AS
 SELECT  QUESITO.NumeroProgressivo,QUESITO.TitoloTest,COUNT(RC.NumeroProgressivoCompletamento) + COUNT(RCC.NumeroProgressivoCompletamento) AS NumeroTotaleRisposte
 FROM QUESITO 
-     JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.NumeroProgressivoQuesito
-     JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito
+ JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RC.TitoloTest
+ JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RCC.TitoloTest
 GROUP BY QUESITO.NumeroProgressivo, QUESITO.TitoloTest
 ORDER BY NumeroTotaleRisposte DESC;
 
 
 
 
-
-
-
 -- AREA PER I TEST
+
+
 
 -- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 /*
