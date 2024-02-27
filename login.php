@@ -69,8 +69,15 @@
 
             $result_check_email = $conn->query($sql_check_email);
             // Verifica se l'email esiste nella tabella del ruolo selezionato
+            if ($result_check_email->num_rows <= 0){
+                echo "<li class='test-item'>Email errata.</li>";
+                echo '<a href="index.html">Torna alla schermata principale</a>';
+            }
+            ?>
+
+            <?php
             if ($result_check_email->num_rows > 0) {
-                
+                echo "Lista Test:";
                 // Query per selezionare tutti i test
                 $sql_all_tests = "";
                 if ($ruolo_login === "docente") {
@@ -94,8 +101,6 @@
                 } else {
                     echo "<li class='test-item'>Nessun risultato trovato</li>";
                 }
-            } else {
-                echo "<li class='test-item'>Email errata.</li>";
             }
 
             // Chiudi la connessione
