@@ -68,9 +68,6 @@
             }
 
             $result_check_email = $conn->query($sql_check_email);
-            ?>
-            <h3>Lista test:</h3>
-            <?php
             // Verifica se l'email esiste nella tabella del ruolo selezionato
             if ($result_check_email->num_rows > 0) {
                 
@@ -98,7 +95,7 @@
                     echo "<li class='test-item'>Nessun risultato trovato</li>";
                 }
             } else {
-                echo "<li class='test-item'>Non sono presenti test.</li>";
+                echo "<li class='test-item'>Email errata.</li>";
             }
 
             // Chiudi la connessione
