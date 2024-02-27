@@ -741,7 +741,9 @@ END
 
 -- TRIGGER
 
-/*
+
+
+
 
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
@@ -750,19 +752,19 @@ FOR EACH ROW
 BEGIN
     DECLARE num_risposte_inserite INT;
 
-    -- Conta quante risposte sono state inserite per lo studente
+    -- Conta quante risposte sono state inserite per lo studente per il test corrente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTAQUESITORISPOSTACHIUSA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
 
     -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
     IF num_risposte_inserite = 1 THEN
         UPDATE COMPLETAMENTO
-        SET Stato = "InCompletamento"
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+        SET Stato = 'InCompletamento'
+        WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
     END IF;
-END//
-DELIMITER ;
+END
+// DELIMITER ;
 
 
 DELIMITER //
@@ -772,20 +774,19 @@ FOR EACH ROW
 BEGIN
     DECLARE num_risposte_inserite INT;
 
-    -- Conta quante risposte sono state inserite per lo studente
+    -- Conta quante risposte sono state inserite per lo studente per il test corrente
     SELECT COUNT(*) INTO num_risposte_inserite
     FROM RISPOSTAQUESITOCODICE
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
 
     -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
     IF num_risposte_inserite = 1 THEN
         UPDATE COMPLETAMENTO
-        SET Stato = "InCompletamento"
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+        SET Stato = 'InCompletamento'
+        WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
     END IF;
-END//
-DELIMITER ;
-
+END;
+// DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER cambio_stato_concluso_rispostaquesitorispostachiusa
@@ -795,31 +796,37 @@ BEGIN
     DECLARE num_quesiti_totali INT;
     DECLARE num_risposte_inserite INT;
     DECLARE num_risposte_corrette INT;
-
+    DECLARE num_progressivo_completamento INT;
+    
+    -- Ottieni il numero progressivo di completamento
+    SELECT NumeroProgressivoCompletamento INTO num_progressivo_completamento
+    FROM RISPOSTAQUESITORISPOSTACHIUSA
+    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento
+    LIMIT 1;
+    
     -- Conta il numero totale di quesiti per il test
     SELECT COUNT(*) INTO num_quesiti_totali
     FROM QUESITO
     WHERE TitoloTest = NEW.TitoloTest;
 
-    -- Conta il numero di risposte inserite per il test e lo studente
+    -- Conta il numero di risposte inserite per il test
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    FROM RISPOSTAQUESITORISPOSTACHIUSA
+    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento;
 
-    -- Conta il numero di risposte corrette per lo studente
+    -- Conta il numero di risposte corrette per il test
     SELECT COUNT(*) INTO num_risposte_corrette
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
+    FROM RISPOSTAQUESITORISPOSTACHIUSA
+    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE;
 
     -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
     IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+        WHERE NumeroProgressivo = num_progressivo_completamento;
     END IF;
-END//
-DELIMITER ;
-
+END;
+// DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER cambio_stato_concluso_rispostaquesitocodice
@@ -829,32 +836,37 @@ BEGIN
     DECLARE num_quesiti_totali INT;
     DECLARE num_risposte_inserite INT;
     DECLARE num_risposte_corrette INT;
-
+    DECLARE num_progressivo_completamento INT;
+    
+    -- Ottieni il numero progressivo di completamento
+    SELECT NumeroProgressivoCompletamento INTO num_progressivo_completamento
+    FROM RISPOSTAQUESITOCODICE
+    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento
+    LIMIT 1;
+    
     -- Conta il numero totale di quesiti per il test
     SELECT COUNT(*) INTO num_quesiti_totali
-    FROM QUESITO
+    FROM QUESITOCODICE
     WHERE TitoloTest = NEW.TitoloTest;
 
-    -- Conta il numero di risposte inserite per il test e lo studente
+    -- Conta il numero di risposte inserite per il test
     SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+    FROM RISPOSTAQUESITOCODICE
+    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento;
 
-    -- Conta il numero di risposte corrette per lo studente
+    -- Conta il numero di risposte corrette per il test
     SELECT COUNT(*) INTO num_risposte_corrette
-    FROM RISPOSTA
-    WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente AND Esito = TRUE;
+    FROM RISPOSTAQUESITOCODICE
+    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE;
 
     -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
     IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
-        WHERE TitoloTest = NEW.TitoloTest AND EmailStudente = NEW.EmailStudente;
+        WHERE NumeroProgressivo = num_progressivo_completamento;
     END IF;
-END
+END;
 // DELIMITER ;
-
-*/
 
 
 DELIMITER //
