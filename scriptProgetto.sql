@@ -543,57 +543,64 @@ END
 
 
 
-// DELIMITER 
+DELIMITER //
+
 CREATE PROCEDURE InserimentoMessaggioDocente(
-	IN TitoloTest_t VARCHAR(20),
+    IN TitoloTest_t VARCHAR(20),
     IN TitoloMessaggio_t VARCHAR(20),
     IN CampoTesto_t VARCHAR(60),
     IN Data_t DATETIME,
     IN EmailDocenteMittente_t VARCHAR(40)
 )
 BEGIN
+    DECLARE TestEsistente INT DEFAULT 0;
+    DECLARE DocenteEsistente INT DEFAULT 0;
+    DECLARE IdMessaggio INT;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE student_email VARCHAR(40);
+    DECLARE student_cursor CURSOR FOR SELECT Email FROM STUDENTE;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-DECLARE TestEsistente INT DEFAULT 0;
-DECLARE DocenteEsistente INT DEFAULT 0;
-DECLARE IdMessaggio INT;
--- mi assicuro che esistano il test e il docente
-SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
-SET DocenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (EmailDocente=DOCENTE.Email));
+    -- mi assicuro che esistano il test e il docente
+    SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE Titolo = TitoloTest_t);
+    SET DocenteEsistente = (SELECT COUNT(*) FROM DOCENTE WHERE Email = EmailDocenteMittente_t);
 
-IF (TestEsistente = 1 AND DocenteEsistente = 1) THEN
+    IF (TestEsistente = 1 AND DocenteEsistente = 1) THEN
+        -- Inserisce il messaggio nella tabella MESSAGGIO
+        INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data) VALUES (TitoloTest_t, TitoloMessaggio_t, CampoTesto_t, Data_t);
 
--- Inserisce il messaggio nella tabella MESSAGGIO
-INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data) VALUES (TitoloTest_t, TitoloMessaggio_t, CampoTesto_t, Data_t);
+        -- Ottiene l'ID del messaggio appena inserito
+        SET IdMessaggio = LAST_INSERT_ID();
 
--- Ottiene l'ID del messaggio appena inserito
-SET IdMessaggio = LAST_INSERT_ID();
+        -- Inserisce il messaggio nella tabella INVIODOCENTE per ogni docente
+        INSERT INTO INVIODOCENTE (Id, TitoloTest, EmailDocenteMittente) VALUES (IdMessaggio, TitoloTest_t, EmailDocenteMittente_t);
 
--- Inserisce il messaggio nella tabella INVIODOCENTE per ogni docente
-INSERT INTO INVIODOCENTE (Id, TitoloTest, EmailDocenteMittente) VALUES (IdMessaggio, TitoloTest_t, EmailDocenteMittente_t)
+        -- ciclo per inserire il messaggio nella tabella ricezione studente di ogni studente
+        
 
--- ciclo per inserire il messaggio nella tabella ricezione studente di ogni studente
-DECLARE done INT DEFAULT FALSE;
-DECLARE student_email VARCHAR(40);
+        -- Cursor per selezionare tutti gli studenti
+        
 
--- Cursor per selezionare utti gli studenti
-DECLARE student_cursor CURSOR FOR SELECT Email FROM STUDENTE;
-DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-OPEN student_cursor;
--- Ciclo per inserire il messaggio nella tabella RICEZIONESTUDENTE per ogni studente
-message_loop: LOOP
-FETCH student_cursor INTO student_email;
-IF done THEN
-LEAVE message_loop;
-END IF;
--- Inserisce il messaggio nella tabella RICEZIONESTUDENTE per lo studente corrente
-INSERT INTO RICEZIONESTUDENTE (Id, TitoloTest, EmailStudenteDestinatario) VALUES (IdMessaggio, TitoloTest_t, student_email);
-END LOOP;
-CLOSE student_cursor;
+        OPEN student_cursor;
 
-END IF;
+        -- Ciclo per inserire il messaggio nella tabella RICEZIONESTUDENTE per ogni studente
+        message_loop: LOOP
+            FETCH student_cursor INTO student_email;
+            IF done THEN
+                LEAVE message_loop;
+            END IF;
+            -- Inserisce il messaggio nella tabella RICEZIONESTUDENTE per lo studente corrente
+            INSERT INTO RICEZIONESTUDENTE (Id, TitoloTest, EmailStudenteDestinatario) VALUES (IdMessaggio, TitoloTest_t, student_email);
+        END LOOP;
 
-END
-// DELIMITER ;
+        CLOSE student_cursor;
+
+    END IF;
+END //
+
+DELIMITER ;
+
+
 
 
 -- PROCEDURE PER GLI STUDENTI
@@ -994,12 +1001,12 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
-
+/* non funziona
 CALL inserisciRisposta(1, "provaNr1", "rispostaCorretta", 2);
 CALL inserisciRisposta(2, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(3, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(4, "provaNr2", "rispostaNonCorretta", 1);
-
+*/
 CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
 SELECT @esitoRispostaScelta;
 
@@ -1007,7 +1014,7 @@ CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
 SELECT @esitoRispostaCodice;
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
-
+CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
 -- Fine test
 
 

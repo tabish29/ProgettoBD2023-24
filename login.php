@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomePage Docente</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -38,74 +37,61 @@
 </head>
 <body>
     <div class="container">
-        <h2>HomePage docente</h2>
         <ul class="email-list">
-            <?php
-            $servername = "localhost"; // Il tuo server
-            $username = "root"; // Il tuo username
-            $password = "Alessia123!"; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
-            $dbname = "esql"; // Il nome del tuo database
+        <?php
+        session_start(); // Avvia la sessione
 
-            // Connessione al database
-            $conn = new mysqli($servername, $username, $password, $dbname);
+        $servername = "localhost"; // Il tuo server
+        $username = "root"; // Il tuo username
+        $password = "Alessia123!"; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
+        $dbname = "esql"; // Il nome del tuo database
 
-            // Verifica della connessione
-            if ($conn->connect_error) {
-                die("Connessione fallita: " . $conn->connect_error);
-            }
+        // Connessione al database
+        $conn = new mysqli($servername, $username, $password, $dbname);
 
-             // Recupera l'email dal form di login
-             $email_login = $_POST['email_login'];
-             // Recupera il ruolo dal form di login
-             $ruolo_login = $_POST['ruolo_login'];
+        // Verifica della connessione
+        if ($conn->connect_error) {
+            die("Connessione fallita: " . $conn->connect_error);
+        }
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Recupera l'email dal form di login
+        $email_login = $_POST['email_login'];
+        // Recupera il ruolo dal form di login
+        $ruolo_login = $_POST['ruolo_login'];
 
-            // Query per verificare se l'email esiste nella tabella del ruolo selezionato
-            $sql_check_email = "";
-            if ($ruolo_login === "docente") {
-                $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login'";
-            } else if ($ruolo_login === "studente") {
-                $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login'";
-            }
+    // Verifica se email_login e ruolo_login sono presenti
+    if (empty($email_login) || empty($ruolo_login)) {
+        echo "<li class='test-item'>Email e ruolo devono essere specificati.</li>";
+        echo '<a href="index.html">Torna alla schermata principale</a>';
+    } else {
+        // Query per verificare se l'email esiste nella tabella del ruolo selezionato
+        $sql_check_email = "";
+        if ($ruolo_login === "docente") {
+            $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login'";
+        } else if ($ruolo_login === "studente") {
+            $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login'";
+        }
 
-            $result_check_email = $conn->query($sql_check_email);
-            // Verifica se l'email esiste nella tabella del ruolo selezionato
-            if ($result_check_email->num_rows <= 0){
-                echo "<li class='test-item'>Email errata.</li>";
-                echo '<a href="index.html">Torna alla schermata principale</a>';
-            }
-            ?>
+        $result_check_email = $conn->query($sql_check_email);
 
-            <?php
-            if ($result_check_email->num_rows > 0) {
-                echo "Lista Test:";
-                // Query per selezionare tutti i test
-                $sql_all_tests = "";
-                if ($ruolo_login === "docente") {
-                    $sql_all_tests = "CALL visualizzaTestDisponibili()";
-                } else if ($ruolo_login === "studente") {
-                    $sql_all_tests = "CALL visualizzaTestDisponibili()";
-                }
+        // Verifica se l'email esiste nella tabella del ruolo selezionato
+        if ($result_check_email->num_rows <= 0) {
+            echo "<li class='test-item'>Email errata.</li>";
+            echo '<a href="index.html">Torna alla schermata principale</a>';
+        } else {
+            echo "Accesso effettuato";
+        }
 
-                $result_all_tests = $conn->query($sql_all_tests);
+            // Imposta le variabili di sessione
+            $_SESSION['email'] = $email_login;
+            $_SESSION['ruolo'] = $ruolo_login;
+            header("Location: homeDocente.php");
+        }
+    }
+        
+    
+    ?>
 
-                // Verifica se ci sono test 
-                if ($result_all_tests->num_rows > 0) {
-                    // Stampa i valori di tutti i test
-                    while ($row = $result_all_tests->fetch_assoc()) {
-                        echo "<li class='test-item'>";
-                        foreach ($row as $key => $value) {
-                            echo ucfirst($key) . ": " . $value . "<br>";
-                        }
-                        echo "</li>";
-                    }
-                } else {
-                    echo "<li class='test-item'>Nessun risultato trovato</li>";
-                }
-            }
-
-            // Chiudi la connessione
-            $conn->close();
-            ?>
         </ul>
     </div>
 </body>
