@@ -1,3 +1,6 @@
+<?php
+    session_start(); // Avvia la sessione
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +42,6 @@
     <div class="container">
         <ul class="email-list">
         <?php
-        session_start(); // Avvia la sessione
 
         $servername = "localhost"; // Il tuo server
         $username = "root"; // Il tuo username
@@ -55,21 +57,22 @@
         }
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Recupera l'email dal form di login
-        $email_login = $_POST['email_login'];
-        // Recupera il ruolo dal form di login
-        $ruolo_login = $_POST['ruolo_login'];
+        
+        $email_login = isset($_POST['email_login']) ? $_POST['email_login'] : '';
+        $ruolo_login = isset($_POST['ruolo_login']) ? $_POST['ruolo_login'] : '';
 
     // Verifica se email_login e ruolo_login sono presenti
     if (empty($email_login) || empty($ruolo_login)) {
-        echo "<li class='test-item'>Email e ruolo devono essere specificati.</li>";
-        echo '<a href="index.html">Torna alla schermata principale</a>';
+        //echo "<li class='test-item'>Email e ruolo devono essere specificati.</li>";
+        //echo '<a href="index.html">Torna alla schermata principale</a>';
     } else {
+        // Query per verificare se l'email esiste nella tabella del ruolo selezionato
         // Query per verificare se l'email esiste nella tabella del ruolo selezionato
         $sql_check_email = "";
         if ($ruolo_login === "docente") {
-            $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login'";
+            $sql_check_email = "SELECT email FROM docente WHERE email = '$_SESSION[email_login]'";
         } else if ($ruolo_login === "studente") {
-            $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login'";
+            $sql_check_email = "SELECT email FROM studente WHERE email = '$_SESSION[email_login]'";
         }
 
         $result_check_email = $conn->query($sql_check_email);
@@ -85,7 +88,8 @@
             // Imposta le variabili di sessione
             $_SESSION['email'] = $email_login;
             $_SESSION['ruolo'] = $ruolo_login;
-            header("Location: homeDocente.php");
+            header("Location: testDocenti.php");
+            exit();
         }
     }
         

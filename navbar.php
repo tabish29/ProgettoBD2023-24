@@ -9,23 +9,21 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#"></a>
-    </div>
-    <ul class="nav navbar-nav">
-      <li class="active"><a href="homeDocente.php">Home</a></li>
-      <li><a href="testDocenti.php">Gestione test</a></li>
-      <li><a href="messaggiDocenti.php">Messaggi</a></li>
-    </ul>
-  </div>
-</nav>
-  
+<h2>HomePage Docente</h2>
 <div class="container">
   <p>Questa è la home page dove puoi gestire i tuoi dati.</p>
 </div>
-
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+    <li <?php echo basename($_SERVER['PHP_SELF']) == 'testDocenti.php' ? 'class="active"' : ''; ?>>
+          <a href="testDocenti.php">Gestione Test</a>
+        </li>
+        <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiDocenti.php' ? 'class="active"' : ''; ?>>
+          <a href="messaggiDocenti.php">Messaggi</a>
+        </li>
+    </ul>
+  </div>
+</nav>
 </body>
 </html>
