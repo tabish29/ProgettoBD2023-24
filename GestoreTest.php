@@ -4,32 +4,31 @@ class GestoreTest {
 
         function creaGraficaCreazioneTest() {
             echo "
-            <form id='creaTestForm' action='process_creazione_test.php' method='post'>
+            <form id='creaTestForm' action='funzioniPerTest.php' method='post'>
                 <label for='titolo'>Titolo:</label>
                 <input type='text' id='titolo' name='titolo' required>
                 <br>
-                <label for='descrizione'>Descrizione:</label>
-                <input type='text' id='descrizione' name='descrizione' required>
-                <br>
-                <label for='dataInizio'>Data inizio:</label>
-                <input type='date' id='dataInizio' name='dataInizio' required>
-                <br>
-                <label for='dataFine'>Data fine:</label>
-                <input type='date' id='dataFine' name='dataFine' required>
-                <br>
-                <label for='tempo'>Tempo:</label>
-                <input type='number' id='tempo' name='tempo' required>
+                <label for='fotoLabel'>Foto:</label>
+                <input type='number' id='foto' name='foto' required> //Da inserire type= il file per la foto
                 <br>
                 <label for='visibilita'>Visibilità:</label>
-                <input type='number' id='visibilita' name='visibilita' required>
+                <input type='text' id='visibilita' name='visibilita' required>
                 <br>
-                <button type='submit'>Crea</button>
+                <input type='hidden' name='action' value='crea'>
+                <button type='submit' id='creaTestButton'>Crea</button>
             </form>
             ";
-            }
-            
-            creaGraficaCreazioneTest();
         }
+
+        creaGraficaCreazioneTest();
+            
+           
+            
+        }
+
+        
+
+        
 
     
 }

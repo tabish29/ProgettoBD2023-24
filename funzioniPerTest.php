@@ -27,6 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     echo "Metodo non valido.";
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['action']) && $_POST['action'] == 'crea') {
+        // Il tuo codice per creare un test qui...
+
+        // Ad esempio, puoi accedere ai valori dei campi di input del form così:
+        $titolo = $_POST['titolo'];
+        $foto = $_POST['foto'];
+        $visibilita = $_POST['visibilita'];
+
+        // Quindi puoi utilizzare questi valori per creare il tuo test...
+    }
+}
+
 
 
 ?>
