@@ -51,7 +51,9 @@
             $email_login = $_SESSION['email'];
             $ruolo_login = $_SESSION['ruolo'];
             
-            echo "Lista Test:";
+           
+            
+            echo "\nLista Test:";
                 // Query per selezionare tutti i test
                 $sql_all_tests = "CALL visualizzaTestDisponibili()";
                 
@@ -59,16 +61,32 @@
 
                 // Verifica se ci sono test 
                 if ($result_all_tests->num_rows > 0) {
+                    echo "<form id='testForm' action='funzioniPerTest.php' method='post'>";
                     while ($row = $result_all_tests->fetch_assoc()) {
                         echo "<li class='test-item'>";
+                        
+                        echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
                         foreach ($row as $key => $value) {
                             echo ucfirst($key) . ": " . $value . "<br>";
                         }
-                    echo "</li>";
+                        echo "</li>";
                     }
+                    echo "<input type='hidden' name='action' id='actionField'>";
+                    echo "</form>";
                 }
             
-            
+                echo "<button id='creaButton' type='button' onclick='submitForm(\"crea\")'>Crea Test</button>";
+                echo "<button id='modificaButton' type='button' onclick='submitForm(\"modifica\")'>Modifica test</button>";
+                echo "<button id='cancellaButton' type='button' onclick='submitForm(\"cancella\")'>Cancella</button>";
+
+                echo "
+                <script>
+                    function submitForm(action) {
+                        document.getElementById('actionField').value = action;
+                        document.getElementById('testForm').submit();
+                    }
+                </script>
+                ";
             ?>
         </ul>
     </div>
