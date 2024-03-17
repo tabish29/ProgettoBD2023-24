@@ -1,8 +1,8 @@
 <?php
     include 'GestoreTest.php';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['test'])) {
-        $testId = $_POST['test']; // l'ID del test selezionato
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+   
+        (isset($_GET['test']) ? $testId = $_GET['test'] : $testId = null); // l'ID del test selezionato
         $action = $_GET['action']; // l'azione richiesta (crea, modifica, cancella)
     
         switch ($action) {
@@ -20,9 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "Azione non valida.";
                 break;
         }
-    } else {
-        echo "La variabile 'test' non è stata ricevuta.";
-    }
+    
     
     
 } else {

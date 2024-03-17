@@ -61,7 +61,7 @@
 
                 // Verifica se ci sono test 
                 if ($result_all_tests->num_rows > 0) {
-                    echo "<form id='testForm' action='funzioniPerTest.php' method='post'>";
+                    echo "<form id='testForm' action='funzioniPerTest.php' method='get'>";
                     while ($row = $result_all_tests->fetch_assoc()) {
                         echo "<li class='test-item'>";
                         
