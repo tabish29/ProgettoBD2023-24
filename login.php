@@ -1,5 +1,7 @@
 <?php
-    session_start(); // Avvia la sessione
+    if (!isset($_SESSION)){
+        session_start();
+    } // Avvia la sessione
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +47,7 @@
 
         $servername = "localhost"; // Il tuo server
         $username = "root"; // Il tuo username
-        $password = "Alessia123!"; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
+        $password = ""; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
         $dbname = "esql"; // Il nome del tuo database
 
         // Connessione al database
@@ -63,7 +65,7 @@
         $_SESSION['email'] = $email_login;
         $_SESSION['ruolo'] = $ruolo_login;
             
-
+        
     // Verifica se email_login e ruolo_login sono presenti
     if (empty($email_login) || empty($ruolo_login)) {
         //echo "<li class='test-item'>Email e ruolo devono essere specificati.</li>";

@@ -39,6 +39,10 @@
     <div class="container">
     <ul class="test-list">
         <?php
+            if (!isset($_SESSION)){
+                session_start();
+            }
+
             include 'navbar.php';
             include 'login.php';
             
@@ -51,7 +55,8 @@
             $email_login = $_SESSION['email'];
             $ruolo_login = $_SESSION['ruolo'];
             
-           
+           echo "Email sessione: " . $_SESSION['email'] . "<br>";
+           echo "Email login: " . $email_login . "<br>";
             
             echo "\nLista Test:";
                 // Query per selezionare tutti i test
@@ -78,15 +83,20 @@
                     echo "</form>";
                 }
             
-                echo "<button id='creaButton' type='button' onclick='submitForm(\"crea\")'>Crea Test</button>";
+                echo "<button id='creaButton' type='button' onclick='creaButton()'>Crea Test</button>";
                 echo "<button id='modificaButton' type='button' onclick='submitForm(\"modifica\")'>Modifica test</button>";
                 echo "<button id='cancellaButton' type='button' onclick='submitForm(\"cancella\")'>Cancella</button>";
 
                 echo "
                 <script>
                     function submitForm(action) {
-                        document.getElementById('actionField').value = action;
-                        document.getElementById('testForm').submit();
+                        var form = document.getElementById('testForm');
+                        form.action.value = action;
+                        form.submit();
+                    }
+
+                    function creaButton() {
+                        window.location.href = 'funzioniPerTest.php?action=crea';
                     }
                 </script>
                 ";

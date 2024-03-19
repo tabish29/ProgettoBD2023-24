@@ -1,8 +1,11 @@
 <?php
+if (!isset($_SESSION)){
+    session_start();
+}
 
 $servername = "localhost"; // Il tuo server
 $username = "root"; // Il tuo username
-$password = "Alessia123!"; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
+$password = ""; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
 $dbname = "esql"; // Il nome del tuo database
 
 // Creazione della connessione
