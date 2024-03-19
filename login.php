@@ -60,6 +60,9 @@
         
         $email_login = isset($_POST['email_login']) ? $_POST['email_login'] : '';
         $ruolo_login = isset($_POST['ruolo_login']) ? $_POST['ruolo_login'] : '';
+        $_SESSION['email'] = $email_login;
+        $_SESSION['ruolo'] = $ruolo_login;
+            
 
     // Verifica se email_login e ruolo_login sono presenti
     if (empty($email_login) || empty($ruolo_login)) {
@@ -70,9 +73,9 @@
         // Query per verificare se l'email esiste nella tabella del ruolo selezionato
         $sql_check_email = "";
         if ($ruolo_login === "docente") {
-            $sql_check_email = "SELECT email FROM docente WHERE email = '$_SESSION[email_login]'";
+            $sql_check_email = "SELECT email FROM docente WHERE email = '$_SESSION[email]'";
         } else if ($ruolo_login === "studente") {
-            $sql_check_email = "SELECT email FROM studente WHERE email = '$_SESSION[email_login]'";
+            $sql_check_email = "SELECT email FROM studente WHERE email = '$_SESSION[email]'";
         }
 
         $result_check_email = $conn->query($sql_check_email);
@@ -83,14 +86,19 @@
             echo '<a href="index.html">Torna alla schermata principale</a>';
         } else {
             echo "Accesso effettuato";
+            // Imposta le variabili di sessione
+            
+            if ($ruolo_login === "docente") {
+                header("Location: testDocenti.php");
+                exit();
+            } else if ($ruolo_login === "studente") {
+              //  header("Location: testStudenti.php");
+              //  exit();
+            }
+           
         }
 
-            // Imposta le variabili di sessione
-            $_SESSION['email'] = $email_login;
-            $_SESSION['ruolo'] = $ruolo_login;
             
-            header("Location: testDocenti.php");
-            exit();
         }
     }
         

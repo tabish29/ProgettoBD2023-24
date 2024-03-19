@@ -342,11 +342,11 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE RegistrazioneDocente (
     IN EmailTemp VARCHAR(40),
-    IN Nome VARCHAR (20),
-    IN Cognome VARCHAR (20),
+    IN Nome VARCHAR (50),
+    IN Cognome VARCHAR (50),
     IN RecapitoTelefonicoDocente INT,
-    IN NomeDipartimento VARCHAR(20),
-    IN NomeCorso VARCHAR(20)
+    IN NomeDipartimento VARCHAR(100),
+    IN NomeCorso VARCHAR(100)
 )
 BEGIN
     -- Verifica se l'email non esiste già nella tabella Docente
