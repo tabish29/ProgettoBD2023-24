@@ -5,7 +5,7 @@
     include 'GestoreTest.php';
     include 'login.php';
     include 'testDocenti.php';
-
+    try{
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
    
         (isset($_GET['test']) ? $testId = $_GET['test'] : $testId = null); // l'ID del test selezionato
@@ -66,6 +66,13 @@
                 echo "Errore";
             }
         }
+    }
+        catch (Exception $e) {
+            // Gestisci altre eccezioni
+            echo "Errore durante la registrazione: " . $e->getMessage();
+            echo '<br>';
+            echo '<a href="index.html">Torna alla schermata principale</a>'; // Aggiungi un link per tornare alla schermata principale
+        } 
 
 
 

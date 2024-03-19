@@ -1,5 +1,4 @@
 <?php
-    include 'funzioniPerTest.php';
 class GestoreTest {
     public function creaGrafica() {
         
