@@ -88,6 +88,7 @@
             // Imposta le variabili di sessione
             $_SESSION['email'] = $email_login;
             $_SESSION['ruolo'] = $ruolo_login;
+            
             header("Location: testDocenti.php");
             exit();
         }

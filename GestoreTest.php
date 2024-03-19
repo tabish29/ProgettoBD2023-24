@@ -9,10 +9,10 @@ class GestoreTest {
                 <input type='text' id='titolo' name='titolo' required>
                 <br>
                 <label for='fotoLabel'>Foto:</label>
-                <input type='number' id='foto' name='foto' required> //Da inserire type= il file per la foto
+                <input type='file' id='fotoF' name='foto'>
                 <br>
                 <label for='visibilita'>Visibilità:</label>
-                <input type='text' id='visibilita' name='visibilita' required>
+                <input type='checkbox' id='visibilitaCB' name='visibilita'>
                 <br>
                 <input type='hidden' name='action' value='crea'>
                 <button type='submit' id='creaTestButton'>Crea</button>

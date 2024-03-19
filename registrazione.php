@@ -70,11 +70,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '<a href="index.html">Torna alla schermata principale</a>'; // Aggiungi un link per tornare alla schermata principale
     } finally {
         // Chiusura dello statement
-        $stmt->close();
+        $stmt->close(); //SERVE?
     }
 
 }
 
 // Chiusura della connessione
-$conn->close();
+//$conn->close();
 ?>

@@ -64,10 +64,13 @@
                     echo "<form id='testForm' action='funzioniPerTest.php' method='get'>";
                     while ($row = $result_all_tests->fetch_assoc()) {
                         echo "<li class='test-item'>";
-                        
                         echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
                         foreach ($row as $key => $value) {
-                            echo ucfirst($key) . ": " . $value . "<br>";
+                            if ($key === 'Foto') {
+                                echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
+                            } else {
+                                echo ucfirst($key) . ": " . $value . "<br>";
+                            }
                         }
                         echo "</li>";
                     }

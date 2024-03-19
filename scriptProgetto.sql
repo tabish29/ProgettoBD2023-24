@@ -5,11 +5,11 @@ USE ESQL;
 -- Creo le tabelle
 CREATE TABLE DOCENTE (
 	Email VARCHAR(40) PRIMARY KEY,
-    Nome VARCHAR (20) NOT NULL,
-    Cognome VARCHAR (20) NOT NULL,
+    Nome VARCHAR (50) NOT NULL,
+    Cognome VARCHAR (50) NOT NULL,
     RecapitoTelefonicoDocente INT,
-    NomeDipartimento VARCHAR(20),
-    NomeCorso VARCHAR(20)
+    NomeDipartimento VARCHAR(100),
+    NomeCorso VARCHAR(100)
     
 ) ENGINE = INNODB;
 
@@ -1017,6 +1017,7 @@ CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "prov
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
 -- Fine test
 
+CALL CreazioneTest("TestDiProva", NOW(), null, true, "docente@gmail.com");
 
 
 
