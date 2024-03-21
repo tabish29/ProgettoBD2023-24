@@ -40,6 +40,10 @@
         <ul class="test-list">
             <?php
 
+                /*
+                TODO:
+                MOSTRARE IN UNA SEZIONE SEPRATA I TEST IN COMPLETAMENTO COSI DA NON RENDERLI SELEZIONABILI
+                */
                 if (!isset($_SESSION)){
                     session_start();
                 }
