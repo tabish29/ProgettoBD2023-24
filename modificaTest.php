@@ -72,7 +72,26 @@
 
            
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                echo "ATTENZIONE NON FUNZIONA SE IL TEST HA UN COMPLETAMENTO PER VIA DELLA FOREIGN KEY"; //tODO
+
+                function ottieniQuesiti($titoloTest){
+                    include 'login.php';
+                    
+                    $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
+                    $result_quesiti_test = $conn->query($sql_quesiti_test);
+                    if ($result_quesiti_test->num_rows>0) {
+                        $row = $result_quesiti_test->fetch_assoc();
+                        $numeroProgressivo = $row['NumeroProgressivo'];
+                        $livelloDifficolta = $row['LivelloDifficolta'];
+                        $descrizione = $row['Descrizione'];
+                        $numeroRisposte = $row['NumeroRisposte'];
+                        $dati = [$numeroProgressivo, $livelloDifficolta,$descrizione,$numeroRisposte];
+                        
+                        echo "<li class='test-item'>Livello Difficoltà: " . $dati[1] . "</li>";
+                        echo "<li class='test-item'>Descrizione: " . $dati[2] . "</li>";
+                        echo "<li class='test-item'>Numero Risposte: " . $dati[3] . "</li>";
+
+                    }
+                }
 
                 function mostraDatiTest(){
                     include 'login.php';
@@ -82,7 +101,7 @@
                     // Esegue la query per selezionare il test dal database
                     $sql_select_test = "SELECT * FROM TEST WHERE Titolo = '$testId'";
                     $result_select_test = $conn->query($sql_select_test);
-
+                    $conn->next_result();
                     // Verifica se il test è stato trovato
                     if ($result_select_test->num_rows > 0) {
                         $row = $result_select_test->fetch_assoc();
@@ -91,6 +110,8 @@
                         echo "<li class='test-item'>Data Creazione: " . $row['DataCreazione'] . "</li>";
                         echo "<li class='test-item'>Visualizza Risposte: " . $row['VisualizzaRisposte'] . "</li>";
                         echo "<li class='test-item'>Email: " . $row['EmailDocente'] . "</li>";
+                        echo "<li class='test-item'>Quesiti:</li>";
+                        ottieniQuesiti($row['Titolo']);
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }
@@ -109,7 +130,6 @@
                                 <br>
                                 <input type='hidden' name='action' value='crea'>
                                 <button type='submit' id='modificaTestButton'>Modifica</button>
-                                
                             </form>
                             ";
                         }
