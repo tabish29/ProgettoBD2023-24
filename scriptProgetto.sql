@@ -682,7 +682,7 @@ END
 // DELIMITER ;
 
 
-
+/* NON FUNZIONA
 DELIMITER //
 CREATE PROCEDURE visualizzaEsitoRisposta(
 	IN idCompletamentoTemp INT,
@@ -709,7 +709,7 @@ END//
 
 DELIMITER ;
 
-
+*/
 
 DELIMITER //
 CREATE PROCEDURE inserisciMessaggioStudente(
@@ -1007,18 +1007,18 @@ CALL inserisciRisposta(2, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(3, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(4, "provaNr2", "rispostaNonCorretta", 1);
 */
-CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
-SELECT @esitoRispostaScelta;
+-- CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
+-- SELECT @esitoRispostaScelta;
 
-CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
-SELECT @esitoRispostaCodice;
+-- CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
+-- SELECT @esitoRispostaCodice;
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
 -- Fine test
 
-CALL CreazioneTest("TestDiProva", NOW(), null, true, "docente@gmail.com");
-
+CALL CreazioneTest("TestDiProva3", NOW(), null, true, "docente@gmail.com");
+CALL VisualizzaTestDisponibili();
 
 
 /*

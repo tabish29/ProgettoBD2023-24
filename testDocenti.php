@@ -37,69 +37,70 @@
 </head>
 <body>
     <div class="container">
-    <ul class="test-list">
-        <?php
-            if (!isset($_SESSION)){
-                session_start();
-            }
-
-            include 'navbar.php';
-            include 'login.php';
+        <ul class="test-list">
+            <?php
             
-            if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
-                // Redirect a una pagina di login se l'utente non è autenticato
-                header("Location: index.html");
-                exit();
-            }
-            
-            $email_login = $_SESSION['email'];
-            $ruolo_login = $_SESSION['ruolo'];
-            
-           echo "Email sessione: " . $_SESSION['email'] . "<br>";
-           echo "Email login: " . $email_login . "<br>";
-            
-            echo "\nLista Test:";
-                // Query per selezionare tutti i test
-                $sql_all_tests = "CALL visualizzaTestDisponibili()";
-                
-                $result_all_tests = $conn->query($sql_all_tests);
-
-                // Verifica se ci sono test 
-                if ($result_all_tests->num_rows > 0) {
-                    echo "<form id='testForm' action='funzioniPerTest.php' method='get'>";
-                    while ($row = $result_all_tests->fetch_assoc()) {
-                        echo "<li class='test-item'>";
-                        echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
-                        foreach ($row as $key => $value) {
-                            if ($key === 'Foto') {
-                                echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
-                            } else {
-                                echo ucfirst($key) . ": " . $value . "<br>";
-                            }
-                        }
-                        echo "</li>";
-                    }
-                    echo "<input type='hidden' name='action' id='actionField'>";
-                    echo "</form>";
+                if (!isset($_SESSION)){
+                    session_start();
                 }
-            
-                echo "<button id='creaButton' type='button' onclick='creaButton()'>Crea Test</button>";
-                echo "<button id='modificaButton' type='button' onclick='submitForm(\"modifica\")'>Modifica test</button>";
-                echo "<button id='cancellaButton' type='button' onclick='submitForm(\"cancella\")'>Cancella</button>";
 
-                echo "
-                <script>
-                    function submitForm(action) {
-                        var form = document.getElementById('testForm');
-                        form.action.value = action;
-                        form.submit();
-                    }
+                include 'navbar.php';
+                include 'login.php';
+                
+                if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
+                    // Redirect a una pagina di login se l'utente non è autenticato
+                    header("Location: index.html");
+                    exit();
+                }
+                
+                $email_login = $_SESSION['email'];
+                $ruolo_login = $_SESSION['ruolo'];
+                
+                echo "Valore della variabile di sessione email in testDocenti.php: " . $_SESSION['email'];
 
-                    function creaButton() {
-                        window.location.href = 'funzioniPerTest.php?action=crea';
+                
+                echo "\nLista Test:";
+                    // Query per selezionare tutti i test
+                    $sql_all_tests = "CALL visualizzaTestDisponibili()";
+                    
+                    $result_all_tests = $conn->query($sql_all_tests);
+                    $conn->next_result(); //Se no entra in conflitto con la query di funzioniPerTest
+                    // Verifica se ci sono test 
+                    if ($result_all_tests->num_rows > 0) {
+                        echo "<form id='testForm' action='funzioniPerTest.php' method='get'>";
+                        while ($row = $result_all_tests->fetch_assoc()) {
+                            echo "<li class='test-item'>";
+                            echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
+                            foreach ($row as $key => $value) {
+                                if ($key === 'Foto') {
+                                    echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
+                                } else {
+                                    echo ucfirst($key) . ": " . $value . "<br>";
+                                }
+                            }
+                            echo "</li>";
+                        }
+                        echo "<input type='hidden' name='action' id='actionField'>";
+                        echo "</form>";
                     }
-                </script>
-                ";
+                
+                    echo "<button id='creaButton' type='button' onclick='creaButton()'>Crea Test</button>";
+                    echo "<button id='modificaButton' type='button' onclick='submitForm(\"modifica\")'>Modifica test</button>";
+                    echo "<button id='cancellaButton' type='button' onclick='submitForm(\"cancella\")'>Cancella</button>";
+
+                    echo "
+                    <script>
+                        function submitForm(action) {
+                            var form = document.getElementById('testForm');
+                            form.action.value = action;
+                            form.submit();
+                        }
+
+                        function creaButton() {
+                            window.location.href = 'funzioniPerTest.php?action=crea';
+                        }
+                    </script>
+                    ";
             ?>
         </ul>
     </div>

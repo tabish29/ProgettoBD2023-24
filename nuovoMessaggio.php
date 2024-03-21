@@ -76,8 +76,11 @@
                 exit();
             }
         
+            echo "Valore della variabile di sessione email in messaggiDocenti.php pt1: " . $_SESSION['email'];
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                echo "Valore della variabile di sessione email in messaggiDocenti.php pt2: " . $_SESSION['email'];
+
                 // Verifica se sono stati inviati i dati del form
                 if (isset($_POST['selectTest']) && isset($_POST['oggetto']) && isset($_POST['testo'])) {
                     // Recupera i dati dal form

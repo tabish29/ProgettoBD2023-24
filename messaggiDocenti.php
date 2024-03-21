@@ -60,6 +60,8 @@
                 exit();
             }
             
+            echo "Valore della variabile di sessione email in messaggiDocenti.php: " . $_SESSION['email']; //ELIMINARE
+
             $email_login = $_SESSION['email'];
             $ruolo_login = $_SESSION['ruolo'];
 
