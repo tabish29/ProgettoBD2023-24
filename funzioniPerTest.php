@@ -17,7 +17,9 @@
         switch ($action) {
             
             case 'modifica':
-                // Codice per modificare il test con ID $testId
+                $test_selezionato = $_GET['test'];
+                echo "Il test selezionato è: " . $test_selezionato;
+
                 break;
             case 'cancella':
                 // Codice per cancellare il test con ID $testId

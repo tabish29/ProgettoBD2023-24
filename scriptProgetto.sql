@@ -1018,8 +1018,15 @@ CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggi
 -- Fine test
 
 CALL CreazioneTest("TestDiProva3", NOW(), null, true, "docente@gmail.com");
-CALL VisualizzaTestDisponibili();
 
+DELIMITER //
+UPDATE TEST
+SET Titolo="nuovoTitolo3",visualizzaRisposte="0"
+WHERE Titolo="TestDiProva3"
+//
+DELIMITER ;
+
+CALL VisualizzaTestDisponibili();
 
 /*
 -- Test classificaTestCompletati

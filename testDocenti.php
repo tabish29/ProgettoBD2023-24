@@ -61,48 +61,55 @@
                 
                 echo "\nLista Test:";
                     // Query per selezionare tutti i test
-                    $sql_all_tests = "CALL visualizzaTestDisponibili()";
+                $sql_all_tests = "CALL visualizzaTestDisponibili()";
                     
-                    $result_all_tests = $conn->query($sql_all_tests);
-                    $conn->next_result(); //Se no entra in conflitto con la query di funzioniPerTest
-                    // Verifica se ci sono test 
-                    if ($result_all_tests->num_rows > 0) {
-                        echo "<form id='testForm' action='funzioniPerTest.php' method='get'>";
-                        while ($row = $result_all_tests->fetch_assoc()) {
-                            echo "<li class='test-item'>";
-                            echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
-                            foreach ($row as $key => $value) {
-                                if ($key === 'Foto') {
-                                    echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
-                                } else {
-                                    echo ucfirst($key) . ": " . $value . "<br>";
-                                }
+                $result_all_tests = $conn->query($sql_all_tests);
+                $conn->next_result(); //Se no entra in conflitto con la query di funzioniPerTest
+                // Verifica se ci sono test 
+                if ($result_all_tests->num_rows > 0) {
+                    echo "<form id='testForm' action='funzioniPerTest.php' method='get'>";
+                    while ($row = $result_all_tests->fetch_assoc()) {
+                        echo "<li class='test-item'>";
+                        echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
+                        foreach ($row as $key => $value) {
+                            if ($key === 'Foto') {
+                                echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
+                            } else {
+                                echo ucfirst($key) . ": " . $value . "<br>";
                             }
-                            echo "</li>";
                         }
-                        echo "<input type='hidden' name='action' id='actionField'>";
-                        echo "</form>";
+                        echo "</li>";
                     }
-                
-                    
-                    echo "<a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>";
-            
-                    echo "<button id='modificaButton' type='button' onclick='submitForm(\"modifica\")'>Modifica test</button>";
-                    echo "<button id='cancellaButton' type='button' onclick='submitForm(\"cancella\")'>Cancella</button>";
-
-                    echo "
-                    <script>
-                        function submitForm(action) {
-                            var form = document.getElementById('testForm');
-                            form.action.value = action;
-                            form.submit();
-                        }
-
-                        
-                    </script>
-                    ";
+                    echo "<input type='hidden' name='action' id='actionField'>";
+                    echo "</form>";
+                }
             ?>
         </ul>
+        <div class="button-container">
+            <a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>
+            <button class="action-button" onclick="openAction('modifica')">Modifica Test</button>
+            <button class="action-button" onclick="openAction('cancella')">Cancella Test</button>
+        </div>
+                    
+        <script>
+            function openAction(action) {
+                var selectedTestId = document.querySelector('input[name="test"]:checked');
+                if (!selectedTestId) {
+                    alert('Seleziona un test.');
+                    return;
+                }
+                var testId = selectedTestId.value;
+                if (action === 'modifica') {
+                    window.location.href = 'modificaTest.php?id=' + testId;
+                } else if (action === 'cancella') {
+                    var confirmDelete = confirm('Sei sicuro di voler cancellare questo test?');
+                    if (confirmDelete) {
+                        window.location.href = 'cancellaTest.php?id=' + testId;
+                    }
+                }
+            }
+        </script>
     </div>
+                         
 </body>
 </html>
