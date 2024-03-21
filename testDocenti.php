@@ -39,7 +39,7 @@
     <div class="container">
         <ul class="test-list">
             <?php
-            
+
                 if (!isset($_SESSION)){
                     session_start();
                 }
@@ -84,7 +84,9 @@
                         echo "</form>";
                     }
                 
-                    echo "<button id='creaButton' type='button' onclick='creaButton()'>Crea Test</button>";
+                    
+                    echo "<a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>";
+            
                     echo "<button id='modificaButton' type='button' onclick='submitForm(\"modifica\")'>Modifica test</button>";
                     echo "<button id='cancellaButton' type='button' onclick='submitForm(\"cancella\")'>Cancella</button>";
 
@@ -96,9 +98,7 @@
                             form.submit();
                         }
 
-                        function creaButton() {
-                            window.location.href = 'funzioniPerTest.php?action=crea';
-                        }
+                        
                     </script>
                     ";
             ?>
