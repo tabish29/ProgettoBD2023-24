@@ -67,7 +67,7 @@
                 $conn->next_result(); //Se no entra in conflitto con la query di funzioniPerTest
                 // Verifica se ci sono test 
                 if ($result_all_tests->num_rows > 0) {
-                    echo "<form id='testForm' action='funzioniPerTest.php' method='get'>";
+                    echo "<form id='testForm'>";
                     while ($row = $result_all_tests->fetch_assoc()) {
                         echo "<li class='test-item'>";
                         echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
