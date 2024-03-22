@@ -78,20 +78,62 @@
                     
                     $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
                     $result_quesiti_test = $conn->query($sql_quesiti_test);
-                    if ($result_quesiti_test->num_rows>0) {
-                        $row = $result_quesiti_test->fetch_assoc();
-                        $numeroProgressivo = $row['NumeroProgressivo'];
-                        $livelloDifficolta = $row['LivelloDifficolta'];
-                        $descrizione = $row['Descrizione'];
-                        $numeroRisposte = $row['NumeroRisposte'];
-                        $dati = [$numeroProgressivo, $livelloDifficolta,$descrizione,$numeroRisposte];
-                        
-                        echo "<li class='test-item'>Livello Difficoltà: " . $dati[1] . "</li>";
-                        echo "<li class='test-item'>Descrizione: " . $dati[2] . "</li>";
-                        echo "<li class='test-item'>Numero Risposte: " . $dati[3] . "</li>";
+                    $conn->next_result();
 
+                    if ($result_quesiti_test->num_rows>0) {
+                        while ($row = $result_quesiti_test->fetch_assoc()) {
+                            $numeroProgressivo = $row['NumeroProgressivo'];
+                            $livelloDifficolta = $row['LivelloDifficolta'];
+                            $descrizione = $row['Descrizione'];
+                            $numeroRisposte = $row['NumeroRisposte'];
+                            $dati = [$numeroProgressivo, $livelloDifficolta,$descrizione,$numeroRisposte];
+                            
+                            echo "<li class='test-item'>Livello Difficoltà: " . $dati[1] . "</li>";
+                            echo "<li class='test-item'>Descrizione: " . $dati[2] . "</li>";
+                            echo "<li class='test-item'>Numero Risposte: " . $dati[3] . "</li>";
+
+                            $tipologiaQuesito = "";
+                            $sql_quesitoRC = "SELECT * FROM QUESITORISPOSTACHIUSA WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+                            $result_quesitoRC = $conn->query($sql_quesitoRC);
+                            $conn->next_result();
+
+                            $sql_quesitoCodice = "SELECT * FROM QUESITOCODICE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+                            $result_quesitoCodice = $conn->query($sql_quesitoCodice);
+                            $conn->next_result();
+
+                            if ($result_quesitoRC->num_rows>0) {
+                                $tipologiaQuesito = "Risposta Chiusa";
+                                echo "<li class='test-item'>Tipologia Quesito: " . $tipologiaQuesito . "</li>";
+                                $sql_soluzioni = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+                                $result_soluzioni = $conn->query($sql_soluzioni);
+                                $conn->next_result();
+                                if ($result_quesitoRC->num_rows>0) {
+                                    $soluzioni = $result_soluzioni->fetch_assoc();
+                                    echo "<li class='test-item'>Soluzione: " . $soluzioni['CampoTesto'] . "</li>";
+                                }
+
+                            } 
+                            
+                            if ($result_quesitoCodice->num_rows>0){
+                                $tipologiaQuesito = "Codice";
+                                echo "<li class='test-item'>Tipologia Quesito: " . $tipologiaQuesito . "</li>";
+                                $sql_soluzioni = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+                                $result_soluzioni = $conn->query($sql_soluzioni);
+                                $conn->next_result();
+                                if ($result_quesitoCodice->num_rows>0) {
+                                    $soluzioni = $result_soluzioni->fetch_assoc();
+                                    echo "<li class='test-item'>Soluzione: " . $soluzioni['TestoSoluzione'] . "</li>";
+                                }
+
+                            }
+                        }
+
+                    } else {
+                        echo "Nessun quesito presente";
+                    
                     }
                 }
+                
 
                 function mostraDatiTest(){
                     include 'login.php';
