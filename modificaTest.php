@@ -58,6 +58,18 @@
             border-radius: 3px;
             cursor: pointer;
         }
+        .btn {
+            width: 100px;
+            height: 30px;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 0px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #7cfc00; 
+            }
     </style>
 </head>
 <body>
@@ -79,20 +91,18 @@
                     $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
                     $result_quesiti_test = $conn->query($sql_quesiti_test);
                     $conn->next_result();
-
+                    $num = 1;
                     if ($result_quesiti_test->num_rows>0) {
                         while ($row = $result_quesiti_test->fetch_assoc()) {
+                            echo "Quesito nr." . $num . "<br>"; //ATtenzione non deve corrispondere al progressivo
                             $numeroProgressivo = $row['NumeroProgressivo'];
                             $livelloDifficolta = $row['LivelloDifficolta'];
                             $descrizione = $row['Descrizione'];
                             $numeroRisposte = $row['NumeroRisposte'];
                             $dati = [$numeroProgressivo, $livelloDifficolta,$descrizione,$numeroRisposte];
-                            
-                            echo "<li class='test-item'>Livello Difficoltà: " . $dati[1] . "</li>";
-                            echo "<li class='test-item'>Descrizione: " . $dati[2] . "</li>";
-                            echo "<li class='test-item'>Numero Risposte: " . $dati[3] . "</li>";
 
                             $tipologiaQuesito = "";
+
                             $sql_quesitoRC = "SELECT * FROM QUESITORISPOSTACHIUSA WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                             $result_quesitoRC = $conn->query($sql_quesitoRC);
                             $conn->next_result();
@@ -102,27 +112,70 @@
                             $conn->next_result();
 
                             if ($result_quesitoRC->num_rows>0) {
+                                $num++;
                                 $tipologiaQuesito = "Risposta Chiusa";
-                                echo "<li class='test-item'>Tipologia Quesito: " . $tipologiaQuesito . "</li>";
+                                echo "<details>";
+                                echo "<summary>Tipologia:</summary>";
+                                echo "" . $tipologiaQuesito . "";
+                                echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Livello Difficoltà:</summary>";
+                                echo "" . $dati[1] . "";
+                                echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Descrizione:</summary>";
+                                echo "" . $dati[2] . "";
+                                echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Numero Risposte:</summary>";
+                                echo "" . $dati[3] . "";
+                                echo "</details><br>";
+
                                 $sql_soluzioni = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_soluzioni = $conn->query($sql_soluzioni);
                                 $conn->next_result();
                                 if ($result_quesitoRC->num_rows>0) {
                                     $soluzioni = $result_soluzioni->fetch_assoc();
-                                    echo "<li class='test-item'>Soluzione: " . $soluzioni['CampoTesto'] . "</li>";
+
+                                    echo "<details>";
+                                    echo "<summary>Soluzioni:</summary>";
+                                    echo "" . $soluzioni['CampoTesto'] . "";
+                                    echo "</details><br>";
                                 }
+
+                                
 
                             } 
                             
                             if ($result_quesitoCodice->num_rows>0){
+                                $num++;
                                 $tipologiaQuesito = "Codice";
-                                echo "<li class='test-item'>Tipologia Quesito: " . $tipologiaQuesito . "</li>";
+                                echo "<details>";
+                                echo "<summary>Tipologia:</summary>";
+                                echo "" . $tipologiaQuesito . "";
+                                echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Livello Difficoltà:</summary>";
+                                echo "" . $dati[1] . "";
+                                echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Descrizione:</summary>";
+                                echo "" . $dati[2] . "";
+                                echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Numero Risposte:</summary>";
+                                echo "" . $dati[3] . "";
+                                echo "</details><br>";
+
                                 $sql_soluzioni = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_soluzioni = $conn->query($sql_soluzioni);
                                 $conn->next_result();
                                 if ($result_quesitoCodice->num_rows>0) {
                                     $soluzioni = $result_soluzioni->fetch_assoc();
-                                    echo "<li class='test-item'>Soluzione: " . $soluzioni['TestoSoluzione'] . "</li>";
+                                    echo "<details>";
+                                    echo "<summary>Soluzioni:</summary>";
+                                    echo "" . $soluzioni['TestoSoluzione'] . "";
+                                    echo "</details><br>";
                                 }
 
                             }
@@ -148,11 +201,30 @@
                     if ($result_select_test->num_rows > 0) {
                         $row = $result_select_test->fetch_assoc();
                         // Visualizza i dettagli del test
+                        /*
                         echo "<li class='test-item'>Titolo: " . $row['Titolo'] . "</li>";
                         echo "<li class='test-item'>Data Creazione: " . $row['DataCreazione'] . "</li>";
                         echo "<li class='test-item'>Visualizza Risposte: " . $row['VisualizzaRisposte'] . "</li>";
                         echo "<li class='test-item'>Email: " . $row['EmailDocente'] . "</li>";
-                        echo "<li class='test-item'>Quesiti:</li>";
+                        echo "<li class='test-item'>Quesiti:</li>";*/
+                        echo "<details>";
+                        echo "<summary>Titolo Test:</summary>";
+                        echo "" . $row['Titolo'] . "";
+                        echo "</details><br>";
+                        echo "<details>";
+                        echo "<summary>Data Creazione:</summary>";
+                        echo "" . $row['DataCreazione'] . "";
+                        echo "</details><br>";
+                        echo "<details>";
+                        echo "<summary>Visualizza Risposte:</summary>";
+                        echo "" . $row['VisualizzaRisposte'] . "";
+                        echo "</details><br>";
+                        echo "<details>";
+                        echo "<summary>Email:</summary>";
+                        echo "" . $row['EmailDocente'] . "";
+                        echo "</details><br>";
+                        
+
                         ottieniQuesiti($row['Titolo']);
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
@@ -171,7 +243,7 @@
                                 <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
                                 <br>
                                 <input type='hidden' name='action' value='crea'>
-                                <button type='submit' id='modificaTestButton'>Modifica</button>
+                                <button type='button' class='btn'  id='modificaTestButton'>Modifica</button>
                             </form>
                             ";
                         }

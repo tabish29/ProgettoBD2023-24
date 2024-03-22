@@ -33,6 +33,35 @@
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
+        details {
+            border-radius: 4px;
+            padding: 0.5em 0.5em 0;
+            }
+
+        summary {
+            font-weight: bold;
+            margin: -0.5em -0.5em 0;
+            padding: 0.5em;
+            }
+
+        details[open] {
+            padding: 0.5em;
+            }
+
+        p,
+        label {
+        font:
+            1rem 'Fira Sans',
+            arial;
+        font-size: 16px;
+        }
+        
+
+        input {
+        margin: 0.4rem;
+        }
+        
+        
     </style>
 </head>
 <body>
@@ -40,10 +69,6 @@
         <ul class="test-list">
             <?php
 
-                /*
-                TODO:
-                MOSTRARE IN UNA SEZIONE SEPRATA I TEST IN COMPLETAMENTO COSI DA NON RENDERLI SELEZIONABILI
-                */
                 if (!isset($_SESSION)){
                     session_start();
                 }
@@ -75,12 +100,18 @@
                     while ($row = $result_all_tests->fetch_assoc()) {
                         echo "<li class='test-item'>";
                         echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
+
                         foreach ($row as $key => $value) {
+                            echo "<details open>";
+                            echo "<summary>" . ucfirst($key) . ":</summary>";
+                            echo "" . $value . "";
+                            echo "</details><br>";
+                            /*
                             if ($key === 'Foto') {
                                 echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
                             } else {
                                 echo ucfirst($key) . ": " . $value . "<br>";
-                            }
+                            }*/
                         }
                         echo "</li>";
                     }
@@ -91,8 +122,8 @@
         </ul>
         <div class="button-container">
             <a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>
-            <button class="action-button" onclick="openAction('modifica')">Modifica Test</button>
-            <button class="action-button" onclick="openAction('cancella')">Cancella Test</button>
+            <button class="btn btn-primary" onclick="openAction('modifica')">Modifica Test</button>
+            <button class="btn btn-primary" onclick="openAction('cancella')">Cancella Test</button>
         </div>
                     
         <script>
