@@ -235,9 +235,7 @@
                     echo "Test ahhh: " . $testId;
                     echo "
                     <form id='modificaTestForm' action='modificaTest.php' method='post'>
-                                <input type='hidden' id ='vecchioTitolo' name='vecchioTitolo' value=" . $testId . ">
-                                <label for='titolo'>Titolo:</label>
-                                <input type='text' id='titolo' name='titolo' required>
+                                <input type='hidden' id ='titoloTest' name='titoloTest' value=" . $testId . ">
                                 <br>
                                 <label for='visualizzaRisposte'>Visualizza Risposte:</label>
                                 <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
@@ -259,12 +257,11 @@
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
-                    $vecchioTitolo = $_POST['vecchioTitolo'];
-                    $titolo = $_POST['titolo'];
+                    $titolo = $_POST['titoloTest'];
                     $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
 
                     // Query SQL per aggiornare il test nel database
-                    $sql_update_test = "UPDATE TEST SET Titolo = '$titolo', VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$vecchioTitolo'";
+                    $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
 
 
                     // Esegue la query di aggiornamento
