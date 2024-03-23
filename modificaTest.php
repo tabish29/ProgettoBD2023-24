@@ -243,7 +243,7 @@
                                 <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
                                 <br>
                                 <input type='hidden' name='action' value='crea'>
-                                <button type='button' class='btn'  id='modificaTestButton'>Modifica</button>
+                                <button type='submit' class='btn'  id='modificaTestButton'>Modifica</button>
                             </form>
                             ";
                         }
