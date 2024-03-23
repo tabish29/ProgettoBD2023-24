@@ -65,7 +65,7 @@
         <h2>Cancella Test</h2>
         <ul>
         <?php
-            include 'login.php';
+            include 'connessione.php';
             if (!isset($_SESSION)){
                 session_start();
             }

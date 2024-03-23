@@ -66,7 +66,7 @@
     <div class="container">
         <?php
             include 'navbar.php';
-            include 'login.php';
+            include 'connessione.php';
             
         
             // Verifica se l'utente è autenticato

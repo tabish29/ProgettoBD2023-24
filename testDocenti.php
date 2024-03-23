@@ -74,7 +74,7 @@
                 }
 
                 include 'navbar.php';
-                include 'login.php';
+                include 'connessione.php';
                 
                 if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
                     // Redirect a una pagina di login se l'utente non è autenticato
