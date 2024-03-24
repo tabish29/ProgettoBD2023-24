@@ -82,28 +82,28 @@
             if (!isset($_SESSION)){
                 session_start();
             }
-            $titoloTest = "";
-            $tipoQuesito = "";
+            
 
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 $campiSchermataPrecedente = explode(";",$_GET['id']);
                 $titoloTest = $campiSchermataPrecedente[0];
                 $tipoQuesito = $campiSchermataPrecedente[1];
-                echo "<h3>Test: $titoloTest</h3>";
-                echo "<h3>Tipo Quesito: $tipoQuesito</h3>";
             }
 
                 
             $sql_queryNuovaOpzioneOSoluzione = '';  
-            $valoreInserito = $_POST['soluzioneT'];
+            
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if ($tipoQuesito === "RC"){
-                    echo "RC: " . $valoreInserito;
+                $valoreInserito = $_POST['soluzioneT'];
+                $tipoQuesito = $_POST['tipoQuesito'];
+                $titoloTest = $_POST['titoloTest'];
+
+                //Scommentare dopo la realizzazione delle query
+                if ($tipoQuesito == "RC"){
                     //$sql_queryNuovaOpzioneOSoluzione = "CALL PROCEDURE InserimentoOpzioneRisposta(VALORI DA METTERE)";
                     
-                } else if ($tipoQuesito === "COD"){
-                    echo "COD: " . $valoreInserito;
+                } else if ($tipoQuesito == "COD"){
                     //$sql_queryNuovaOpzioneOSoluzione = "CALL PROCEDURE InserimentoSoluzione(VALORI DA METTERE)";
                     
                 }
@@ -116,12 +116,13 @@
         ?>
         
             <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
-                
+                <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
+                <label for="tipoQ">Titolo Test: <?php echo $titoloTest; ?></label>
+                <input type="hidden" name="tipoQuesito" value="<?php echo $tipoQuesito; ?>">
+                <label for="tipoQ">Tipo quesito: <?php echo $tipoQuesito; ?></label>
                 <label for="testoSoluzione">Testo soluzione:</label>
                 <input type="text" id="soluzioneT" name="soluzioneT">
-                <input type="hidden" name="submitAction" id="submitAction" value="">
                 <input type="submit" class="btn" id="salvataggioSoluzione" value="Salva Soluzione">
-                <button type="button" class="add-button" onclick="aggiungiCampo()">Inserisci una nuova Soluzione</button>
             </form>
             
 
