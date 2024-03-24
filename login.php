@@ -67,7 +67,7 @@
         if ($ruolo_login === "docente") {
             $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login'";
         } else if ($ruolo_login === "studente") {
-            $sql_check_email = "SELECT email FROM studente WHERE email = '$ruolo_login'";
+            $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login'";
         }
 
         $result_check_email = $conn->query($sql_check_email);
@@ -85,8 +85,8 @@
                 header("Location: testDocenti.php");
                 exit();
             } else if ($ruolo_login === "studente") {
-              //  header("Location: testStudenti.php");
-              //  exit();
+                header("Location: messaggiStudenti.php");
+                exit();
             }
            
         }
