@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,7 +76,7 @@
 <body>
     <div class="container">
         <h2>Modifica Test</h2>
-        <ul class="test-details">
+        <ul>
         <?php
             include 'connessione.php';
             if (!isset($_SESSION)){
@@ -185,8 +186,7 @@
                         echo "Nessun quesito presente";
                     
                     }
-                }
-                
+                }             
 
                 function mostraDatiTest(){
                     include 'connessione.php';
@@ -230,33 +230,39 @@
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }
                 }
+                
                 function creaGrafica() {
                     $testId = $_GET['id'];
-                    echo "Test ahhh: " . $testId;
                     echo "
-                    <form id='modificaTestForm' action='modificaTest.php' method='post'>
-                                <input type='hidden' id ='titoloTest' name='titoloTest' value=" . $testId . ">
-                                <br>
-                                <label for='visualizzaRisposte'>Visualizza Risposte:</label>
-                                <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
-                                <br>
-                                <input type='hidden' name='action' value='crea'>
-                                <button type='submit' class='btn'  id='modificaTestButton'>Modifica</button>
-                            </form>
-                            ";
-                        }
+                        <form id='modificaTestForm' action='modificaTest.php' method='post'>
+                            <input type='hidden' id ='titoloTest' name='titoloTest' value=" . $testId . ">
+                            <br>
+                            <label for='visualizzaRisposte'>Visualizza Risposte:</label>
+                            <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
+                            <br>
+                            <input type='hidden' name='action' value='crea'>
+                            <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Modifica</button>
+                        </form>
+                        <a href='inserisciQuesito.php?id=" . $testId . "' class='btn'>Aggiungi Quesito</a>                        
+                        ";
 
-                        mostraDatiTest();
+                    
+                    
+                }
 
-                        creaGrafica();
+                mostraDatiTest();
+
+                creaGrafica();
         
                         
-                }
+        }
+        
+
 
             
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                
+
                     $titolo = $_POST['titoloTest'];
                     $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
 

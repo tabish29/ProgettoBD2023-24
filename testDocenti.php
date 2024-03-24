@@ -120,7 +120,7 @@
                 }
             ?>
         </ul>
-        <div class="button-container">
+        <div>
             <a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>
             <button class="btn btn-primary" onclick="openAction('modifica')">Modifica Test</button>
             <button class="btn btn-primary" onclick="openAction('cancella')">Cancella Test</button>
