@@ -456,7 +456,7 @@ END
 // DELIMITER ;
 
 
-// DELIMITER 
+DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
     IN TitoloTest_t VARCHAR(20),
     IN LivelloDifficolta_t ENUM("Basso","Medio","Alto"),
@@ -465,21 +465,21 @@ CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
 )
 BEGIN
 
-DECLARE TestEsistente INT DEFAULT 0;
-SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+	DECLARE TestEsistente INT DEFAULT 0;
+	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
 
-IF (TestEsistente = 1) THEN
-INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
-VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
-INSERT INTO QUESITORISPOSTACHIUSA(TitoloTest) VALUES (TitoloTest_t);
-END IF;
+	IF (TestEsistente = 1) THEN
+		INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
+		VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
+		INSERT INTO QUESITORISPOSTACHIUSA(TitoloTest) VALUES (TitoloTest_t);
+	END IF;
 
 END 
 // DELIMITER ;
 
 
 
-// DELIMITER 
+DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoCodice (
     IN TitoloTest_t VARCHAR(20),
     IN LivelloDifficolta_t ENUM("Basso","Medio","Alto"),
@@ -488,21 +488,21 @@ CREATE PROCEDURE CreazioneQuesitoCodice (
 )
 BEGIN
 
-DECLARE TestEsistente INT DEFAULT 0;
-SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+	DECLARE TestEsistente INT DEFAULT 0;
+	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
 
-IF (TestEsistente = 1) THEN
-INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
-VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
-INSERT INTO QUESITOCODICE(TitoloTest) VALUES (TitoloTest_t);
-END IF;
+	IF (TestEsistente = 1) THEN
+		INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
+		VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
+		INSERT INTO QUESITOCODICE(TitoloTest) VALUES (TitoloTest_t);
+	END IF;
 
 END 
 // DELIMITER ;
 
 
 
-// DELIMITER 
+DELIMITER //
 CREATE PROCEDURE InserimentoSoluzione (
     IN TitoloTest_t VARCHAR(20),
     IN TestoSoluzione_t VARCHAR(40)
@@ -522,31 +522,33 @@ END
 
 
 
-// DELIMITER 
+DELIMITER //
+
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTest_t VARCHAR(20),
     IN NumeroProgressivoQuesito_t INT,
     IN NumeroProgressivoOpzione_t INT,
-    IN CampoTesto_t VARCHAR(2000),
+    IN CampoTesto_t VARCHAR(2000)
 )
 BEGIN
+    DECLARE TestEsistente INT DEFAULT 0;
+    DECLARE ProgressivoQuesitoEsistente INT DEFAULT 0;
+    DECLARE ProgressiviETestEsistenti INT DEFAULT 0;
 
-DECLARE TestEsistente INT DEFAULT 0;
-DECLARE ProgressivoQuesitoEsistente INT DEFAULT 0;
-DECLARE ProgressiviETestEsistenti INT DEFAULT 0;
-SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
-SET ProgressivoQuesitoEsistente = (SELECT COUNT(*) FROM QUESITORISPOSTACHIUSA WHERE (NumeroProgressivoQuesito_t=NumeroProgressivo));
-SET ProgressivoETestEsistenti = (SELECT COUNT(*) INTO ProgressiviETestEsistenti FROM OPZIONERISPOSTA WHERE TitoloTest = TitoloTest_t 
-									AND NumeroProgressivoQuesito = NumeroProgressivoQuesito_t 
-                                    AND NumeroProgressivoOpzione = NumeroProgressivoOpzione_t;);
+    SELECT COUNT(*) INTO TestEsistente FROM TEST WHERE TitoloTest = TitoloTest_t;
+    SELECT COUNT(*) INTO ProgressivoQuesitoEsistente FROM QUESITORISPOSTACHIUSA WHERE NumeroProgressivoQuesito = NumeroProgressivoQuesito_t;
+    SELECT COUNT(*) INTO ProgressiviETestEsistenti FROM OPZIONERISPOSTA WHERE TitoloTest = TitoloTest_t 
+        AND NumeroProgressivoQuesito = NumeroProgressivoQuesito_t 
+        AND NumeroProgressivoOpzione = NumeroProgressivoOpzione_t;
 
-IF (TestEsistente = 1 AND ProgressivoQuesitoEsistente = 1 AND ProgressivoETestEsistenti = 0) THEN
-INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, NumeroProgressivoOpzione, CampoTesto) 
-VALUES (TitoloTest_t, NumeroProgressivoQuesito_t, NumeroProgressivoOpzione_t, CampoTesto_t);
-END IF;
+    IF TestEsistente = 1 AND ProgressivoQuesitoEsistente = 1 AND ProgressiviETestEsistenti = 0 THEN
+        INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, NumeroProgressivoOpzione, CampoTesto) 
+        VALUES (TitoloTest_t, NumeroProgressivoQuesito_t, NumeroProgressivoOpzione_t, CampoTesto_t);
+    END IF;
 
-END 
-// DELIMITER ;
+END //
+
+DELIMITER ;
 
 
 
