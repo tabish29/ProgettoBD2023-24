@@ -89,11 +89,22 @@
             }
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                
                 $titoloTest = $_POST['titoloTest'];
                 $tipoQuesito = $_POST['tipoQuesito'];
                 $livDifficolta = $_POST['livDifficolta'];
                 $descrizione = $_POST['descrizione'];
                 $numeroRisposte = $_POST['numeroRisposte'];
+                
+                echo "<h3>Test: $titoloTest</h3>";
+                echo "<h3>Tipo di quesito: $tipoQuesito</h3>";
+                echo "<h3>Livello di difficoltà: $livDifficolta</h3>";
+                echo "<h3>Descrizione: $descrizione</h3>";
+                echo "<h3>Numero di risposte: $numeroRisposte</h3>";
+                
+             /*
+             Togliere commento dopo che Lorenzo sistema le Query
+                
                 $sql_creaQuesitoQuery = '';
                 if ($tipoQuesito === 'chiusa') {
                     $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', '$numeroRisposte')";
@@ -102,7 +113,9 @@
                 }
                 if ($conn->query($sql_creaQuesitoQuery) === FALSE && mysqli_affected_rows($conn) == 0){
                     echo "<p>Errore nella creazione del quesito: " . $conn->error . "</p>";
-                }
+                }    
+                */
+                echo "<a href='inserisciQuesitoSpecifico.php?id=" . $titoloTest . ";" . $tipoQuesito . "' class='btn'>Procedi per configurare le risposte</a> ";
 
             }
         ?>
@@ -113,8 +126,8 @@
                 <div class="form-group">
                     <label for="tipoQuesito">Tipo di quesito:</label>
                     <select id="tipoQuesito" name="tipoQuesito">
-                        <option value="chiusa" selected>Quesito a Risposta Chiusa</option>
-                        <option value="codice">Quesito di Codice</option>
+                        <option value="RC" selected>Quesito a Risposta Chiusa</option>
+                        <option value="COD">Quesito di Codice</option>
                     </select>
                 </div>
 
@@ -138,69 +151,12 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="submit" class="btn" id="salvataggioQuesito" value="Salva Dati">
-                    <button type="button" class="btn" onclick="mostraCampiAggiuntivi()">Procedi all'inserimento delle risposte</button>
+                    <input type="submit" class="btn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
                 </div>
                 </VerticalPanel>
 
-                <div id="campiAggiuntiviContainer" class="additional-fields">
-                    <div class="form-group" id="campoTestoContainer" style="display: block;">
-                        <label for="campoTesto">Campo testo:</label>
-                        <div id="campiTesto">
-                            <input type="text" name="campiTesto[]">
-                        </div>
-                        <button type="button" class="add-button" onclick="aggiungiCampo('campoTestoContainer', 'campiTesto')">Aggiungi Campo</button>
-                        
-                    </div>
-
-                    <div class="form-group" id="testoSoluzioneContainer">
-                        <label for="testoSoluzione">Testo soluzione:</label>
-                        <div id="testiSoluzione">
-                            <input type="text" name="testiSoluzione[]">
-                        </div>
-                        <button type="button" class="add-button" onclick="aggiungiCampo('testoSoluzioneContainer', 'testiSoluzione')">Aggiungi Soluzione</button>
-                    </div>
-
-                </div>
-
-                
-
             </form>
-            
 
-        
     </div>
 
-    <script>
-        function mostraCampiAggiuntivi() {
-            var tipoQuesito = document.getElementById('tipoQuesito').value;
-            var campiAggiuntiviContainer = document.getElementById('campiAggiuntiviContainer');
-            var pannello = document.getElementById('pannello');
-
-        
-            if (tipoQuesito === 'codice') {
-                document.getElementById('campoTestoContainer').style.display = 'none';
-                document.getElementById('testoSoluzioneContainer').style.display = 'block';
-                
-                // Nascondi i campi comuni
-                document.getElementById('tipoQuesito').parentNode.parentNode.style.display = 'none';
-                document.getElementById('livelloDifficoltaSelect').parentNode.parentNode.style.display = 'none';
-                document.getElementById('descrizione').parentNode.parentNode.style.display = 'none';
-                document.getElementById('numeroRisposte').parentNode.parentNode.style.display = 'none';
-            } else {
-                document.getElementById('campoTestoContainer').style.display = 'block';
-                document.getElementById('testoSoluzioneContainer').style.display = 'none';
-                
-                // Nascondi i campi comuni
-                document.getElementById('tipoQuesito').parentNode.parentNode.style.display = 'none';
-                document.getElementById('livelloDifficoltaSelect').parentNode.parentNode.style.display = 'none';
-                document.getElementById('descrizione').parentNode.parentNode.style.display = 'none';
-                document.getElementById('numeroRisposte').parentNode.parentNode.style.display = 'none';
-            }
-
-            // Mostra solo i campi aggiuntivi
-            campiAggiuntiviContainer.style.display = 'block';
-        }
-
-
-    </script>
+    
