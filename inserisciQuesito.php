@@ -90,6 +90,20 @@
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $titoloTest = $_POST['titoloTest'];
+                $tipoQuesito = $_POST['tipoQuesito'];
+                $livDifficolta = $_POST['livDifficolta'];
+                $descrizione = $_POST['descrizione'];
+                $numeroRisposte = $_POST['numeroRisposte'];
+                $sql_creaQuesitoQuery = '';
+                if ($tipoQuesito === 'chiusa') {
+                    $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', '$numeroRisposte')";
+                } else {
+                    $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', '$numeroRisposte')";
+                }
+                if ($conn->query($sql_creaQuesitoQuery) === FALSE && mysqli_affected_rows($conn) == 0){
+                    echo "<p>Errore nella creazione del quesito: " . $conn->error . "</p>";
+                }
+
             }
         ?>
         
@@ -124,6 +138,7 @@
                 </div>
 
                 <div class="form-group">
+                    <input type="submit" class="btn" id="salvataggioQuesito" value="Salva Dati">
                     <button type="button" class="btn" onclick="mostraCampiAggiuntivi()">Procedi all'inserimento delle risposte</button>
                 </div>
                 </VerticalPanel>
@@ -135,6 +150,7 @@
                             <input type="text" name="campiTesto[]">
                         </div>
                         <button type="button" class="add-button" onclick="aggiungiCampo('campoTestoContainer', 'campiTesto')">Aggiungi Campo</button>
+                        
                     </div>
 
                     <div class="form-group" id="testoSoluzioneContainer">
@@ -144,11 +160,10 @@
                         </div>
                         <button type="button" class="add-button" onclick="aggiungiCampo('testoSoluzioneContainer', 'testiSoluzione')">Aggiungi Soluzione</button>
                     </div>
+
                 </div>
 
-                <div class="form-group">
-                    <input type="submit" class="btn" value="Invia">
-                </div>
+                
 
             </form>
             
@@ -161,6 +176,7 @@
             var tipoQuesito = document.getElementById('tipoQuesito').value;
             var campiAggiuntiviContainer = document.getElementById('campiAggiuntiviContainer');
             var pannello = document.getElementById('pannello');
+
         
             if (tipoQuesito === 'codice') {
                 document.getElementById('campoTestoContainer').style.display = 'none';
