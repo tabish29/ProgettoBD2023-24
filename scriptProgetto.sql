@@ -457,93 +457,98 @@ END
 // DELIMITER ;
 
 
-
+-- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
-    IN TitoloTest_t VARCHAR(20),
-    IN LivelloDifficolta_t ENUM("Basso","Medio","Alto"),
-    IN Descrizione_t VARCHAR(50),
-    IN NumeroRisposte_t INT
+    IN TitoloTestTemp VARCHAR(20),
+    IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
+    IN DescrizioneTemp VARCHAR(50),
+    IN NumeroRisposteTemp INT
 )
 BEGIN
+    DECLARE TestEsistente INT DEFAULT 0;
+    DECLARE UltimoNumeroProgressivo INT;
+    SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE Titolo = TitoloTestTemp);
+    IF (TestEsistente = 1) THEN
+        INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
+        VALUES (TitoloTestTemp, LivelloDifficoltaTemp, DescrizioneTemp, NumeroRisposteTemp);
 
-	DECLARE TestEsistente INT DEFAULT 0;
-	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest_t=TEST.Titolo));
-
-	IF (TestEsistente = 1) THEN
-		INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
-		VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
-		INSERT INTO QUESITORISPOSTACHIUSA(TitoloTest) VALUES (TitoloTest_t);
-	END IF;
-END 
-// DELIMITER ;
+        SET UltimoNumeroProgressivo = (SELECT MAX(NumeroProgressivo) FROM QUESITO WHERE TitoloTest = TitoloTestTemp);
+        INSERT INTO QUESITORISPOSTACHIUSA(NumeroProgressivo, TitoloTest) VALUES (UltimoNumeroProgressivo, TitoloTestTemp);
+    END IF;
+END //
+DELIMITER ;
 
 
 
+-- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoCodice (
-    IN TitoloTest_t VARCHAR(20),
-    IN LivelloDifficolta_t ENUM("Basso","Medio","Alto"),
-    IN Descrizione_t VARCHAR(50),
-    IN NumeroRisposte_t INT
+    IN TitoloTestTemp VARCHAR(20),
+    IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
+    IN DescrizioneTemp VARCHAR(50),
+    IN NumeroRisposteTemp INT
 )
 BEGIN
-
+	DECLARE UltimoNumeroProgressivo INT;
 	DECLARE TestEsistente INT DEFAULT 0;
-	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTestTemp = Titolo));
 
 	IF (TestEsistente = 1) THEN
 		INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
-		VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
-		INSERT INTO QUESITOCODICE(TitoloTest) VALUES (TitoloTest_t);
+		VALUES (TitoloTestTemp, LivelloDifficoltaTemp, DescrizioneTemp, NumeroRisposteTemp);
+        
+        SET UltimoNumeroProgressivo = (SELECT MAX(NumeroProgressivo) FROM QUESITO WHERE TitoloTest = TitoloTestTemp);
+		INSERT INTO QUESITOCODICE(TitoloTest,NumeroProgressivo) VALUES (TitoloTestTemp, UltimoNumeroProgressivo);
 	END IF;
-
 END 
 // DELIMITER ;
 
 
+# QUA COME SI FA ?? DEVO RECUPERARE IL PROGRESSIVO
 
 DELIMITER //
 CREATE PROCEDURE InserimentoSoluzione (
-    IN TitoloTest_t VARCHAR(20),
-    IN TestoSoluzione_t VARCHAR(40)
+    IN TitoloTestTemp VARCHAR(20),
+    IN TestoSoluzioneTemp VARCHAR(40)
 )
 BEGIN
+	DECLARE NumeroProgressivoTemp INT DEFAULT 0;
+	DECLARE TestEsistente INT DEFAULT 0;
+	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTestTemp = Titolo));
 
-DECLARE TestEsistente INT DEFAULT 0;
-SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
-
-IF (TestEsistente = 1) THEN
-INSERT INTO SOLUZIONE(TitoloTest, TestoSoluzione) VALUES (TitoloTest_t, TestoSoluzione_t);
-END IF;
+	IF (TestEsistente = 1) THEN
+	INSERT INTO SOLUZIONE(NumeroProgressivo, TitoloTest, TestoSoluzione) VALUES (NumeroProgressivoTemp, TitoloTestTemp, TestoSoluzioneTemp);
+	END IF;
 
 END 
 // DELIMITER ;
 
 
 
+# QUA COME SI FA 2 ?? IL PROGRESSIVO DEL QUESITO DEVE ESSERE AUTO INCREMENT, NON LO PUO SCEGLIERE LUI...
 
 DELIMITER //
 CREATE PROCEDURE InserimentoOpzioneRisposta (
-    IN TitoloTest_t VARCHAR(20),
-    IN NumeroProgressivoQuesito_t INT,
-    IN NumeroProgressivoOpzione_t INT,
-    IN CampoTesto_t VARCHAR(2000)
+    IN TitoloTestTemp VARCHAR(20),
+    IN NumeroProgressivoQuesitoTemp INT,
+    IN NumeroProgressivoOpzioneTemp INT,
+    IN CampoTestoTemp VARCHAR(2000)
 )
 BEGIN
     DECLARE TestEsistente INT DEFAULT 0;
     DECLARE ProgressivoQuesitoEsistente INT DEFAULT 0;
     DECLARE ProgressiviETestEsistenti INT DEFAULT 0;
 
-    SELECT COUNT(*) INTO TestEsistente FROM TEST WHERE TitoloTest = TitoloTest_t;
-    SELECT COUNT(*) INTO ProgressivoQuesitoEsistente FROM QUESITORISPOSTACHIUSA WHERE NumeroProgressivoQuesito = NumeroProgressivoQuesito_t;
-    SELECT COUNT(*) INTO ProgressiviETestEsistenti FROM OPZIONERISPOSTA WHERE TitoloTest = TitoloTest_t 
-        AND NumeroProgressivoQuesito = NumeroProgressivoQuesito_t 
-        AND NumeroProgressivoOpzione = NumeroProgressivoOpzione_t;
+    SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE TitoloTest = TitoloTestTemp);
+    SET ProgressivoQuesitoEsistente = (SELECT COUNT(*) FROM QUESITORISPOSTACHIUSA WHERE NumeroProgressivoQuesito = NumeroProgressivoQuesitoTemp);
+    SET ProgressiviETestEsistenti = (SELECT COUNT(*) FROM OPZIONERISPOSTA WHERE TitoloTest = TitoloTestTemp
+        AND NumeroProgressivoQuesito = NumeroProgressivoQuesitoTemp 
+        AND NumeroProgressivoOpzione = NumeroProgressivoOpzioneTemp);
 
-    IF TestEsistente = 1 AND ProgressivoQuesitoEsistente = 1 AND ProgressiviETestEsistenti = 0 THEN
+    IF (TestEsistente = 1 AND ProgressivoQuesitoEsistente = 1 AND ProgressiviETestEsistenti = 0) THEN
         INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, NumeroProgressivoOpzione, CampoTesto) 
-        VALUES (TitoloTest_t, NumeroProgressivoQuesito_t, NumeroProgressivoOpzione_t, CampoTesto_t);
+        VALUES (TitoloTestTemp, NumeroProgressivoQuesitoTemp, NumeroProgressivoOpzioneTemp, CampoTestoTemp);
     END IF;
 
 END //
@@ -1018,26 +1023,36 @@ CALL inserisciRisposta(4, "provaNr2", "rispostaNonCorretta", 1);
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
 CALL InserimentoMessaggioDocente("testDiProva3", "Eccoci qua","Questo è un messaggio e basta",null,"docente2@gmail.com");
-SELECT * FROM MESSAGGIO;
+#SELECT * FROM MESSAGGIO;
 
 CALL CreazioneTabellaEsercizio("NomeTabellaProva",NOW(),20,"docente2@gmail.com");
-SELECT * FROM TABELLADIESERCIZIO;
+#SELECT * FROM TABELLADIESERCIZIO;
 
 CALL ModificaVisualizzazioneRisposte("nuovoTitolo3",true);
-SELECT * FROM TEST;
+#SELECT * FROM TEST;
 
 CALL CreazioneTest("TestDiProva3", NOW(), null, true, "docente@gmail.com");
-SELECT * FROM TEST;
+#SELECT * FROM TEST;
 
 CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40);
+CALL CreazioneQuesitoRispostaChiusa("provaNr2","Medio","Descrizione",5);
+CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40);
+CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10);
+CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20);
+#SELECT * FROM QUESITO;
+#SELECT * FROM QUESITORISPOSTACHIUSA;
+#SELECT * FROM QUESITOCODICE;
 
+CALL InserimentoSoluzione("provaNr2","Qui va tutto bene");
+
+CALL InserimentoOpzioneRisposta("provaNr2",2,1,"Evviva Noi");
 
 
 
 
 
 -- Fine test
-
+/*
 
 DELIMITER //
 UPDATE TEST
