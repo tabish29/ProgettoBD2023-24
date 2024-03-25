@@ -288,6 +288,9 @@ CREATE TABLE REALIZZAZIONE (
 
 
 
+
+
+
 -- PROCEDURE PER TUTTI GLI UTENTI
 DELIMITER //
 CREATE PROCEDURE VisualizzaDocenti ()
@@ -302,6 +305,7 @@ BEGIN
     SELECT * FROM TEST;
 END //
 DELIMITER ;
+
 
 DELIMITER //
 CREATE PROCEDURE VisualizzaQuesitiPerTest (
@@ -391,6 +395,8 @@ DELIMITER ;
 
 
 -- PROCEDURE PER I DOCENTI
+
+-- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneTabellaEsercizio (
     IN nomeTabella VARCHAR(20),
@@ -399,7 +405,6 @@ CREATE PROCEDURE CreazioneTabellaEsercizio (
     IN emailDocente VARCHAR(40)
 )
 BEGIN
-
 -- controllo che la tabella non esista già e che esista il docente
 DECLARE tabellaNonEsistente INT DEFAULT 0;
 DECLARE docenteEsistente INT DEFAULT 0;
@@ -416,22 +421,21 @@ END
 
 
 
-
+-- OK
 DELIMITER //
 CREATE PROCEDURE ModificaVisualizzazioneRisposte (
-    IN TitoloTest_t VARCHAR(50),
-    IN Valore_t BOOLEAN
+    IN TitoloTestTemp VARCHAR(50),
+    IN ValoreTemp BOOLEAN
 )
 BEGIN
     -- Imposta il campo VisualizzaRisposte al valore specificato per il test specificato
-    UPDATE Test SET VisualizzaRisposte = Valore_t WHERE Titolo = TitoloTest_t;
+    UPDATE Test SET VisualizzaRisposte = ValoreTemp WHERE Titolo = TitoloTestTemp;
 END 
 // DELIMITER ;
 
 
 
-
--- solo per docente 
+-- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneTest (
     IN TitoloTest VARCHAR(50),
@@ -441,19 +445,17 @@ CREATE PROCEDURE CreazioneTest (
     IN EmailDocente VARCHAR(40)
 )
 BEGIN
-
     DECLARE docenteEsistente INT DEFAULT 0;
     DECLARE TestNonEsistente INT DEFAULT 0;
     SET docenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (EmailDocente=DOCENTE.Email));
 	SET TestNonEsistente = ( SELECT COUNT(*) FROM Test WHERE (TitoloTest=TEST.Titolo));
-    
 -- se il docente esiste, e il test non esiste, inserisce i dati
 IF (docenteEsistente = 1 AND TestNonEsistente = 0) THEN
 	INSERT INTO TEST VALUES (TitoloTest, DataCreazione, Foto, VisualizzaRisposte, EmailDocente);
 END IF;
-
 END 
 // DELIMITER ;
+
 
 
 DELIMITER //
@@ -466,14 +468,13 @@ CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
 BEGIN
 
 	DECLARE TestEsistente INT DEFAULT 0;
-	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest=TEST.Titolo));
+	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTest_t=TEST.Titolo));
 
 	IF (TestEsistente = 1) THEN
 		INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
 		VALUES (TitoloTest_t, LivelloDifficolta_t, Descrizione_t, NumeroRisposte_t);
 		INSERT INTO QUESITORISPOSTACHIUSA(TitoloTest) VALUES (TitoloTest_t);
 	END IF;
-
 END 
 // DELIMITER ;
 
@@ -523,7 +524,6 @@ END
 
 
 DELIMITER //
-
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTest_t VARCHAR(20),
     IN NumeroProgressivoQuesito_t INT,
@@ -547,13 +547,12 @@ BEGIN
     END IF;
 
 END //
-
 DELIMITER ;
 
 
 
+-- OK
 DELIMITER //
-
 CREATE PROCEDURE InserimentoMessaggioDocente(
     IN TitoloTest_t VARCHAR(20),
     IN TitoloMessaggio_t VARCHAR(20),
@@ -582,13 +581,7 @@ BEGIN
         SET IdMessaggio = LAST_INSERT_ID();
 
         -- Inserisce il messaggio nella tabella INVIODOCENTE per ogni docente
-        INSERT INTO INVIODOCENTE (Id, TitoloTest, EmailDocenteMittente) VALUES (IdMessaggio, TitoloTest_t, EmailDocenteMittente_t);
-
-        -- ciclo per inserire il messaggio nella tabella ricezione studente di ogni studente
-        
-
-        -- Cursor per selezionare tutti gli studenti
-        
+        INSERT INTO INVIODOCENTE (Id, TitoloTest, EmailDocenteMittente) VALUES (IdMessaggio, TitoloTest_t, EmailDocenteMittente_t);        
 
         OPEN student_cursor;
 
@@ -606,7 +599,6 @@ BEGIN
 
     END IF;
 END //
-
 DELIMITER ;
 
 
@@ -986,6 +978,7 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 -- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 
 INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
+INSERT INTO DOCENTE VALUES("docente2@gmail.com","ciao2","nano2", 12345892, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
 INSERT INTO STUDENTE VALUES("studente2@gmail.com", "nano", "ciao", 3333, 2010, 2234567891234567);
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
@@ -1024,9 +1017,27 @@ CALL inserisciRisposta(4, "provaNr2", "rispostaNonCorretta", 1);
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
--- Fine test
+CALL InserimentoMessaggioDocente("testDiProva3", "Eccoci qua","Questo è un messaggio e basta",null,"docente2@gmail.com");
+SELECT * FROM MESSAGGIO;
+
+CALL CreazioneTabellaEsercizio("NomeTabellaProva",NOW(),20,"docente2@gmail.com");
+SELECT * FROM TABELLADIESERCIZIO;
+
+CALL ModificaVisualizzazioneRisposte("nuovoTitolo3",true);
+SELECT * FROM TEST;
 
 CALL CreazioneTest("TestDiProva3", NOW(), null, true, "docente@gmail.com");
+SELECT * FROM TEST;
+
+CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40);
+
+
+
+
+
+
+-- Fine test
+
 
 DELIMITER //
 UPDATE TEST
