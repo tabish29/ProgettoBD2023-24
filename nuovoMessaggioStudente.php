@@ -68,14 +68,14 @@
             include 'navbarStudente.php';
             include 'connessione.php';
             
-        /*
+        
             // Verifica se l'utente è autenticato
             if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
                 // Redirect a una pagina di login se l'utente non è autenticato
                 header("Location: index.html");
                 exit();
             }
-*/
+
             echo "Valore della variabile di sessione email in messaggiStudenti.php pt1: " . $_SESSION['email'];
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -140,6 +140,23 @@
 
             <div class="btn-container">
                 <button type="submit" id="inviaMessaggioBtn" class="btn btn-primary">Invia Messaggio</button>
+            </div>
+
+            <div class="form-group">
+                <label for="selectTest">Seleziona un test:</label>
+                <select id="selectTest" name="selectTest">
+                    <?php
+                        // Recupera i nomi dei test dal database
+                        $query_test2 = "CALL visualizzaTestDisponibili()";
+                        $result_test2 = $conn->query($query_test2);
+
+                        // Aggiungi opzioni alla ListBox
+                        while ($row_test = $result_test2->fetch_assoc()) {
+                            echo "<option value='" . $row_test['Titolo'] . "'>" . $row_test['Titolo'] . "</option>";
+                        }
+
+                    ?>
+                </select>
             </div>
         </form>
     </div>
