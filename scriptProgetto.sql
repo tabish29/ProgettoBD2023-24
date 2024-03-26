@@ -171,7 +171,7 @@ CREATE TABLE QUESITO (
 ) ENGINE = INNODB;
 
 CREATE TABLE QUESITORISPOSTACHIUSA (
-	NumeroProgressivo INT,
+	NumeroProgressivo INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     
 	PRIMARY KEY(NumeroProgressivo, TitoloTest),
@@ -182,7 +182,7 @@ CREATE TABLE QUESITORISPOSTACHIUSA (
 ) ENGINE = INNODB;
 
 CREATE TABLE QUESITOCODICE (
-	NumeroProgressivo INT,
+	NumeroProgressivo INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     
     PRIMARY KEY(TitoloTest, NumeroProgressivo),
@@ -193,7 +193,7 @@ CREATE TABLE QUESITOCODICE (
 ) ENGINE = INNODB;
 
 CREATE TABLE SOLUZIONE (
-	NumeroProgressivo INT,
+	NumeroProgressivo INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
     TestoSoluzione VARCHAR(40),
     
@@ -233,12 +233,12 @@ CREATE TABLE RISPOSTAQUESITOCODICE  (
 )  ENGINE=INNODB;
 
 CREATE TABLE OPZIONERISPOSTA (
+	NumeroProgressivoOpzione INT auto_increment,
     TitoloTest VARCHAR(20) NOT NULL,
     NumeroProgressivoQuesito INT NOT NULL,
-    NumeroProgressivoOpzione INT NOT NULL,
     CampoTesto VARCHAR(2000),
     
-    PRIMARY KEY (NumeroProgressivoQuesito, TitoloTest, NumeroProgressivoOpzione),
+    PRIMARY KEY (NumeroProgressivoOpzione, NumeroProgressivoQuesito, TitoloTest),
     
     FOREIGN KEY(TitoloTest) REFERENCES QUESITORISPOSTACHIUSA(TitoloTest) ON DELETE CASCADE,
     FOREIGN KEY(NumeroProgressivoQuesito) REFERENCES QUESITORISPOSTACHIUSA(NumeroProgressivo) ON DELETE CASCADE
@@ -505,52 +505,46 @@ END
 // DELIMITER ;
 
 
-# QUA COME SI FA ?? DEVO RECUPERARE IL PROGRESSIVO
-
+# Faccio mettere in input il progressivo al docente, dovrà essere visibile nel programma
+-- OK
 DELIMITER //
 CREATE PROCEDURE InserimentoSoluzione (
     IN TitoloTestTemp VARCHAR(20),
+    IN NumeroProgressivoTemp INT,
     IN TestoSoluzioneTemp VARCHAR(40)
 )
 BEGIN
-	DECLARE NumeroProgressivoTemp INT DEFAULT 0;
-	DECLARE TestEsistente INT DEFAULT 0;
-	SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE (TitoloTestTemp = Titolo));
+    DECLARE ProgressivoETestEsistenti INT DEFAULT 0;
+    SET ProgressivoETestEsistenti = (SELECT COUNT(*) FROM QUESITOCODICE 
+    WHERE (NumeroProgressivo=NumeroProgressivoTemp AND TitoloTestTemp=TitoloTest));
 
-	IF (TestEsistente = 1) THEN
-	INSERT INTO SOLUZIONE(NumeroProgressivo, TitoloTest, TestoSoluzione) VALUES (NumeroProgressivoTemp, TitoloTestTemp, TestoSoluzioneTemp);
+	IF (ProgressivoETestEsistenti=1) THEN
+	INSERT INTO SOLUZIONE(NumeroProgressivo, TitoloTest, TestoSoluzione) 
+    VALUES (NumeroProgressivoTemp, TitoloTestTemp, TestoSoluzioneTemp);
 	END IF;
-
 END 
 // DELIMITER ;
 
 
 
-# QUA COME SI FA 2 ?? IL PROGRESSIVO DEL QUESITO DEVE ESSERE AUTO INCREMENT, NON LO PUO SCEGLIERE LUI...
-
+# qui ho reso auto_increment il progressivo e come prima faccio inserire il progressivo
+-- OK
 DELIMITER //
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTestTemp VARCHAR(20),
     IN NumeroProgressivoQuesitoTemp INT,
-    IN NumeroProgressivoOpzioneTemp INT,
     IN CampoTestoTemp VARCHAR(2000)
 )
 BEGIN
-    DECLARE TestEsistente INT DEFAULT 0;
-    DECLARE ProgressivoQuesitoEsistente INT DEFAULT 0;
-    DECLARE ProgressiviETestEsistenti INT DEFAULT 0;
+    DECLARE ProgressivoQuesitoETestEsistente INT DEFAULT 0;
 
-    SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE TitoloTest = TitoloTestTemp);
-    SET ProgressivoQuesitoEsistente = (SELECT COUNT(*) FROM QUESITORISPOSTACHIUSA WHERE NumeroProgressivoQuesito = NumeroProgressivoQuesitoTemp);
-    SET ProgressiviETestEsistenti = (SELECT COUNT(*) FROM OPZIONERISPOSTA WHERE TitoloTest = TitoloTestTemp
-        AND NumeroProgressivoQuesito = NumeroProgressivoQuesitoTemp 
-        AND NumeroProgressivoOpzione = NumeroProgressivoOpzioneTemp);
+	SET ProgressivoQuesitoETestEsistente = (SELECT COUNT(*) FROM QUESITORISPOSTACHIUSA 
+    WHERE (TitoloTestTemp=TitoloTest AND NumeroProgressivo = NumeroProgressivoQuesitoTemp));
 
-    IF (TestEsistente = 1 AND ProgressivoQuesitoEsistente = 1 AND ProgressiviETestEsistenti = 0) THEN
-        INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, NumeroProgressivoOpzione, CampoTesto) 
-        VALUES (TitoloTestTemp, NumeroProgressivoQuesitoTemp, NumeroProgressivoOpzioneTemp, CampoTestoTemp);
+    IF (ProgressivoQuesitoETestEsistente = 1) THEN
+        INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, CampoTesto) 
+        VALUES (TitoloTestTemp, NumeroProgressivoQuesitoTemp, CampoTestoTemp);
     END IF;
-
 END //
 DELIMITER ;
 
@@ -841,6 +835,8 @@ BEGIN
 END;
 // DELIMITER ;
 
+
+
 DELIMITER //
 CREATE TRIGGER cambio_stato_concluso_rispostaquesitocodice
 AFTER INSERT ON RISPOSTAQUESITOCODICE
@@ -907,6 +903,10 @@ BEGIN
 END 
 //
 DELIMITER ;
+
+
+
+
 
 DELIMITER //
 -- TRIGGER PER CAMBIARE L'ATTRIBUTO NUMERORISPOSTE DELLA TAVELLA QUESITO(IN RISPOSTA CI DOVREBBE ESSERE ANCHE IL TITOLO DEL TEST DATO CHE SOLO IL NUMERO PROGRESSIVO DEL QUESITO NON è SUFFICIENTE PER INDENTIFICARLO DALLA TABELLA RIPSOSTA )
@@ -992,9 +992,9 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
 INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
 INSERT INTO QUESITOCODICE VALUES(1, "provaNr1");
-INSERT INTO SOLUZIONE VALUES(1, "provaNr1","rispostaCorretta");
+INSERT INTO SOLUZIONE VALUES(1, "provaNr1","soluzione risposta Corretta");
 INSERT INTO QUESITORISPOSTACHIUSA VALUES(2, "provaNr1");
-INSERT INTO OPZIONERISPOSTA VALUES("provaNr1",2,2,"rispostaCorretta");
+INSERT INTO OPZIONERISPOSTA VALUES(1,"provaNr1",2,"opzione risposta Corretta");
 INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
 INSERT INTO STUDENTE VALUES("tabish@gmail.com", "Tabish", "Ghazanfar", 8654678, 2010,"gdhdnbgdtjhjklmk");
 INSERT INTO STUDENTE VALUES("lorenzo@gmail.com", "Lorenzo", "Maini", 475875983,2010, "llllllllllllllll");
@@ -1039,15 +1039,21 @@ CALL CreazioneQuesitoRispostaChiusa("provaNr2","Medio","Descrizione",5);
 CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40);
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10);
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20);
-#SELECT * FROM QUESITO;
-#SELECT * FROM QUESITORISPOSTACHIUSA;
-#SELECT * FROM QUESITOCODICE;
 
-CALL InserimentoSoluzione("provaNr2","Qui va tutto bene");
+CALL InserimentoSoluzione("provaNr1",1,"Qui va tutto bene");
+CALL InserimentoSoluzione("provaNr1",8,"Qui va tutto bene sbagliato");
+CALL InserimentoSoluzione("TestDiProva3",8,"Anche qua funziona");
+CALL InserimentoSoluzione("TestDiProva3",9,"Anche qua funziona tutto");
 
-CALL InserimentoOpzioneRisposta("provaNr2",2,1,"Evviva Noi");
-
-
+CALL InserimentoOpzioneRisposta("provaNr2",2,"Evviva Noi fatto male");
+CALL InserimentoOpzioneRisposta("provaNr2",6,"Evviva Noi");
+/*
+SELECT * FROM OPZIONERISPOSTA;
+SELECT * FROM SOLUZIONE;
+SELECT * FROM QUESITO;
+SELECT * FROM QUESITORISPOSTACHIUSA;
+SELECT * FROM QUESITOCODICE;
+*/
 
 
 
