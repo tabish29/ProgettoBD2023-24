@@ -87,7 +87,7 @@
             }
 
             echo "<h2>Messaggi inviati:</h2>";
-            $sql_all_messagesInviati = "SELECT * FROM messaggio as M, inviodocente as D WHERE (M.Id = D.Id)";
+            $sql_all_messagesInviati = "SELECT * FROM messaggio as M, inviodocente as D WHERE (M.Id = D.Id) AND (D.emailDocenteMittente = '$email_login')";
                 
             $result_all_messagesInviati = $conn->query($sql_all_messagesInviati);
 
