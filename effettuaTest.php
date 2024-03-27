@@ -126,22 +126,8 @@
                                 echo "<summary>Descrizione:</summary>";
                                 echo "" . $dati[2] . "";
                                 echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Numero Risposte:</summary>";
-                                echo "" . $dati[3] . "";
-                                echo "</details><br>";
 
-                                $sql_soluzioni = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                                $result_soluzioni = $conn->query($sql_soluzioni);
-                                $conn->next_result();
-                                if ($result_quesitoRC->num_rows>0) {
-                                    $soluzioni = $result_soluzioni->fetch_assoc();
-
-                                    echo "<details>";
-                                    echo "<summary>Soluzioni:</summary>";
-                                    echo "" . $soluzioni['CampoTesto'] . "";
-                                    echo "</details><br>";
-                                }
+                                
 
                                 
 
@@ -162,21 +148,8 @@
                                 echo "<summary>Descrizione:</summary>";
                                 echo "" . $dati[2] . "";
                                 echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Numero Risposte:</summary>";
-                                echo "" . $dati[3] . "";
-                                echo "</details><br>";
 
-                                $sql_soluzioni = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                                $result_soluzioni = $conn->query($sql_soluzioni);
-                                $conn->next_result();
-                                if ($result_quesitoCodice->num_rows>0) {
-                                    $soluzioni = $result_soluzioni->fetch_assoc();
-                                    echo "<details>";
-                                    echo "<summary>Soluzioni:</summary>";
-                                    echo "" . $soluzioni['TestoSoluzione'] . "";
-                                    echo "</details><br>";
-                                }
+                                
 
                             }
                         }
@@ -201,12 +174,7 @@
                     if ($result_select_test->num_rows > 0) {
                         $row = $result_select_test->fetch_assoc();
                         // Visualizza i dettagli del test
-                        /*
-                        echo "<li class='test-item'>Titolo: " . $row['Titolo'] . "</li>";
-                        echo "<li class='test-item'>Data Creazione: " . $row['DataCreazione'] . "</li>";
-                        echo "<li class='test-item'>Visualizza Risposte: " . $row['VisualizzaRisposte'] . "</li>";
-                        echo "<li class='test-item'>Email: " . $row['EmailDocente'] . "</li>";
-                        echo "<li class='test-item'>Quesiti:</li>";*/
+                        
                         echo "<details>";
                         echo "<summary>Titolo Test:</summary>";
                         echo "" . $row['Titolo'] . "";
@@ -232,23 +200,15 @@
                 }
                 function creaGrafica() {
                     $testId = $_GET['id'];
-                    echo "Test ahhh: " . $testId;
                     echo "
-                    <form id='modificaTestForm' action='modificaTest.php' method='post'>
-                                <input type='hidden' id ='titoloTest' name='titoloTest' value=" . $testId . ">
-                                <br>
-                                <label for='visualizzaRisposte'>Visualizza Risposte:</label>
-                                <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
-                                <br>
-                                <input type='hidden' name='action' value='crea'>
-                                <button type='submit' class='btn'  id='modificaTestButton'>Modifica</button>
-                            </form>
-                            ";
-                        }
+                        <input type='hidden' id ='titoloTest' name='titoloTest' value=" . $testId . ">
+                        <br>
+                        ";
+                    }
 
-                        mostraDatiTest();
+                    mostraDatiTest();
 
-                        creaGrafica();
+                    creaGrafica();
         
                         
                 }
@@ -257,21 +217,7 @@
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
-                    $titolo = $_POST['titoloTest'];
-                    $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
-
-                    // Query SQL per aggiornare il test nel database
-                    $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
-
-
-                    // Esegue la query di aggiornamento
-                    if ($conn->query($sql_update_test) === TRUE && mysqli_affected_rows($conn) > 0) {
-                        echo "Test aggiornato con successo.";
-                        echo '<a href="testStudenti.php">Torna ai Test</a>';
-                    } else {
-                        echo "Errore durante l'aggiornamento del test: " . $conn->error;
-                        echo '<a href="testStudenti.php">Torna ai Test</a>';
-                    }   
+                    
             }
             
         ?>
