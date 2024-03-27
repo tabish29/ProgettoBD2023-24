@@ -83,43 +83,78 @@
                 session_start();
             }
             
+        
 
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                $datiTest = []; // NumProgressivo, Tipo, TitoloTest, NumeroRisposte, NumeroRisposteInserite
                 $campiSchermataPrecedente = explode(";",$_GET['id']);
-                $titoloTest = $campiSchermataPrecedente[0];
-                $tipoQuesito = $campiSchermataPrecedente[1];
+                array_push($datiTest, $campiSchermataPrecedente[0]);   
+                array_push($datiTest, $campiSchermataPrecedente[1]);             
+
+                $sql_ottieniDatiQuesito = "SELECT TitoloTest, NumeroRisposte FROM Quesito WHERE NumeroProgressivo = $datiTest[0]";
+                $result = $conn->query($sql_ottieniDatiQuesito);
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $titoloTest = $row['TitoloTest'];
+                    $numRisposte = $row['NumeroRisposte'];
+                    array_push($datiTest, $titoloTest);
+                    array_push($datiTest, $numRisposte);
+                }
+                array_push($datiTest, 0); 
+                $_SESSION['datiTestAttuale'] = $datiTest;
+                $conn->next_result();
+                //echo "titolo: " . $titoloTest . " tipo: " . $tipoQuesito . " num: " . $numQuesito;
             }
 
-                
-            $sql_queryNuovaOpzioneOSoluzione = '';  
-            
 
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['datiTestAttuale']) && !empty($_SESSION['datiTestAttuale'])) {
+                $datiTest = $_SESSION['datiTestAttuale'];
                 $valoreInserito = $_POST['soluzioneT'];
-                $tipoQuesito = $_POST['tipoQuesito'];
-                $titoloTest = $_POST['titoloTest'];
-
+                $_SESSION['datiTestAttuale'][4] = $datiTest[4] + 1;
+                $datiTest = $_SESSION['datiTestAttuale'];
+                
                 //Scommentare dopo la realizzazione delle query
-                if ($tipoQuesito == "RC"){
-                    //$sql_queryNuovaOpzioneOSoluzione = "CALL PROCEDURE InserimentoOpzioneRisposta(VALORI DA METTERE)";
-                    
-                } else if ($tipoQuesito == "COD"){
-                    //$sql_queryNuovaOpzioneOSoluzione = "CALL PROCEDURE InserimentoSoluzione(VALORI DA METTERE)";
-                    
-                }
+                $sql_queryNuovaOpzioneOSoluzione = ''; 
+                if ($datiTest[3] - $datiTest[4] > 0){
+                    echo "Devi inserire ancora " . ($datiTest[3] - $datiTest[4]) . " risposte";
 
-                //if ($conn->query($sql_queryNuovaOpzioneOSoluzione) === FALSE && mysqli_affected_rows($conn) == 0){
-                //    echo "<p>Errore nell'inserimento: " . $conn->error . "</p>";
-                //} 
+                    if ($datiTest[1] == "RC"){
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+
+                        
+                    } else if ($datiTest[1] == "COD"){
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoSoluzione('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+                        
+                    }
+
+                    if ($conn->query($sql_queryNuovaOpzioneOSoluzione) === FALSE || mysqli_affected_rows($conn) == 0){
+                        echo "<p>Errore nell'inserimento: " . $conn->error . "</p>";
+                    } else {
+                        echo "<p>Inserimento avvenuto con successo</p>";
+                        $datiTest[4]++;
+                    }
+                } else if ($datiTest[3] - $datiTest[4] == 0){
+                    if ($datiTest[1] == "RC"){
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+
+                        
+                    } else if ($datiTest[1] == "COD"){
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoSoluzione('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+                        
+                    }
+                    $conn->query($sql_queryNuovaOpzioneOSoluzione);
+                    $conn->next_result();
+                    $datiTest[4]++;
+                    echo "<p>Numero massimo di risposte raggiunto</p>";
+                    $titolo = $datiTest[2];
+                    unset($_SESSION['datiTestAttuale']);
+                    echo "<a href='modificaTest.php?id=$titolo' class='btn'>Torna alla modifica del test</a>";
+                } 
                 
             }
         ?>
         
             <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
-                <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
-                <label for="tipoQ">Titolo Test: <?php echo $titoloTest; ?></label>
-                <input type="hidden" name="tipoQuesito" value="<?php echo $tipoQuesito; ?>">
-                <label for="tipoQ">Tipo quesito: <?php echo $tipoQuesito; ?></label>
                 <label for="testoSoluzione">Testo soluzione:</label>
                 <input type="text" id="soluzioneT" name="soluzioneT">
                 <input type="submit" class="btn" id="salvataggioSoluzione" value="Salva Soluzione">
