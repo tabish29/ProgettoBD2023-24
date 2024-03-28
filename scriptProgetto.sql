@@ -1074,6 +1074,9 @@ SELECT * FROM COMPLETAMENTO;
 
 
 
+
+
+
 -- Fine test
 /*
 
