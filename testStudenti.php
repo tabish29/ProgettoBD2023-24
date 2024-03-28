@@ -105,7 +105,7 @@
                         $result_completamento = $conn->query($ottieniCompletamento);
                         $statoCompletamento = 'nessun completamento';
                         if ($result_completamento->num_rows > 0){
-                            $statoCompletamento = '';             
+                            $statoCompletamento = $result_completamento->fetch_assoc()['Stato'];             
                         }
                         echo "<li class='test-item'>";
                         echo "<input type='radio' name='test' value='" . $titoloTest . "'>"; 
