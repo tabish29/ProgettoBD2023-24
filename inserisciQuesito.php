@@ -96,13 +96,6 @@
                 $descrizione = $_POST['descrizione'];
                 $numeroRisposte = $_POST['numeroRisposte'];
                 
-                echo "<h3>Test: $titoloTest</h3>";
-                echo "<h3>Tipo di quesito: $tipoQuesito</h3>";
-                echo "<h3>Livello di difficoltà: $livDifficolta</h3>";
-                echo "<h3>Descrizione: $descrizione</h3>";
-                echo "<h3>Numero di risposte: $numeroRisposte</h3>";
-                
-             
                 
                 $sql_creaQuesitoQuery = '';
                 if ($tipoQuesito == 'RC') {

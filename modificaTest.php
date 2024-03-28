@@ -60,8 +60,8 @@
             cursor: pointer;
         }
         .btn {
-            width: 100px;
-            height: 30px;
+            width: auto;
+            height: auto;
             border: 1px solid #222222;
             padding: 3px;
             margin: 0px;
@@ -238,10 +238,10 @@
                             <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
                             <br>
                             <input type='hidden' name='action' value='crea'>
-                            <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Modifica</button>
+                            <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Salva</button>
                         </form>
                         <a href='inserisciQuesito.php?id=" . $testId . "' class='btn'>Aggiungi Quesito</a> 
-                        <button id='tornaTest' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
+                        <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
                         ";
                     
                     
@@ -256,8 +256,6 @@
         }
         
 
-
-            
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -278,14 +276,8 @@
                     }
                 
             }
-            
-            
-
-            
         ?>
         </ul>
-        
-        
     </div>
 </body>
 </html>
