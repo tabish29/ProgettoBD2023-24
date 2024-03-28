@@ -237,6 +237,7 @@ CREATE TABLE OPZIONERISPOSTA (
     TitoloTest VARCHAR(20) NOT NULL,
     NumeroProgressivoQuesito INT NOT NULL,
     CampoTesto VARCHAR(2000),
+    RispostaCorretta BOOLEAN,
     
     PRIMARY KEY (NumeroProgressivoOpzione, NumeroProgressivoQuesito, TitoloTest),
     
@@ -617,7 +618,7 @@ DELIMITER //
 CREATE PROCEDURE inserisciRisposta(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(20),
-    IN valoreRispostaTemp VARCHAR(20),
+    IN valoreRispostaTemp VARCHAR(2000),
     IN numeroQuesitoTemp INT
 )
 BEGIN
@@ -661,7 +662,7 @@ BEGIN
     IF tipoRispostaChiusa THEN
 		SELECT CampoTesto INTO rispostaCorretta
 		FROM OPZIONERISPOSTA AS OP
-		WHERE (OP.NumeroProgressivoQuesito = numeroQuesitoTemp) AND (OP.TitoloTest IN (SELECT C1.TitoloTest
+		WHERE (OP.RispostaCorretta = TRUE) AND (OP.NumeroProgressivoQuesito = numeroQuesitoTemp) AND (OP.TitoloTest IN (SELECT C1.TitoloTest
                                                                                     FROM COMPLETAMENTO AS C1
                                                                                     WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
                         
@@ -690,34 +691,54 @@ END
 // DELIMITER ;
 
 
-/* NON FUNZIONA
+
 DELIMITER //
 CREATE PROCEDURE visualizzaEsitoRisposta(
-	IN idCompletamentoTemp INT,
-	IN TitoloTestTemp VARCHAR(30),
+    IN idCompletamentoTemp INT,
+    IN TitoloTestTemp VARCHAR(30),
     IN numQuesito INT,
     OUT esitoRisposta BOOLEAN
 )
 BEGIN
-	
-    IF(EXISTS(SELECT * FROM RISPOSTAQUESITORISPOSTACHIUSA AS RC WHERE (numQuesito = NumeroProgressivoQuesito) AND (RC.TitoloTest = TitoloTestTemp))) THEN
-		(SELECT esito INTO esitoRisposta
-		FROM RISPOSTAQUESITORISPOSTACHIUSA as RC
-		WHERE (numQuesito = NumeroProgressivoQuesito) AND (RC.TitoloTest = TitoloTestTemp));
-        
-    END IF;
-    
-    IF(EXISTS(SELECT * FROM RISPOSTAQUESITOCODICE AS QC WHERE (numQuesito = NumeroProgressivoQuesito) AND (QC.TitoloTest = TitoloTestTemp))) THEN
-		(SELECT esito INTO esitoRisposta
-		FROM RISPOSTAQUESITOCODICE AS QC
-		WHERE (numQuesito = NumeroProgressivoQuesito) AND (QC.TitoloTest = TitoloTestTemp));
+    DECLARE esitoTemp BOOLEAN;
+
+    -- Verifica se esiste una risposta per il quesito di tipo "Risposta Chiusa"
+    IF EXISTS (
+        SELECT 1 
+        FROM RISPOSTAQUESITORISPOSTACHIUSA AS RC 
+        WHERE RC.NumeroProgressivoQuesito = numQuesito AND RC.TitoloTest = TitoloTestTemp
+    ) THEN
+        SELECT esito INTO esitoTemp
+        FROM RISPOSTAQUESITORISPOSTACHIUSA AS RC
+        WHERE RC.NumeroProgressivoQuesito = numQuesito AND RC.TitoloTest = TitoloTestTemp
+        LIMIT 1; -- Assicura che venga restituita una sola riga
     END IF;
 
-END//
+    -- Verifica se esiste una risposta per il quesito di tipo "Codice"
+    IF EXISTS (
+        SELECT 1 
+        FROM RISPOSTAQUESITOCODICE AS QC 
+        WHERE QC.NumeroProgressivoQuesito = numQuesito AND QC.TitoloTest = TitoloTestTemp
+    ) THEN
+        SELECT esito INTO esitoTemp
+        FROM RISPOSTAQUESITOCODICE AS QC
+        WHERE QC.NumeroProgressivoQuesito = numQuesito AND QC.TitoloTest = TitoloTestTemp
+        LIMIT 1; -- Assicura che venga restituita una sola riga
+    END IF;
 
+    -- Imposta il valore di esitoRisposta in base al valore di esitoTemp
+    IF esitoTemp IS NOT NULL THEN
+        SET esitoRisposta = esitoTemp;
+    ELSE
+        SET esitoRisposta = NULL;
+    END IF;
+
+END
+//
 DELIMITER ;
 
-*/
+
+
 
 DELIMITER //
 CREATE PROCEDURE inserisciMessaggioStudente(
@@ -1000,7 +1021,8 @@ INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
 INSERT INTO QUESITOCODICE VALUES(1, "provaNr1");
 INSERT INTO SOLUZIONE VALUES(1, "provaNr1","soluzione risposta Corretta");
 INSERT INTO QUESITORISPOSTACHIUSA VALUES(2, "provaNr1");
-INSERT INTO OPZIONERISPOSTA VALUES(1,"provaNr1",2,"opzione risposta Corretta");
+INSERT INTO OPZIONERISPOSTA VALUES(1,"provaNr1",2,"opzione risposta Corretta",true);
+INSERT INTO OPZIONERISPOSTA VALUES(2,"provaNr1",2,"opzione risposta sbagliata",false);
 INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
 INSERT INTO STUDENTE VALUES("tabish@gmail.com", "Tabish", "Ghazanfar", 8654678, 2010,"gdhdnbgdtjhjklmk");
 INSERT INTO STUDENTE VALUES("lorenzo@gmail.com", "Lorenzo", "Maini", 475875983,2010, "llllllllllllllll");
@@ -1014,17 +1036,17 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "tabish@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("provaNr2", "lorenzo@gmail.com", NOW(), NOW());
-/* non funziona
-CALL inserisciRisposta(1, "provaNr1", "rispostaCorretta", 2);
+
+CALL inserisciRisposta(1, "provaNr1", "opzione risposta Corretta", 2);
 CALL inserisciRisposta(2, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(3, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(4, "provaNr2", "rispostaNonCorretta", 1);
-*/
--- CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
--- SELECT @esitoRispostaScelta;
 
--- CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
--- SELECT @esitoRispostaCodice;
+ CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
+ SELECT @esitoRispostaScelta;
+
+ CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
+ SELECT @esitoRispostaCodice;
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
