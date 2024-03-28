@@ -103,14 +103,15 @@
 
                 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     $testId = $_GET['id'];
-                    mostraDatiTest($testId,'');
+                    mostraDatiTest($testId,'',-1);
                     creaGrafica($testId);
                 }
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $testId = $_POST['titoloTest'];
                     $testoVerifica = "risposta sbagliata/corretta"; //TODO: verificare la risposta
-                    mostraDatiTest($testId,$testoVerifica);
+                    $numDomanda = $_POST['numeroDomanda'];
+                    mostraDatiTest($testId,$testoVerifica,$numDomanda);
                     creaGrafica($testId);
                     // Qui puoi inserire la logica per gestire i dati inviati tramite il form
                 }
@@ -123,7 +124,7 @@
                     ";
                 }
 
-                function graficaRisposte($numeroProgressivo, $titoloTest, $tipologiaQuesito, $numeroQuesitiTest, $testoVerifica) {
+                function graficaRisposte($numeroProgressivo, $titoloTest, $tipologiaQuesito, $numeroQuesitiTest, $testoVerifica, $numDomanda) {
                     include 'connessione.php';
                     verificaRisposta();
                     $contatore = 1;
@@ -140,9 +141,12 @@
                             }
                             echo "<form method='post' action='effettuaTest.php'>";
                             echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
+                            echo "<input type='hidden' name='numeroDomanda' value='" . $contatore . "'>";
                             echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
-                            echo "<button type='submit' class='btnVerifica'>Verifica Risposta</button>";
-                            echo "<br><label>" . $testoVerifica . "</label>";                            
+                            if ($contatore == $numDomanda){
+                                echo "<button type='submit' class='btnVerifica'>Verifica Risposta</button>";
+                                echo "<br><label>" . $testoVerifica . "</label>";
+                            }                          
                             echo "</form>";
 
                         } 
@@ -154,7 +158,10 @@
                         echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
                         echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
                         echo "<button type='submit' class='btnVerifica'>Verifica Risposta</button>";
-                        echo "<br><label>" . $testoVerifica . "</label>";
+
+                        if ($contatore == $numDomanda){
+                            echo "<br><label>" . $testoVerifica . "</label>";
+                        }
                         echo "</form>";
 
                         echo "<br><br>";
@@ -167,7 +174,7 @@
                     }
                 }
 
-                function ottieniQuesiti($titoloTest, $testoVerifica) {
+                function ottieniQuesiti($titoloTest, $testoVerifica, $numDomanda) {
                     include 'connessione.php';
                     
                     $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
@@ -177,6 +184,7 @@
                     if ($result_quesiti_test->num_rows > 0) {
                         while ($row = $result_quesiti_test->fetch_assoc()) {
                             $num++;
+                            
                             echo "<br><p>Quesito nr." . $num . "</p>";                 
                             $numeroProgressivo = $row['NumeroProgressivo'];
                             $livelloDifficolta = $row['LivelloDifficolta'];
@@ -205,14 +213,14 @@
                                 echo "<p>Domanda:\n" . $dati[2] . "</p><br>";
                             }
 
-                            graficaRisposte($numeroProgressivo, $titoloTest, $tipologiaQuesito, $num, $testoVerifica);
+                            graficaRisposte($numeroProgressivo, $titoloTest, $tipologiaQuesito, $num, $testoVerifica, $numDomanda);
                         }
                     } else {
                         echo "Nessun quesito presente";
                     }
                 }
 
-                function mostraDatiTest($testId,$testoVerifica) {
+                function mostraDatiTest($testId,$testoVerifica,$numDomanda) {
                     include 'connessione.php';
 
                     $sql_select_test = "SELECT * FROM TEST WHERE Titolo = '$testId'";
@@ -222,7 +230,7 @@
                         $row = $result_select_test->fetch_assoc();
                         echo "<p>Titolo Test:\n" . $row['Titolo']. "</p><br>";
 
-                        ottieniQuesiti($row['Titolo'], $testoVerifica);
+                        ottieniQuesiti($row['Titolo'], $testoVerifica, $numDomanda);
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }

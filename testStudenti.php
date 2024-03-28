@@ -100,11 +100,19 @@
                 if ($result_all_tests->num_rows > 0) {
                     echo "<form id='testForm'>";
                     while ($row = $result_all_tests->fetch_assoc()) {
+                        $titoloTest = $row['Titolo'];
+                        $ottieniCompletamento = "SELECT Stato FROM COMPLETAMENTO WHERE TitoloTest = '$titoloTest' AND EmailStudente = '$email_login'";
+                        $result_completamento = $conn->query($ottieniCompletamento);
+                        $statoCompletamento = 'nessun completamento';
+                        if ($result_completamento->num_rows > 0){
+                            $statoCompletamento = '';             
+                        }
                         echo "<li class='test-item'>";
-                        echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
+                        echo "<input type='radio' name='test' value='" . $titoloTest . "'>"; 
 
-                        echo "<label for='test'>" . $row['Titolo'] . "</label>";
-                        echo "<label for ='test'> - " . $row['EmailDocente'] . "</label>";
+                        echo "<label for='test'>" . $titoloTest . "</label><br>";
+                        echo "<label for ='test'>" . $row['EmailDocente'] . "</label><br>";
+                        echo "<label for ='test'> Stato completamento: " . $statoCompletamento . "</label>";
                         echo "</li>";
                     }
                     echo "<input type='hidden' name='action' id='actionField'>";
@@ -123,7 +131,7 @@
                     alert('Seleziona un test.');
                     return;
                 }
-                var testId = selectedTestId.value;                  // EFFETTUARE IL TEST !!!
+                var testId = selectedTestId.value;                  
                 if (action === 'effettua') {
                     window.location.href = 'effettuaTest.php?id=' + testId;
                 }
