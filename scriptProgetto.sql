@@ -760,6 +760,9 @@ END
 
 
 
+
+
+
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
@@ -768,18 +771,18 @@ BEGIN
     DECLARE num_risposte_inserite INT;
 
     -- Conta quante risposte sono state inserite per lo studente per il test corrente
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITORISPOSTACHIUSA
-    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
+    SET num_risposte_inserite = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
+		WHERE (TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento));
 
     -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
-    IF num_risposte_inserite = 1 THEN
+    IF (num_risposte_inserite = 1) THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'InCompletamento'
-        WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
+        WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivo = NEW.NumeroProgressivoCompletamento;
     END IF;
 END
 // DELIMITER ;
+
 
 
 DELIMITER //
@@ -790,18 +793,19 @@ BEGIN
     DECLARE num_risposte_inserite INT;
 
     -- Conta quante risposte sono state inserite per lo studente per il test corrente
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITOCODICE
-    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
+    SET num_risposte_inserite = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
+		WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento);
 
     -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
-    IF num_risposte_inserite = 1 THEN
+    IF (num_risposte_inserite = 1) THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'InCompletamento'
-        WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento;
+        WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivo = NEW.NumeroProgressivoCompletamento;
     END IF;
 END;
 // DELIMITER ;
+
+
 
 DELIMITER //
 CREATE TRIGGER cambio_stato_concluso_rispostaquesitorispostachiusa
@@ -814,28 +818,24 @@ BEGIN
     DECLARE num_progressivo_completamento INT;
     
     -- Ottieni il numero progressivo di completamento
-    SELECT NumeroProgressivoCompletamento INTO num_progressivo_completamento
-    FROM RISPOSTAQUESITORISPOSTACHIUSA
-    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento
-    LIMIT 1;
+    SET num_progressivo_completamento = (SELECT NumeroProgressivoCompletamento FROM RISPOSTAQUESITORISPOSTACHIUSA
+		WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento
+		LIMIT 1);
     
     -- Conta il numero totale di quesiti per il test
-    SELECT COUNT(*) INTO num_quesiti_totali
-    FROM QUESITO
-    WHERE TitoloTest = NEW.TitoloTest;
+    SET num_quesiti_totali = (SELECT COUNT(*) FROM QUESITORISPOSTACHIUSA
+		WHERE TitoloTest = NEW.TitoloTest);
 
     -- Conta il numero di risposte inserite per il test
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITORISPOSTACHIUSA
-    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento;
+    SET num_risposte_inserite = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
+		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento);
 
     -- Conta il numero di risposte corrette per il test
-    SELECT COUNT(*) INTO num_risposte_corrette
-    FROM RISPOSTAQUESITORISPOSTACHIUSA
-    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE;
+    SET num_risposte_corrette = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
+		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
 
     -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
-    IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
+    IF (num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali) THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
         WHERE NumeroProgressivo = num_progressivo_completamento;
@@ -856,25 +856,21 @@ BEGIN
     DECLARE num_progressivo_completamento INT;
     
     -- Ottieni il numero progressivo di completamento
-    SELECT NumeroProgressivoCompletamento INTO num_progressivo_completamento
-    FROM RISPOSTAQUESITOCODICE
-    WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento
-    LIMIT 1;
+    SET num_progressivo_completamento = (SELECT NumeroProgressivoCompletamento FROM RISPOSTAQUESITOCODICE
+		WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento
+		LIMIT 1);
     
     -- Conta il numero totale di quesiti per il test
-    SELECT COUNT(*) INTO num_quesiti_totali
-    FROM QUESITOCODICE
-    WHERE TitoloTest = NEW.TitoloTest;
+    SET num_quesiti_totali = (SELECT COUNT(*) FROM QUESITOCODICE
+		WHERE TitoloTest = NEW.TitoloTest);
 
     -- Conta il numero di risposte inserite per il test
-    SELECT COUNT(*) INTO num_risposte_inserite
-    FROM RISPOSTAQUESITOCODICE
-    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento;
+    SET num_risposte_inserite = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
+		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento);
 
     -- Conta il numero di risposte corrette per il test
-    SELECT COUNT(*) INTO num_risposte_corrette
-    FROM RISPOSTAQUESITOCODICE
-    WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE;
+    SET num_risposte_corrette = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
+		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
 
     -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
     IF num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali THEN
@@ -884,6 +880,8 @@ BEGIN
     END IF;
 END;
 // DELIMITER ;
+
+
 
 
 DELIMITER //
@@ -1011,11 +1009,11 @@ INSERT INTO STUDENTE VALUES("davide@gmail.com", "Davide", "De Rosa", 1211212,201
 INSERT INTO TEST VALUES("provaNr2", '2024-02-09 14:30:00', NULL ,true, "docente@gmail.com");
 INSERT INTO QUESITO VALUES(4,"provaNr2","Basso", "testo quesito a scleta", 3);
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "alessia@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr2", "alessia@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr1", "tabish@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Concluso", "provaNr2", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "alessia@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "tabish@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "tabish@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
-INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "lorenzo@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 /* non funziona
 CALL inserisciRisposta(1, "provaNr1", "rispostaCorretta", 2);
 CALL inserisciRisposta(2, "provaNr1", "rispostaNonCorretta", 1);
@@ -1061,13 +1059,21 @@ CALL InserimentoSoluzione("TestDiProva3",9,"Anche qua funziona tutto");
 
 CALL InserimentoOpzioneRisposta("provaNr2",2,"Evviva Noi fatto male");
 CALL InserimentoOpzioneRisposta("provaNr2",6,"Evviva Noi");
-/*
-SELECT * FROM OPZIONERISPOSTA;
-SELECT * FROM SOLUZIONE;
+CALL InserimentoOpzioneRisposta("provaNr2",8,"Completamento di Lollo");
+
+CALL InserisciRisposta(3,"ProvaNr1","risposta chiusa",2);
+
 SELECT * FROM QUESITO;
 SELECT * FROM QUESITORISPOSTACHIUSA;
+SELECT * FROM OPZIONERISPOSTA;
+SELECT * FROM RISPOSTAQUESITORISPOSTACHIUSA;
 SELECT * FROM QUESITOCODICE;
-*/
+SELECT * FROM SOLUZIONE;
+SELECT * FROM RISPOSTAQUESITOCODICE;
+SELECT * FROM COMPLETAMENTO;
+
+
+
 
 
 
