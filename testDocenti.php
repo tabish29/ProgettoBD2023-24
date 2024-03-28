@@ -8,7 +8,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f9acac;
         }
         .container {
             width: 80%;
@@ -85,10 +85,8 @@
                 $email_login = $_SESSION['email'];
                 $ruolo_login = $_SESSION['ruolo'];
                 
-                echo "Valore della variabile di sessione email in testDocenti.php: " . $_SESSION['email'];
 
-                
-                echo "\nLista Test:";
+                echo "<p>Lista Test:</p>";
                     // Query per selezionare tutti i test
                 $sql_all_tests = "CALL visualizzaTestDisponibili()";
                     

@@ -96,26 +96,25 @@
                 $descrizione = $_POST['descrizione'];
                 $numeroRisposte = $_POST['numeroRisposte'];
                 
-                echo "<h3>Test: $titoloTest</h3>";
-                echo "<h3>Tipo di quesito: $tipoQuesito</h3>";
-                echo "<h3>Livello di difficoltà: $livDifficolta</h3>";
-                echo "<h3>Descrizione: $descrizione</h3>";
-                echo "<h3>Numero di risposte: $numeroRisposte</h3>";
-                
-             /*
-             Togliere commento dopo che Lorenzo sistema le Query
                 
                 $sql_creaQuesitoQuery = '';
-                if ($tipoQuesito === 'chiusa') {
-                    $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', '$numeroRisposte')";
-                } else {
-                    $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', '$numeroRisposte')";
+                if ($tipoQuesito == 'RC') {
+                    $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', $numeroRisposte, @numeroProgressivoQuesito)";
+                    
+                } else if ($tipoQuesito == 'COD') {
+                    $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', $numeroRisposte, @numeroProgressivoQuesito)";
                 }
-                if ($conn->query($sql_creaQuesitoQuery) === FALSE && mysqli_affected_rows($conn) == 0){
+                if ($conn->query($sql_creaQuesitoQuery) === FALSE || mysqli_affected_rows($conn) == 0){
+                    
                     echo "<p>Errore nella creazione del quesito: " . $conn->error . "</p>";
                 }    
-                */
-                echo "<a href='inserisciQuesitoSpecifico.php?id=" . $titoloTest . ";" . $tipoQuesito . "' class='btn'>Procedi per configurare le risposte</a> ";
+                
+                // Recupero del valore di output
+                $result = $conn->query("SELECT @NumeroProgressivoQuesito AS NumeroProgressivo");
+                $row = $result->fetch_assoc();
+                $numeroProgressivoQuesito = $row['NumeroProgressivo'];
+                echo "<a href='inserisciQuesitoSpecifico.php?id=" . $numeroProgressivoQuesito. ";" . $tipoQuesito . "' class='btn'>Procedi per configurare le risposte</a> ";
+                
 
             }
         ?>

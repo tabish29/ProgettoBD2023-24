@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,8 +60,8 @@
             cursor: pointer;
         }
         .btn {
-            width: 100px;
-            height: 30px;
+            width: auto;
+            height: auto;
             border: 1px solid #222222;
             padding: 3px;
             margin: 0px;
@@ -69,37 +70,119 @@
             font-style: normal;
             color: #222222;
             background-color: #7cfc00; 
-            }
+        }
+        p{
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+        }
+        .btnVerifica{
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 0px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #acf9ba; 
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Effettua il Test</h2>
         <ul class="test-details">
-        <?php
-            include 'connessione.php';
-            if (!isset($_SESSION)){
-                session_start();
-            }
+            <?php
+                include 'connessione.php';
+                if (!isset($_SESSION)){
+                    session_start();
+                }
 
-           
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                    $testId = $_GET['id'];
+                    mostraDatiTest($testId,'');
+                    creaGrafica($testId);
+                }
 
-                function ottieniQuesiti($titoloTest){
+                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                    $testId = $_POST['titoloTest'];
+                    $testoVerifica = "risposta sbagliata/corretta"; //TODO: verificare la risposta
+                    mostraDatiTest($testId,$testoVerifica);
+                    creaGrafica($testId);
+                    // Qui puoi inserire la logica per gestire i dati inviati tramite il form
+                }
+
+                function verificaRisposta() {
+                    echo "
+                        <script>
+                            // Qui puoi inserire la logica JavaScript per la verifica della risposta
+                        </script>
+                    ";
+                }
+
+                function graficaRisposte($numeroProgressivo, $titoloTest, $tipologiaQuesito, $numeroQuesitiTest, $testoVerifica) {
+                    include 'connessione.php';
+                    verificaRisposta();
+                    $contatore = 1;
+                    
+                    if ($tipologiaQuesito == "Risposta Chiusa") {
+                        echo "<br><p>Seleziona la risposta corretta:</p>";
+                        $sql_risposte = "SELECT * FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+                        $result_risposte = $conn->query($sql_risposte);
+                        $conn->next_result();
+                        if ($result_risposte->num_rows > 0) {
+                            while ($row = $result_risposte->fetch_assoc()) {
+                                $risposta = $row['CampoTesto'];
+                                echo "<input type='radio' name='risposta' value='$risposta' data-quesito='$numeroProgressivo'>$risposta<br>";
+                            }
+                            echo "<form method='post' action='effettuaTest.php'>";
+                            echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
+                            echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
+                            echo "<button type='submit' class='btnVerifica'>Verifica Risposta</button>";
+                            echo "<br><label>" . $testoVerifica . "</label>";                            
+                            echo "</form>";
+
+                        } 
+                        $contatore++;
+                   } else if ($tipologiaQuesito == "Codice") {
+                        echo "<p>Inserisci il codice:</p>";
+                        echo "<textarea id='codice' name='codice' rows='10' cols='50'></textarea>";
+                        echo "<form method='post' action='effettuaTest.php'>";
+                        echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
+                        echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
+                        echo "<button type='submit' class='btnVerifica'>Verifica Risposta</button>";
+                        echo "<br><label>" . $testoVerifica . "</label>";
+                        echo "</form>";
+
+                        echo "<br><br>";
+                        $contatore++;
+                    }
+                    
+                    if ($contatore == $numeroQuesitiTest) {
+                        echo "<br><br>";
+                        echo "<input class='btn' type='submit' value='Termina Test'>"; 
+                    }
+                }
+
+                function ottieniQuesiti($titoloTest, $testoVerifica) {
                     include 'connessione.php';
                     
                     $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
                     $result_quesiti_test = $conn->query($sql_quesiti_test);
                     $conn->next_result();
-                    $num = 1;
-                    if ($result_quesiti_test->num_rows>0) {
+                    $num = 0;
+                    if ($result_quesiti_test->num_rows > 0) {
                         while ($row = $result_quesiti_test->fetch_assoc()) {
-                            echo "Quesito nr." . $num . "<br>";                 //Attenzione non deve corrispondere al progressivo
+                            $num++;
+                            echo "<br><p>Quesito nr." . $num . "</p>";                 
                             $numeroProgressivo = $row['NumeroProgressivo'];
                             $livelloDifficolta = $row['LivelloDifficolta'];
                             $descrizione = $row['Descrizione'];
                             $numeroRisposte = $row['NumeroRisposte'];
-                            $dati = [$numeroProgressivo, $livelloDifficolta,$descrizione,$numeroRisposte];
+                            $dati = [$numeroProgressivo, $livelloDifficolta, $descrizione, $numeroRisposte];
 
                             $tipologiaQuesito = "";
 
@@ -111,170 +194,47 @@
                             $result_quesitoCodice = $conn->query($sql_quesitoCodice);
                             $conn->next_result();
 
-                            if ($result_quesitoRC->num_rows>0) {
-                                $num++;
+                            if ($result_quesitoRC->num_rows > 0) {
                                 $tipologiaQuesito = "Risposta Chiusa";
-                                echo "<details>";
-                                echo "<summary>Tipologia:</summary>";
-                                echo "" . $tipologiaQuesito . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Livello Difficoltà:</summary>";
-                                echo "" . $dati[1] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Descrizione:</summary>";
-                                echo "" . $dati[2] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Numero Risposte:</summary>";
-                                echo "" . $dati[3] . "";
-                                echo "</details><br>";
-
-                                $sql_soluzioni = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                                $result_soluzioni = $conn->query($sql_soluzioni);
-                                $conn->next_result();
-                                if ($result_quesitoRC->num_rows>0) {
-                                    $soluzioni = $result_soluzioni->fetch_assoc();
-
-                                    echo "<details>";
-                                    echo "<summary>Soluzioni:</summary>";
-                                    echo "" . $soluzioni['CampoTesto'] . "";
-                                    echo "</details><br>";
-                                }
-
+                                echo "<p>Domanda:</p>" . $dati[2] . "<br>";
                                 
-
                             } 
                             
-                            if ($result_quesitoCodice->num_rows>0){
-                                $num++;
+                            if ($result_quesitoCodice->num_rows > 0){
                                 $tipologiaQuesito = "Codice";
-                                echo "<details>";
-                                echo "<summary>Tipologia:</summary>";
-                                echo "" . $tipologiaQuesito . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Livello Difficoltà:</summary>";
-                                echo "" . $dati[1] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Descrizione:</summary>";
-                                echo "" . $dati[2] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Numero Risposte:</summary>";
-                                echo "" . $dati[3] . "";
-                                echo "</details><br>";
-
-                                $sql_soluzioni = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                                $result_soluzioni = $conn->query($sql_soluzioni);
-                                $conn->next_result();
-                                if ($result_quesitoCodice->num_rows>0) {
-                                    $soluzioni = $result_soluzioni->fetch_assoc();
-                                    echo "<details>";
-                                    echo "<summary>Soluzioni:</summary>";
-                                    echo "" . $soluzioni['TestoSoluzione'] . "";
-                                    echo "</details><br>";
-                                }
-
+                                echo "<p>Domanda:\n" . $dati[2] . "</p><br>";
                             }
-                        }
 
+                            graficaRisposte($numeroProgressivo, $titoloTest, $tipologiaQuesito, $num, $testoVerifica);
+                        }
                     } else {
                         echo "Nessun quesito presente";
-                    
                     }
                 }
-                
 
-                function mostraDatiTest(){
+                function mostraDatiTest($testId,$testoVerifica) {
                     include 'connessione.php';
-                    // Preleva il Titolo del test dalla query string
-                    $testId = $_GET['id'];
 
-                    // Esegue la query per selezionare il test dal database
                     $sql_select_test = "SELECT * FROM TEST WHERE Titolo = '$testId'";
                     $result_select_test = $conn->query($sql_select_test);
                     $conn->next_result();
-                    // Verifica se il test è stato trovato
                     if ($result_select_test->num_rows > 0) {
                         $row = $result_select_test->fetch_assoc();
-                        // Visualizza i dettagli del test
-                        /*
-                        echo "<li class='test-item'>Titolo: " . $row['Titolo'] . "</li>";
-                        echo "<li class='test-item'>Data Creazione: " . $row['DataCreazione'] . "</li>";
-                        echo "<li class='test-item'>Visualizza Risposte: " . $row['VisualizzaRisposte'] . "</li>";
-                        echo "<li class='test-item'>Email: " . $row['EmailDocente'] . "</li>";
-                        echo "<li class='test-item'>Quesiti:</li>";*/
-                        echo "<details>";
-                        echo "<summary>Titolo Test:</summary>";
-                        echo "" . $row['Titolo'] . "";
-                        echo "</details><br>";
-                        echo "<details>";
-                        echo "<summary>Data Creazione:</summary>";
-                        echo "" . $row['DataCreazione'] . "";
-                        echo "</details><br>";
-                        echo "<details>";
-                        echo "<summary>Visualizza Risposte:</summary>";
-                        echo "" . $row['VisualizzaRisposte'] . "";
-                        echo "</details><br>";
-                        echo "<details>";
-                        echo "<summary>Email:</summary>";
-                        echo "" . $row['EmailDocente'] . "";
-                        echo "</details><br>";
-                        
+                        echo "<p>Titolo Test:\n" . $row['Titolo']. "</p><br>";
 
-                        ottieniQuesiti($row['Titolo']);
+                        ottieniQuesiti($row['Titolo'], $testoVerifica);
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }
                 }
-                function creaGrafica() {
-                    $testId = $_GET['id'];
-                    echo "Test ahhh: " . $testId;
+
+                function creaGrafica($testId) {
                     echo "
-                    <form id='modificaTestForm' action='modificaTest.php' method='post'>
-                                <input type='hidden' id ='titoloTest' name='titoloTest' value=" . $testId . ">
-                                <br>
-                                <label for='visualizzaRisposte'>Visualizza Risposte:</label>
-                                <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
-                                <br>
-                                <input type='hidden' name='action' value='crea'>
-                                <button type='submit' class='btn'  id='modificaTestButton'>Modifica</button>
-                            </form>
-                            ";
-                        }
-
-                        mostraDatiTest();
-
-                        creaGrafica();
-        
-                        
+                        <input type='hidden' id='titoloTest' name='titoloTest' value=" . $testId . ">
+                        <br>
+                    ";
                 }
-
-            
-
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                
-                    $titolo = $_POST['titoloTest'];
-                    $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
-
-                    // Query SQL per aggiornare il test nel database
-                    $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
-
-
-                    // Esegue la query di aggiornamento
-                    if ($conn->query($sql_update_test) === TRUE && mysqli_affected_rows($conn) > 0) {
-                        echo "Test aggiornato con successo.";
-                        echo '<a href="testStudenti.php">Torna ai Test</a>';
-                    } else {
-                        echo "Errore durante l'aggiornamento del test: " . $conn->error;
-                        echo '<a href="testStudenti.php">Torna ai Test</a>';
-                    }   
-            }
-            
-        ?>
+            ?>
         </ul>
     </div>
 </body>

@@ -60,8 +60,8 @@
             cursor: pointer;
         }
         .btn {
-            width: 100px;
-            height: 30px;
+            width: auto;
+            height: auto;
             border: 1px solid #222222;
             padding: 3px;
             margin: 0px;
@@ -95,7 +95,7 @@
                     $num = 1;
                     if ($result_quesiti_test->num_rows>0) {
                         while ($row = $result_quesiti_test->fetch_assoc()) {
-                            echo "Quesito nr." . $num . "<br>"; //ATtenzione non deve corrispondere al progressivo
+                            echo "Quesito nr." . $num . "<br>"; // Attenzione non deve corrispondere al progressivo
                             $numeroProgressivo = $row['NumeroProgressivo'];
                             $livelloDifficolta = $row['LivelloDifficolta'];
                             $descrizione = $row['Descrizione'];
@@ -135,14 +135,12 @@
                                 $sql_soluzioni = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_soluzioni = $conn->query($sql_soluzioni);
                                 $conn->next_result();
-                                if ($result_quesitoRC->num_rows>0) {
-                                    $soluzioni = $result_soluzioni->fetch_assoc();
-
-                                    echo "<details>";
-                                    echo "<summary>Soluzioni:</summary>";
-                                    echo "" . $soluzioni['CampoTesto'] . "";
-                                    echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Soluzioni:</summary>";
+                                while ($soluzione = $result_soluzioni->fetch_assoc()) {
+                                    echo "" . $soluzione['CampoTesto'] . "<br>";
                                 }
+                                echo "</details><br>";
 
                                 
 
@@ -171,13 +169,12 @@
                                 $sql_soluzioni = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_soluzioni = $conn->query($sql_soluzioni);
                                 $conn->next_result();
-                                if ($result_quesitoCodice->num_rows>0) {
-                                    $soluzioni = $result_soluzioni->fetch_assoc();
-                                    echo "<details>";
-                                    echo "<summary>Soluzioni:</summary>";
-                                    echo "" . $soluzioni['TestoSoluzione'] . "";
-                                    echo "</details><br>";
+                                echo "<details>";
+                                echo "<summary>Soluzioni:</summary>";
+                                while ($soluzione = $result_soluzioni->fetch_assoc()) {
+                                    echo "" . $soluzione['TestoSoluzioni'] . "<br>";
                                 }
+                                echo "</details><br>";
 
                             }
                         }
@@ -241,11 +238,12 @@
                             <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
                             <br>
                             <input type='hidden' name='action' value='crea'>
-                            <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Modifica</button>
+                            <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Salva</button>
                         </form>
-                        <a href='inserisciQuesito.php?id=" . $testId . "' class='btn'>Aggiungi Quesito</a>                        
+                        <a href='inserisciQuesito.php?id=" . $testId . "' class='btn'>Aggiungi Quesito</a> 
+                        <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
                         ";
-
+                    
                     
                     
                 }
@@ -258,8 +256,6 @@
         }
         
 
-
-            
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -280,14 +276,8 @@
                     }
                 
             }
-            
-            
-
-            
         ?>
         </ul>
-        
-        
     </div>
 </body>
 </html>

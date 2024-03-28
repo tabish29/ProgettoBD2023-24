@@ -103,18 +103,8 @@
                         echo "<li class='test-item'>";
                         echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
 
-                        foreach ($row as $key => $value) {
-                            echo "<details open>";
-                            echo "<summary>" . ucfirst($key) . ":</summary>";
-                            echo "" . $value . "";
-                            echo "</details><br>";
-                            /*
-                            if ($key === 'Foto') {
-                                echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
-                            } else {
-                                echo ucfirst($key) . ": " . $value . "<br>";
-                            }*/
-                        }
+                        echo "<label for='test'>" . $row['Titolo'] . "</label>";
+                        echo "<label for ='test'> - " . $row['EmailDocente'] . "</label>";
                         echo "</li>";
                     }
                     echo "<input type='hidden' name='action' id='actionField'>";

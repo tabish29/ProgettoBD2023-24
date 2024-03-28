@@ -463,7 +463,8 @@ CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
     IN TitoloTestTemp VARCHAR(20),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
     IN DescrizioneTemp VARCHAR(50),
-    IN NumeroRisposteTemp INT
+    IN NumeroRisposteTemp INT,
+    OUT numProgressivo INT
 )
 BEGIN
     DECLARE TestEsistente INT DEFAULT 0;
@@ -475,7 +476,10 @@ BEGIN
 
         SET UltimoNumeroProgressivo = (SELECT MAX(NumeroProgressivo) FROM QUESITO WHERE TitoloTest = TitoloTestTemp);
         INSERT INTO QUESITORISPOSTACHIUSA(NumeroProgressivo, TitoloTest) VALUES (UltimoNumeroProgressivo, TitoloTestTemp);
+        
+        SET numProgressivo = UltimoNumeroProgressivo;
     END IF;
+    
 END //
 DELIMITER ;
 
@@ -487,7 +491,8 @@ CREATE PROCEDURE CreazioneQuesitoCodice (
     IN TitoloTestTemp VARCHAR(20),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
     IN DescrizioneTemp VARCHAR(50),
-    IN NumeroRisposteTemp INT
+    IN NumeroRisposteTemp INT,
+    OUT numProgressivo INT
 )
 BEGIN
 	DECLARE UltimoNumeroProgressivo INT;
@@ -500,7 +505,10 @@ BEGIN
         
         SET UltimoNumeroProgressivo = (SELECT MAX(NumeroProgressivo) FROM QUESITO WHERE TitoloTest = TitoloTestTemp);
 		INSERT INTO QUESITOCODICE(TitoloTest,NumeroProgressivo) VALUES (TitoloTestTemp, UltimoNumeroProgressivo);
+        
+        SET numProgressivo = UltimoNumeroProgressivo;
 	END IF;
+    
 END 
 // DELIMITER ;
 
@@ -1032,11 +1040,17 @@ CALL ModificaVisualizzazioneRisposte("nuovoTitolo3",true);
 CALL CreazioneTest("TestDiProva3", NOW(), null, true, "docente@gmail.com");
 #SELECT * FROM TEST;
 
-CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40);
-CALL CreazioneQuesitoRispostaChiusa("provaNr2","Medio","Descrizione",5);
-CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40);
-CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10);
-CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20);
+CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40,@nQ1);
+CALL CreazioneQuesitoRispostaChiusa("provaNr2","Medio","Descrizione",5,@nQ2);
+CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40,@nQ3);
+CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10,@nQ4);
+CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20,@nQ5);
+
+SELECT @nQ1;
+SELECT @nQ2;
+SELECT @nQ3;
+SELECT @nQ4;
+SELECT @nQ5;
 
 CALL InserimentoSoluzione("provaNr1",1,"Qui va tutto bene");
 CALL InserimentoSoluzione("provaNr1",8,"Qui va tutto bene sbagliato");
