@@ -137,7 +137,13 @@
 
 
                     //PASSO 2: inserisco la risposta
-                    $sql_inserimentoRisposta = "CALL inserisciRipostaQuesitoRispostaChiusa(?, ?, ?, ?)";
+                    $sql_inserimentoRisposta = "";
+                    if ($tipologiaQuesito == "Codice") {
+                        $sql_inserimentoRisposta = "CALL inserisciRispostaQuesitoCodice(?, ?, ?, ?)";
+                    } else if ($tipologiaQuesito == "Risposta Chiusa") {
+                        $sql_inserimentoRisposta = "CALL inserisciRispostaQuesitoRispostaChiusa(?, ?, ?, ?)";
+                    }
+                    
                     if ($tipologiaQuesito == "Risposta Chiusa"){
                         $rispostaData = $_POST['rispostaData'];
                     } else if ($tipologiaQuesito == "Codice") {
@@ -149,6 +155,11 @@
                     $stmt->execute();
                     $stmt->close();
 
+                    echo "idCompletamento: " . $idCompletamento . "<br>";
+                    echo "testId: " . $testId . "<br>";
+                    echo "rispostaData: " . $rispostaData . "<br>";
+                    echo "numQuesito: " . $numQuesito . "<br>";
+
                     //PASSO 3: verifico l'esito
                     $sql_verificaRisposta = "CALL visualizzaEsitoRisposta(?, ?, ?, @esitoQ)";
                     $stmt = $conn->prepare($sql_verificaRisposta);
@@ -156,12 +167,7 @@
                     $stmt->execute();
                     $stmt->close();
 
-                    // Debug: stampa il valore di @esitoQ dopo l'esecuzione della stored procedure
-                    $sql_debug = "SELECT @esitoQ AS esitoQ_debug";
-                    $result_debug = $conn->query($sql_debug);
-                    $row_debug = $result_debug->fetch_assoc();
-                    $esitoQ_debug = $row_debug['esitoQ_debug'];
-                    echo "Debug @esitoQ: " . $esitoQ_debug . "<br>";
+                    
 
                     // Ora esegui una query separata per recuperare il valore del parametro di output
                     $sql_esito = "SELECT @esitoQ AS esitoQ";
@@ -274,12 +280,14 @@
 
                         } else if ($tipologiaQuesito == "Codice") {
                                 $contatore++;
+                                
+                                echo "<form method='post' action='effettuaTest.php'>";
                                 echo "<p>Inserisci il codice:</p>";
                                 echo "<textarea id='codice' name='codice' rows='10' cols='50'></textarea>";
-                                echo "<form method='post' action='effettuaTest.php'>";
                                 echo "<input type='hidden' name='tipologiaQuesito' value='$tipologiaQuesito'>";
                                 echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
-                                echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
+                                echo "<input type='hidden' name='numeroDomanda' value='" . $contatore . "'>";
+                                echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'><br>";
                                 echo "<button type='submit' class='btnVerifica'>Verifica Risposta</button>";
 
                                 if ($contatore == $numDomanda){
