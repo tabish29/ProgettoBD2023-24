@@ -101,58 +101,88 @@
                     session_start();
                 }
 
+                
+
                 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     $testId = $_GET['id'];
-                    $sql_creaCompletamento = "INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente) VALUES ('Aperto', '$testId', '" . $_SESSION['email'] . "')";
-                    $result_creaCompletamento = $conn->query($sql_creaCompletamento);
-                    $conn->next_result();
+                    // Se non esiste il completamento, lo creo
+                    $sql_cercaCompletamento = "SELECT * FROM COMPLETAMENTO WHERE Stato<>'Concluso' AND TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "'";
+                    $result_cercaCompletamento = $conn->query($sql_cercaCompletamento);
+                    if ($result_cercaCompletamento->num_rows == 0) {
+                        $sql_creaCompletamento = "INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente) VALUES ('Aperto', '$testId', '" . $_SESSION['email'] . "')";
+                        $result_creaCompletamento = $conn->query($sql_creaCompletamento);
+                        $conn->next_result();
+                    } else {
+                        
+                        
+                    }
                     mostraDatiTest($testId,'',-1);
                     creaGrafica($testId);
                 }
 
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                    $esito = "";
+                    echo "Esito inizio: " . $esito . "<br>";
                     $testId = $_POST['titoloTest'];
                     $numQuesito = $_POST['numeroQuesito'];
-                    $rispostaData = $_POST['rispostaData'];
-                    echo "risposta data: $rispostaData<br>";
+                    $tipologiaQuesito = $_POST['tipologiaQuesito'];
+                    $rispostaData = "";
+                    
 
                     $testoVerifica = ""; 
-                    echo "SONO QUI1<br>";
-                    // Cerco prima il completamento
+                    //PASSO 1: cerco l'id del completamento
                     $sql_cercaCompletamento = "SELECT NumeroProgressivo FROM COMPLETAMENTO WHERE Stato <> 'Concluso' AND TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "'";
-                    $result_cercaCompletamento = $conn->query($sql_cercaCompletamento);
-                    $conn->next_result();
-                    if ($result_cercaCompletamento && $result_cercaCompletamento->num_rows > 0) {
-                        echo "SONO QUI2<br>";
-                        $row = $result_cercaCompletamento->fetch_assoc();
-                        $numeroProgressivoCompletamento = $row['NumeroProgressivo'];
-                        // Inserisco la risposta
-                        $sql_inserimentoRisposta = "CALL InserisciRisposta($numeroProgressivoCompletamento, '$testId', '$rispostaData', $numQuesito)";
-                        $result_inserimentoRisposta = $conn->query($sql_inserimentoRisposta);
-                        $conn->next_result();
-                        if ($result_inserimentoRisposta) {
-                            echo "SONO QUI3<br>";
-                            // Verifico l'esito
-                            $sql_verificaRisposta = "CALL visualizzaEsitoRisposta($numeroProgressivoCompletamento, '$testId', $numQuesito, @esito)";
-                            $conn->query($sql_verificaRisposta);
-                            $sql_esito = "SELECT @esito AS esito";
-                            $result_esito = $conn->query($sql_esito);
-                            $conn->next_result();
-                            if ($result_esito && $result_esito->num_rows > 0) {
-                                echo "SONO QUI4<br>";
-                                $row = $result_esito->fetch_assoc();
-                                $testoVerifica = $row['esito'];
-                                echo "ESITOOO: " . $testoVerifica;
-                            } else {
-                                $testoVerifica = "Risposta errata";
-                            }
-                        } else {
-                            echo "Errore: risposta non inserita";
-                        }
-                    } else {
-                        echo "Errore: completamento non trovato";
+                    $idCompletamento = $conn->query($sql_cercaCompletamento)->fetch_assoc()['NumeroProgressivo'];
+                    echo "ID Completamento: " . $idCompletamento . "<br>";
+
+
+                    //PASSO 2: inserisco la risposta
+                    $sql_inserimentoRisposta = "CALL inserisciRipostaQuesitoRispostaChiusa(?, ?, ?, ?)";
+                    if ($tipologiaQuesito == "Risposta Chiusa"){
+                        $rispostaData = $_POST['rispostaData'];
+                    } else if ($tipologiaQuesito == "Codice") {
+                        $rispostaData = $_POST['codice'];
                     }
 
+                    $stmt = $conn->prepare($sql_inserimentoRisposta);
+                    $stmt->bind_param("issi", $idCompletamento, $testId, $rispostaData, $numQuesito);
+                    $stmt->execute();
+                    $stmt->close();
+
+                    //PASSO 3: verifico l'esito
+                    $sql_verificaRisposta = "CALL visualizzaEsitoRisposta(?, ?, ?, @esitoQ)";
+                    $stmt = $conn->prepare($sql_verificaRisposta);
+                    $stmt->bind_param("isi", $idCompletamento, $testId, $numQuesito);
+                    $stmt->execute();
+                    $stmt->close();
+
+                    // Debug: stampa il valore di @esitoQ dopo l'esecuzione della stored procedure
+                    $sql_debug = "SELECT @esitoQ AS esitoQ_debug";
+                    $result_debug = $conn->query($sql_debug);
+                    $row_debug = $result_debug->fetch_assoc();
+                    $esitoQ_debug = $row_debug['esitoQ_debug'];
+                    echo "Debug @esitoQ: " . $esitoQ_debug . "<br>";
+
+                    // Ora esegui una query separata per recuperare il valore del parametro di output
+                    $sql_esito = "SELECT @esitoQ AS esitoQ";
+                    $stmt = $conn->prepare($sql_esito);
+                    $stmt->execute();
+                    $stmt->bind_result($esito);
+                    $stmt->fetch();
+                    $stmt->close();
+
+                    echo "Esito: " . $esito . "<br>";
+                    
+
+                    if ($esito){
+                        $testoVerifica = "Risposta corretta!";
+                    } else {
+                        $testoVerifica = "Risposta errata!";
+                    }
+
+                    echo "Verifica Risposta: " . $testoVerifica;
+
+                    $esito = "";
                     $numDomanda = $_POST['numeroDomanda'];
                     mostraDatiTest($testId,$testoVerifica,$numDomanda);
                     creaGrafica($testId);
@@ -165,8 +195,12 @@
                     
                     $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
                     $result_quesiti_test = $conn->query($sql_quesiti_test);
-                    $conn->next_result();
+                    
+
+
                     $numeroQuesitiTest = $result_quesiti_test->num_rows;
+
+                    $conn->next_result();
                     $num = 0;
                     if ($result_quesiti_test->num_rows > 0) {
                         while ($row = $result_quesiti_test->fetch_assoc()) {
@@ -218,6 +252,7 @@
                                         echo "<input type='radio' name='risposta' value='$risposta' data-quesito='$numeroProgressivo'>$risposta<br>";
                                     }
                                     echo "<form id='form_verifica' method='post' action='effettuaTest.php'>";
+                                    echo "<input type='hidden' name='tipologiaQuesito' value='$tipologiaQuesito'>";
                                     echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
                                     echo "<input type='hidden' name='numeroDomanda' value='" . $contatore . "'>";
                                     echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
@@ -242,6 +277,7 @@
                                 echo "<p>Inserisci il codice:</p>";
                                 echo "<textarea id='codice' name='codice' rows='10' cols='50'></textarea>";
                                 echo "<form method='post' action='effettuaTest.php'>";
+                                echo "<input type='hidden' name='tipologiaQuesito' value='$tipologiaQuesito'>";
                                 echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
                                 echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
                                 echo "<button type='submit' class='btnVerifica'>Verifica Risposta</button>";

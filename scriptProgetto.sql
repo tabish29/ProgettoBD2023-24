@@ -195,7 +195,7 @@ CREATE TABLE QUESITOCODICE (
 CREATE TABLE SOLUZIONE (
 	NumeroProgressivo INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
-    TestoSoluzione VARCHAR(40),
+    TestoSoluzione VARCHAR(500),
     
 	PRIMARY KEY(TitoloTest, NumeroProgressivo, TestoSoluzione),
     
@@ -207,7 +207,7 @@ CREATE TABLE SOLUZIONE (
 CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
     NumeroProgressivoCompletamento INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
-    OpzioneScelta VARCHAR(20),
+    OpzioneScelta VARCHAR(2000),
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
@@ -221,7 +221,7 @@ CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
 CREATE TABLE RISPOSTAQUESITOCODICE  (
     NumeroProgressivoCompletamento INT NOT NULL,
     TitoloTest VARCHAR(20) NOT NULL,
-    Testo VARCHAR(100),
+    Testo VARCHAR(2000),
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
@@ -615,7 +615,9 @@ DELIMITER ;
 -- PROCEDURE PER GLI STUDENTI
 
 DELIMITER //
-CREATE PROCEDURE inserisciRisposta(
+DELIMITER //
+
+CREATE PROCEDURE inserisciRispostaQuesitoCodice(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(20),
     IN valoreRispostaTemp VARCHAR(2000),
@@ -623,104 +625,158 @@ CREATE PROCEDURE inserisciRisposta(
 )
 BEGIN
 
-    DECLARE tipoRispostaChiusa BOOLEAN;
-    DECLARE tipoRispostaAperta BOOLEAN;
-    DECLARE numRispostaChiusa INT;
     DECLARE numRispostaAperta INT;
     DECLARE esitoRisposta BOOLEAN;
     DECLARE rispostaCorretta VARCHAR(40);
     DECLARE num_risposte INT;
     
-	
-	-- Controlla se è una risposta a quesito chiuso
-    SELECT COUNT(*) INTO numRispostaChiusa
-    FROM QUESITORISPOSTACHIUSA  AS QC
-    WHERE (QC.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
-                                                                      FROM COMPLETAMENTO AS C1
-                                                                      WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
-    
-	IF numRispostaChiusa = 1 THEN
-        SET tipoRispostaChiusa = TRUE;
-    ELSE
-        SET tipoRispostaChiusa = FALSE;
-    END IF;
-    
-	-- Controlla se è una risposta a quesito aperto
+    -- Stampa per debug
+    SELECT 'Valori in input:';
+    SELECT idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp;
+
+	-- Controlla se esiste il quesito
     SELECT COUNT(*) INTO numRispostaAperta
     FROM QUESITOCODICE AS QC
     WHERE (QC.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
                                                                       FROM COMPLETAMENTO AS C1
                                                                       WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
 
+    -- Stampa per debug
+    SELECT 'Numero di risposte aperte trovate:', numRispostaAperta;
+
     IF numRispostaAperta = 1 THEN
-        SET tipoRispostaAperta = TRUE;
-    ELSE
-        SET tipoRispostaAperta = FALSE;
-    END IF;
-    
-    SET esitoRisposta = FALSE;
-    
-    IF tipoRispostaChiusa THEN
-		SELECT CampoTesto INTO rispostaCorretta
-		FROM OPZIONERISPOSTA AS OP
-		WHERE (OP.RispostaCorretta = TRUE) AND (OP.NumeroProgressivoQuesito = numeroQuesitoTemp) AND (OP.TitoloTest IN (SELECT C1.TitoloTest
-                                                                                    FROM COMPLETAMENTO AS C1
-                                                                                    WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
-                        
-        IF (valoreRispostaTemp = rispostaCorretta) THEN
-			SET esitoRisposta = TRUE;
-		END IF;
-		
-        -- Controllo se è già presente una risposta al quesito
-		SELECT COUNT(*) AS num_risposte
-		FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE NumeroProgressivoCompletamento = idCompletamentoTemp AND TitoloTest = TitoloTestTemp AND NumeroProgressivoQuesito = numeroQuesitoTemp;
-		
-        IF (num_risposte = 0) THEN
-			INSERT INTO RISPOSTAQUESITORISPOSTACHIUSA(NumeroProgressivoCompletamento, TitoloTest, OpzioneScelta, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
-		ELSE 
-			UPDATE RISPOSTAQUESITORISPOSTACHIUSA
-            SET OpzioneScelta = valoreRispostaTemp, Esito = esitoRisposta
-			WHERE NumeroProgressivoCompletamento = idCompletamentoTemp
-			AND TitoloTest = TitoloTestTemp
-			AND NumeroProgressivoQuesito = numeroQuesitoTemp;
-		END IF;
-    END IF;
-    
-    IF tipoRispostaAperta THEN
-		SELECT TestoSoluzione INTO rispostaCorretta
-		FROM QUESITOCODICE AS QC, SOLUZIONE
-		WHERE (QC.NumeroProgressivo = SOLUZIONE.NumeroProgressivo) AND (SOLUZIONE.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
+        SET esitoRisposta = FALSE;
+
+        SELECT TestoSoluzione INTO rispostaCorretta
+        FROM QUESITOCODICE AS QC, SOLUZIONE
+        WHERE (QC.NumeroProgressivo = SOLUZIONE.NumeroProgressivo) AND (SOLUZIONE.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
                                                                                                                                         FROM COMPLETAMENTO AS C1
                                                                                                                                         WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
-        
         IF (valoreRispostaTemp = rispostaCorretta) THEN
-			SET esitoRisposta = TRUE;
-		END IF;
-		-- Controllo se è già presente una risposta al quesito
-		SELECT COUNT(*) AS num_risposte
-		FROM RISPOSTAQUESITOCODICE
-		WHERE NumeroProgressivoCompletamento = idCompletamentoTemp AND TitoloTest = TitoloTestTemp AND NumeroProgressivoQuesito = numeroQuesitoTemp;
-		
+            SET esitoRisposta = TRUE;
+        END IF;
+
+        -- Stampa per debug
+        SELECT 'Risposta corretta:', rispostaCorretta;
+        SELECT 'Esito della risposta:', esitoRisposta;
+
+        -- Controllo se è già presente una risposta al quesito
+        SELECT COUNT(*) INTO num_risposte
+        FROM RISPOSTAQUESITOCODICE
+        WHERE NumeroProgressivoCompletamento = idCompletamentoTemp AND TitoloTest = TitoloTestTemp AND NumeroProgressivoQuesito = numeroQuesitoTemp;
+        
+        -- Stampa per debug
+        SELECT 'Numero di risposte trovate per questo utente e quesito:', num_risposte;
+
         IF (num_risposte = 0) THEN
-			INSERT INTO RISPOSTAQUESITOCODICE(NumeroProgressivoCompletamento, TitoloTest, Testo, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
-		ELSE 
-			UPDATE RISPOSTAQUESITOCODICE
+            INSERT INTO RISPOSTAQUESITOCODICE(NumeroProgressivoCompletamento, TitoloTest, Testo, NumeroProgressivoQuesito, Esito) 
+            VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+            
+            -- Stampa per debug
+            SELECT 'Nuova risposta inserita:';
+            SELECT idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta;
+        ELSE 
+            UPDATE RISPOSTAQUESITOCODICE
             SET Testo = valoreRispostaTemp, Esito = esitoRisposta
-			WHERE NumeroProgressivoCompletamento = idCompletamentoTemp
-			AND TitoloTest = TitoloTestTemp
-			AND NumeroProgressivoQuesito = numeroQuesitoTemp;
-		END IF;
-        
-        
+            WHERE NumeroProgressivoCompletamento = idCompletamentoTemp
+            AND TitoloTest = TitoloTestTemp
+            AND NumeroProgressivoQuesito = numeroQuesitoTemp;
+            
+            -- Stampa per debug
+            SELECT 'Risposta aggiornata:';
+            SELECT idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta;
+        END IF;
+
     END IF;
-    
-END
-// DELIMITER ;
+   
+END//
+
+DELIMITER ;
 
 
 
 DELIMITER //
+
+CREATE PROCEDURE inserisciRipostaQuesitoRispostaChiusa(
+    IN idCompletamentoTemp INT,
+    IN TitoloTestTemp VARCHAR(20),
+    IN valoreRispostaTemp VARCHAR(2000),
+    IN numeroQuesitoTemp INT
+)
+BEGIN
+    DECLARE numRispostaChiusa INT;
+    DECLARE esitoRisposta BOOLEAN;
+    DECLARE rispostaCorretta VARCHAR(40);
+    DECLARE num_risposte INT;
+    
+    -- Stampa per debug
+    SELECT 'Valori in input:';
+    SELECT idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp;
+    
+    /*
+    -- Controlla se esiste la risposta
+    SELECT COUNT(*) INTO numRispostaChiusa
+    FROM QUESITORISPOSTACHIUSA AS QC
+    WHERE (QC.NumeroProgressivo = numeroQuesitoTemp) AND (QC.TitoloTest IN (SELECT C1.TitoloTest
+                                                                      FROM COMPLETAMENTO AS C1
+                                                                      WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
+    
+    -- Stampa per debug
+    SELECT 'Numero di risposte chiuse trovate:', numRispostaChiusa;
+    */
+    -- IF (numRispostaChiusa = 1) THEN
+        SET esitoRisposta = FALSE;
+
+        SELECT CampoTesto INTO rispostaCorretta
+        FROM OPZIONERISPOSTA AS OP
+        WHERE (OP.RispostaCorretta = TRUE) AND (OP.NumeroProgressivoQuesito = numeroQuesitoTemp) AND (OP.TitoloTest IN (SELECT C1.TitoloTest
+                                                                                    FROM COMPLETAMENTO AS C1
+                                                                                    WHERE (idCompletamentoTemp = C1.NumeroProgressivo)));
+                        
+        IF (valoreRispostaTemp = rispostaCorretta) THEN
+            SET esitoRisposta = TRUE;
+        END IF;
+        
+        -- Stampa per debug
+        SELECT 'Risposta corretta:', rispostaCorretta;
+        SELECT 'Esito della risposta:', esitoRisposta;
+        
+        -- Controllo se è già presente una risposta al quesito
+        SELECT COUNT(*) INTO num_risposte
+        FROM RISPOSTAQUESITORISPOSTACHIUSA
+        WHERE NumeroProgressivoCompletamento = idCompletamentoTemp AND TitoloTest = TitoloTestTemp AND NumeroProgressivoQuesito = numeroQuesitoTemp;
+        
+        -- Stampa per debug
+        SELECT 'Numero di risposte trovate per questo utente e quesito:', num_risposte;
+        
+        IF (num_risposte = 0) THEN
+            INSERT INTO RISPOSTAQUESITORISPOSTACHIUSA(NumeroProgressivoCompletamento, TitoloTest, OpzioneScelta, NumeroProgressivoQuesito, Esito) 
+            VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+            
+            -- Stampa per debug
+            SELECT 'Nuova risposta inserita:';
+            SELECT idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta;
+        ELSE 
+            UPDATE RISPOSTAQUESITORISPOSTACHIUSA
+            SET OpzioneScelta = valoreRispostaTemp, Esito = esitoRisposta
+            WHERE NumeroProgressivoCompletamento = idCompletamentoTemp
+            AND TitoloTest = TitoloTestTemp
+            AND NumeroProgressivoQuesito = numeroQuesitoTemp;
+            
+            -- Stampa per debug
+            SELECT 'Risposta aggiornata:';
+            SELECT idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta;
+        END IF;
+
+     -- END IF;   
+END
+
+//
+DELIMITER ;
+
+
+DELIMITER //
+
 CREATE PROCEDURE visualizzaEsitoRisposta(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(30),
@@ -730,28 +786,38 @@ CREATE PROCEDURE visualizzaEsitoRisposta(
 BEGIN
     DECLARE esitoTemp BOOLEAN;
 
+    
+
     -- Verifica se esiste una risposta per il quesito di tipo "Risposta Chiusa"
     IF EXISTS (
         SELECT 1 
         FROM RISPOSTAQUESITORISPOSTACHIUSA AS RC 
-        WHERE RC.NumeroProgressivoQuesito = numQuesito AND RC.TitoloTest = TitoloTestTemp
+        WHERE RC.NumeroProgressivoQuesito = numQuesito AND RC.TitoloTest = TitoloTestTemp AND RC.NumeroProgressivoCompletamento = idCompletamentoTemp
     ) THEN
+        
+
         SELECT esito INTO esitoTemp
         FROM RISPOSTAQUESITORISPOSTACHIUSA AS RC
-        WHERE RC.NumeroProgressivoQuesito = numQuesito AND RC.TitoloTest = TitoloTestTemp
+        WHERE RC.NumeroProgressivoQuesito = numQuesito AND RC.TitoloTest = TitoloTestTemp AND  RC.NumeroProgressivoCompletamento = idCompletamentoTemp
         LIMIT 1; -- Assicura che venga restituita una sola riga
+
+        
     END IF;
 
     -- Verifica se esiste una risposta per il quesito di tipo "Codice"
     IF EXISTS (
         SELECT 1 
         FROM RISPOSTAQUESITOCODICE AS QC 
-        WHERE QC.NumeroProgressivoQuesito = numQuesito AND QC.TitoloTest = TitoloTestTemp
+        WHERE QC.NumeroProgressivoQuesito = numQuesito AND QC.TitoloTest = TitoloTestTemp AND QC.NumeroProgressivoCompletamento = idCompletamentoTemp
     ) THEN
+        
+
         SELECT esito INTO esitoTemp
         FROM RISPOSTAQUESITOCODICE AS QC
-        WHERE QC.NumeroProgressivoQuesito = numQuesito AND QC.TitoloTest = TitoloTestTemp
+        WHERE QC.NumeroProgressivoQuesito = numQuesito AND QC.TitoloTest = TitoloTestTemp AND  QC.NumeroProgressivoCompletamento = idCompletamentoTemp
         LIMIT 1; -- Assicura che venga restituita una sola riga
+
+        
     END IF;
 
     -- Imposta il valore di esitoRisposta in base al valore di esitoTemp
@@ -761,9 +827,10 @@ BEGIN
         SET esitoRisposta = NULL;
     END IF;
 
-END
-//
+END//
+
 DELIMITER ;
+
 
 
 
@@ -1064,18 +1131,19 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "tabish@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "lorenzo@gmail.com", NOW(), NOW());
 INSERT INTO COMPLETAMENTO (TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("provaNr2", "lorenzo@gmail.com", NOW(), NOW());
-
-CALL inserisciRisposta(1, "provaNr1", "opzione risposta Corretta", 2);
-CALL inserisciRisposta(1, "provaNr1", "opzione risposta sbagliata", 2);
-CALL inserisciRisposta(2, "provaNr1", "rispostaNonCorretta", 1);
-CALL inserisciRisposta(3, "provaNr1", "rispostaNonCorretta", 1);
-CALL inserisciRisposta(4, "provaNr2", "rispostaNonCorretta", 1);
-
- CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
- SELECT @esitoRispostaScelta;
+CALL inserisciRipostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta sbagliata", 2);
+CALL inserisciRipostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta Corretta", 2);
+CALL inserisciRispostaQuesitoCodice(2, "provaNr1", "rispostaNonCorretta", 1);
+CALL inserisciRispostaQuesitoCodice(3, "provaNr1", "rispostaNonCorretta", 1);
+CALL inserisciRispostaQuesitoCodice(4, "provaNr2", "rispostaNonCorretta", 1);
 
  CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
  SELECT @esitoRispostaCodice;
+ CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
+ SELECT @esitoRispostaScelta;
+
+
+
 
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
@@ -1097,6 +1165,7 @@ CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40,@nQ3)
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10,@nQ4);
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20,@nQ5);
 
+
 SELECT @nQ1;
 SELECT @nQ2;
 SELECT @nQ3;
@@ -1112,14 +1181,14 @@ CALL InserimentoOpzioneRisposta("provaNr2",2,"Evviva Noi fatto male");
 CALL InserimentoOpzioneRisposta("provaNr2",6,"Evviva Noi");
 CALL InserimentoOpzioneRisposta("provaNr2",8,"Completamento di Lollo");
 
-CALL InserisciRisposta(3,"ProvaNr1","risposta chiusa",2);
+CALL inserisciRipostaQuesitoRispostaChiusa(3,"ProvaNr1","risposta chiusa",2);
 
-SELECT * FROM QUESITO;
-SELECT * FROM QUESITORISPOSTACHIUSA;
-SELECT * FROM OPZIONERISPOSTA;
+-- SELECT * FROM QUESITO;
+-- SELECT * FROM QUESITORISPOSTACHIUSA;
+-- SELECT * FROM OPZIONERISPOSTA;
 SELECT * FROM RISPOSTAQUESITORISPOSTACHIUSA;
-SELECT * FROM QUESITOCODICE;
-SELECT * FROM SOLUZIONE;
+-- SELECT * FROM QUESITOCODICE;
+-- SELECT * FROM SOLUZIONE;
 SELECT * FROM RISPOSTAQUESITOCODICE;
 SELECT * FROM COMPLETAMENTO;
 
