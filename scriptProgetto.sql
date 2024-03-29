@@ -629,6 +629,7 @@ BEGIN
     DECLARE numRispostaAperta INT;
     DECLARE esitoRisposta BOOLEAN;
     DECLARE rispostaCorretta VARCHAR(40);
+    DECLARE num_risposte INT;
     
 	
 	-- Controlla se è una risposta a quesito chiuso
@@ -670,7 +671,20 @@ BEGIN
 			SET esitoRisposta = TRUE;
 		END IF;
 		
-        INSERT INTO RISPOSTAQUESITORISPOSTACHIUSA(NumeroProgressivoCompletamento, TitoloTest, OpzioneScelta, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+        -- Controllo se è già presente una risposta al quesito
+		SELECT COUNT(*) AS num_risposte
+		FROM RISPOSTAQUESITORISPOSTACHIUSA
+		WHERE NumeroProgressivoCompletamento = idCompletamentoTemp AND TitoloTest = TitoloTestTemp AND NumeroProgressivoQuesito = numeroQuesitoTemp;
+		
+        IF (num_risposte = 0) THEN
+			INSERT INTO RISPOSTAQUESITORISPOSTACHIUSA(NumeroProgressivoCompletamento, TitoloTest, OpzioneScelta, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+		ELSE 
+			UPDATE RISPOSTAQUESITORISPOSTACHIUSA
+            SET OpzioneScelta = valoreRispostaTemp, Esito = esitoRisposta
+			WHERE NumeroProgressivoCompletamento = idCompletamentoTemp
+			AND TitoloTest = TitoloTestTemp
+			AND NumeroProgressivoQuesito = numeroQuesitoTemp;
+		END IF;
     END IF;
     
     IF tipoRispostaAperta THEN
@@ -683,8 +697,22 @@ BEGIN
         IF (valoreRispostaTemp = rispostaCorretta) THEN
 			SET esitoRisposta = TRUE;
 		END IF;
+		-- Controllo se è già presente una risposta al quesito
+		SELECT COUNT(*) AS num_risposte
+		FROM RISPOSTAQUESITOCODICE
+		WHERE NumeroProgressivoCompletamento = idCompletamentoTemp AND TitoloTest = TitoloTestTemp AND NumeroProgressivoQuesito = numeroQuesitoTemp;
 		
-        INSERT INTO RISPOSTAQUESITOCODICE(NumeroProgressivoCompletamento, TitoloTest, Testo, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+        IF (num_risposte = 0) THEN
+			INSERT INTO RISPOSTAQUESITOCODICE(NumeroProgressivoCompletamento, TitoloTest, Testo, NumeroProgressivoQuesito,Esito) VALUES (idCompletamentoTemp, TitoloTestTemp, valoreRispostaTemp, numeroQuesitoTemp, esitoRisposta);
+		ELSE 
+			UPDATE RISPOSTAQUESITOCODICE
+            SET Testo = valoreRispostaTemp, Esito = esitoRisposta
+			WHERE NumeroProgressivoCompletamento = idCompletamentoTemp
+			AND TitoloTest = TitoloTestTemp
+			AND NumeroProgressivoQuesito = numeroQuesitoTemp;
+		END IF;
+        
+        
     END IF;
     
 END
@@ -1038,6 +1066,7 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO COMPLETAMENTO (TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("provaNr2", "lorenzo@gmail.com", NOW(), NOW());
 
 CALL inserisciRisposta(1, "provaNr1", "opzione risposta Corretta", 2);
+CALL inserisciRisposta(1, "provaNr1", "opzione risposta sbagliata", 2);
 CALL inserisciRisposta(2, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(3, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRisposta(4, "provaNr2", "rispostaNonCorretta", 1);

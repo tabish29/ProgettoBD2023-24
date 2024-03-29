@@ -116,41 +116,42 @@
                     $rispostaData = $_POST['rispostaData'];
                     echo "risposta data: $rispostaData<br>";
 
-                    $testoVerifica = ""; //TODO: verificare la risposta
-                    // 1. Cerco prima il completamento
-                    $sql_cercaCompletamento = "SELECT NumeroProgressivo FROM COMPLETAMENTO WHERE Stato <>  \"Concluso\" AND TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "'";
+                    $testoVerifica = ""; 
+                    echo "SONO QUI1<br>";
+                    // Cerco prima il completamento
+                    $sql_cercaCompletamento = "SELECT NumeroProgressivo FROM COMPLETAMENTO WHERE Stato <> 'Concluso' AND TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "'";
                     $result_cercaCompletamento = $conn->query($sql_cercaCompletamento);
                     $conn->next_result();
-                    if ($result_cercaCompletamento->num_rows > 0) {
+                    if ($result_cercaCompletamento && $result_cercaCompletamento->num_rows > 0) {
+                        echo "SONO QUI2<br>";
                         $row = $result_cercaCompletamento->fetch_assoc();
                         $numeroProgressivoCompletamento = $row['NumeroProgressivo'];
-                        // 2. Inserisco la risposta
-                        $sql_inserimentoRisposta = "CALL InserisciRisposta($numeroProgressivoCompletamento,'$testId', '$rispostaData', $numQuesito)";
+                        // Inserisco la risposta
+                        $sql_inserimentoRisposta = "CALL InserisciRisposta($numeroProgressivoCompletamento, '$testId', '$rispostaData', $numQuesito)";
                         $result_inserimentoRisposta = $conn->query($sql_inserimentoRisposta);
-                        /*  todo:
-                        PROBLEMA: se viene inserita più volte una risposta si blocca per la chiave del completamento
-                        */
                         $conn->next_result();
                         if ($result_inserimentoRisposta) {
-                            // 3. Verifico l'esito
+                            echo "SONO QUI3<br>";
+                            // Verifico l'esito
                             $sql_verificaRisposta = "CALL visualizzaEsitoRisposta($numeroProgressivoCompletamento, '$testId', $numQuesito, @esito)";
-                            $result_verificaRisposta = $conn->query($sql_verificaRisposta);
+                            $conn->query($sql_verificaRisposta);
+                            $sql_esito = "SELECT @esito AS esito";
+                            $result_esito = $conn->query($sql_esito);
                             $conn->next_result();
-                            $sql_esito = "SELECT @esito";
-                            if ($sql_esito == true){
-                                $testoVerifica = "Risposta corretta";
+                            if ($result_esito && $result_esito->num_rows > 0) {
+                                echo "SONO QUI4<br>";
+                                $row = $result_esito->fetch_assoc();
+                                $testoVerifica = $row['esito'];
+                                echo "ESITOOO: " . $testoVerifica;
                             } else {
                                 $testoVerifica = "Risposta errata";
                             }
                         } else {
                             echo "Errore: risposta non inserita";
                         }
-
-
-                    }
-                    else {
+                    } else {
                         echo "Errore: completamento non trovato";
-                    } 
+                    }
 
                     $numDomanda = $_POST['numeroDomanda'];
                     mostraDatiTest($testId,$testoVerifica,$numDomanda);
