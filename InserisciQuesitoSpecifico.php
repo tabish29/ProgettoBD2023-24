@@ -86,7 +86,7 @@
         
 
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                $datiTest = []; // NumProgressivo, Tipo, TitoloTest, NumeroRisposte, NumeroRisposteInserite
+                $datiTest = []; // NumProgressivo, Tipo, TitoloTest, NumeroRisposte, NumeroRisposteInserite 
                 $campiSchermataPrecedente = explode(";",$_GET['id']);
                 array_push($datiTest, $campiSchermataPrecedente[0]);   
                 array_push($datiTest, $campiSchermataPrecedente[1]);             
@@ -101,6 +101,7 @@
                     array_push($datiTest, $numRisposte);
                 }
                 array_push($datiTest, 0); 
+                
                 $_SESSION['datiTestAttuale'] = $datiTest;
                 $conn->next_result();
                 //echo "titolo: " . $titoloTest . " tipo: " . $tipoQuesito . " num: " . $numQuesito;
@@ -109,6 +110,11 @@
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['datiTestAttuale']) && !empty($_SESSION['datiTestAttuale'])) {
                 $datiTest = $_SESSION['datiTestAttuale'];
+                $soluzioneCorretta = "";
+                if ($datiTest[1]=="RC"){
+                    $soluzioneCorretta = isset($_POST['soluzioneCorretta']) ? $_POST['soluzioneCorretta'] : 0;
+
+                }
                 $valoreInserito = $_POST['soluzioneT'];
                 $_SESSION['datiTestAttuale'][4] = $datiTest[4] + 1;
                 $datiTest = $_SESSION['datiTestAttuale'];
@@ -119,7 +125,7 @@
                     echo "Devi inserire ancora " . ($datiTest[3] - $datiTest[4]) . " risposte";
 
                     if ($datiTest[1] == "RC"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',$soluzioneCorretta)";
 
                         
                     } else if ($datiTest[1] == "COD"){
@@ -135,7 +141,7 @@
                     }
                 } else if ($datiTest[3] - $datiTest[4] == 0){
                     if ($datiTest[1] == "RC"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',$soluzioneCorretta)";
 
                         
                     } else if ($datiTest[1] == "COD"){
@@ -154,11 +160,23 @@
             }
         ?>
         
-            <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
-                <label for="testoSoluzione">Testo soluzione:</label>
+        <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
+            <div class="form-group">
+                <label for="soluzioneT">Testo soluzione:</label>
                 <input type="text" id="soluzioneT" name="soluzioneT">
-                <input type="submit" class="btn" id="salvataggioSoluzione" value="Salva Soluzione">
-            </form>
+            </div>
+            <?php
+            if ($datiTest[1] == "RC") { // Se il tipo di quesito è a risposta chiusa
+                echo '<div class="form-group">';
+                echo '<label for="soluzioneCorretta">Soluzione corretta:</label>';
+                echo '<input type="checkbox" id="soluzioneCorretta" name="soluzioneCorretta" value="1">';
+                echo '<label> Attenzione, inserisci solo un\'opzione corretta</label>';
+                echo '</div>';
+            }
+            ?>
+            <input type="submit" class="btn" id="salvataggioSoluzione" value="Salva Soluzione">
+        </form>
+
             
 
         

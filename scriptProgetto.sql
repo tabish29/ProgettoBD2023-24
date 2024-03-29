@@ -542,7 +542,8 @@ DELIMITER //
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTestTemp VARCHAR(20),
     IN NumeroProgressivoQuesitoTemp INT,
-    IN CampoTestoTemp VARCHAR(2000)
+    IN CampoTestoTemp VARCHAR(2000),
+    IN RispostaCorrettaTemp BOOLEAN
 )
 BEGIN
     DECLARE ProgressivoQuesitoETestEsistente INT DEFAULT 0;
@@ -551,8 +552,8 @@ BEGIN
     WHERE (TitoloTestTemp=TitoloTest AND NumeroProgressivo = NumeroProgressivoQuesitoTemp));
 
     IF (ProgressivoQuesitoETestEsistente = 1) THEN
-        INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, CampoTesto) 
-        VALUES (TitoloTestTemp, NumeroProgressivoQuesitoTemp, CampoTestoTemp);
+        INSERT INTO OPZIONERISPOSTA(TitoloTest, NumeroProgressivoQuesito, CampoTesto, RispostaCorretta) 
+        VALUES (TitoloTestTemp, NumeroProgressivoQuesitoTemp, CampoTestoTemp, RispostaCorrettaTemp);
     END IF;
 END //
 DELIMITER ;
@@ -1155,9 +1156,9 @@ CALL InserimentoSoluzione("provaNr1",8,"Qui va tutto bene sbagliato");
 CALL InserimentoSoluzione("TestDiProva3",8,"Anche qua funziona");
 CALL InserimentoSoluzione("TestDiProva3",9,"Anche qua funziona tutto");
 
-CALL InserimentoOpzioneRisposta("provaNr2",2,"Evviva Noi fatto male");
-CALL InserimentoOpzioneRisposta("provaNr2",6,"Evviva Noi");
-CALL InserimentoOpzioneRisposta("provaNr2",8,"Completamento di Lollo");
+CALL InserimentoOpzioneRisposta("provaNr2",2,"Evviva Noi fatto male",true);
+CALL InserimentoOpzioneRisposta("provaNr2",6,"Evviva Noi",true);
+CALL InserimentoOpzioneRisposta("provaNr2",8,"Completamento di Lollo",false);
 
 CALL inserisciRispostaQuesitoRispostaChiusa(3,"ProvaNr1","risposta chiusa",2);
 CALL inserisciRispostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta sbagliata", 2);
