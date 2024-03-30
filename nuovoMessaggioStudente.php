@@ -76,10 +76,8 @@
                 exit();
             }
 
-            echo "Valore della variabile di sessione email in messaggiStudenti.php pt1: " . $_SESSION['email'];
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                echo "Valore della variabile di sessione email in messaggiStudenti.php pt2: " . $_SESSION['email'];
 
                 // Verifica se sono stati inviati i dati del form
                 if (isset($_POST['selectDocente']) && isset($_POST['selectTest']) && isset($_POST['oggetto']) && isset($_POST['testo'])) {
@@ -112,6 +110,24 @@
             <h2>Invia Nuovo Messaggio</h2>
 
             <div class="form-group">
+                <label for="selectTest">Seleziona un test:</label>
+                <select id="selectTest" name="selectTest">
+                    <?php
+                        // Recupera i nomi dei test dal database
+                        $query_test2 = "CALL visualizzaTestDisponibili()";
+                        $result_test2 = $conn->query($query_test2);
+
+                        // Aggiungi opzioni alla ListBox
+                        while ($row_test = $result_test2->fetch_assoc()) {
+                            echo "<option value='" . $row_test['Titolo'] . "'>" . $row_test['Titolo'] . "</option>";
+                        }
+                        $conn-> next_result();
+
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="selectDocente">Seleziona un docente:</label>
                 <select id="selectDocente" name="selectDocente">
                     <?php
@@ -123,6 +139,7 @@
                         while ($row_test = $result_doc->fetch_assoc()) {
                             echo "<option value='" . $row_test['Email'] . "'>" . $row_test['Email'] . "</option>";
                         }
+                        $conn-> next_result();
 
                     ?>
                 </select>
@@ -142,22 +159,7 @@
                 <button type="submit" id="inviaMessaggioBtn" class="btn btn-primary">Invia Messaggio</button>
             </div>
 
-            <div class="form-group">
-                <label for="selectTest">Seleziona un test:</label>
-                <select id="selectTest" name="selectTest">
-                    <?php
-                        // Recupera i nomi dei test dal database
-                        $query_test2 = "CALL visualizzaTestDisponibili()";
-                        $result_test2 = $conn->query($query_test2);
-
-                        // Aggiungi opzioni alla ListBox
-                        while ($row_test = $result_test2->fetch_assoc()) {
-                            echo "<option value='" . $row_test['Titolo'] . "'>" . $row_test['Titolo'] . "</option>";
-                        }
-
-                    ?>
-                </select>
-            </div>
+            
         </form>
     </div>
 </body>
