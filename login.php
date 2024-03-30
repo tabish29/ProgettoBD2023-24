@@ -46,7 +46,12 @@
         <?php
         include 'connessione.php';
         
-        
+        if ($_SERVER["REQUEST_METHOD"] == "GET"){
+            $_SESSION['email'] = "";
+            $_SESSION['ruolo'] = "";
+            
+        }
+
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Recupera l'email dal form di login
         
@@ -54,8 +59,7 @@
             $ruolo_login = isset($_POST['ruolo_login']) ? $_POST['ruolo_login'] : '';
             
             
-            echo "Valore della variabile di sessione email in login.php: " . $_SESSION['email']; //ELIMINARE
-            
+
             // Verifica se email_login e ruolo_login sono presenti
             if (empty($email_login) || empty($ruolo_login)) {
                 //echo "<li class='test-item'>Email e ruolo devono essere specificati.</li>";

@@ -24,6 +24,18 @@
       margin-bottom: 20px;
       font-size: large;
     }
+    .btnLogout{
+      text-align: center;
+      font: sans-serif;
+      font-weight: bold;
+      font-size: medium;
+      background-color: #ff0000;
+      margin: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      height: auto;
+      width: auto;
+    }
   </style>
 </head>
 <body>
@@ -39,6 +51,7 @@
           <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiDocenti.php' ? 'class="active"' : ''; ?>>
             <a href="messaggiDocenti.php">Messaggi</a>
           </li>
+          <button type="button" class="btnLogout" onclick="window.location.href='index.html'">Logout</button>
         </ul>
       </div>
     </nav>
