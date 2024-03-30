@@ -66,7 +66,6 @@
                 //echo '<a href="index.html">Torna alla schermata principale</a>';
             } else {
                     // Query per verificare se l'email esiste nella tabella del ruolo selezionato
-                    // Query per verificare se l'email esiste nella tabella del ruolo selezionato
                     $sql_check_email = "";
                     if ($ruolo_login === "docente") {
                         $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login' AND PasswordDocente = '$password_login'";

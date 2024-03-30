@@ -30,7 +30,7 @@ CREATE TABLE TEST (
     DataCreazione DATETIME,
     Foto BLOB,											-- METTIAMO BLOB
     VisualizzaRisposte BOOLEAN,
-    EmailDocente VARCHAR(40),
+    EmailDocente VARCHAR(40) NOT NULL,
     
     FOREIGN KEY(EmailDocente) REFERENCES DOCENTE(Email) ON DELETE CASCADE
 
