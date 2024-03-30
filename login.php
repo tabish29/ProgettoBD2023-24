@@ -57,11 +57,11 @@
         
             $email_login = isset($_POST['email_login']) ? $_POST['email_login'] : '';
             $ruolo_login = isset($_POST['ruolo_login']) ? $_POST['ruolo_login'] : '';
-            
+            $password_login = isset($_POST['password_login']) ? $_POST['password_login'] : '';
             
 
-            // Verifica se email_login e ruolo_login sono presenti
-            if (empty($email_login) || empty($ruolo_login)) {
+            // Verifica se email_login, ruolo_login sono presenti e password_login sono presenti
+            if (empty($email_login) || empty($ruolo_login) || empty($password_login)) {
                 //echo "<li class='test-item'>Email e ruolo devono essere specificati.</li>";
                 //echo '<a href="index.html">Torna alla schermata principale</a>';
             } else {
@@ -69,16 +69,16 @@
                     // Query per verificare se l'email esiste nella tabella del ruolo selezionato
                     $sql_check_email = "";
                     if ($ruolo_login === "docente") {
-                        $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login'";
+                        $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login' AND PasswordDocente = '$password_login'";
                     } else if ($ruolo_login === "studente") {
-                        $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login'";
+                        $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login' AND PasswordStudente = '$password_login'";
                     }
 
                     $result_check_email = $conn->query($sql_check_email);
 
                     // Verifica se l'email esiste nella tabella del ruolo selezionato
                     if ($result_check_email->num_rows <= 0) {
-                        echo "<li class='test-item'>Email errata.</li>";
+                        echo "<li class='test-item'>Credenziali errate.</li>";
                         echo '<a href="index.html">Torna alla schermata principale</a>';
                     } else {
                         echo "Accesso effettuato";

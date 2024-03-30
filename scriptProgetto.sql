@@ -5,6 +5,7 @@ USE ESQL;
 -- Creo le tabelle
 CREATE TABLE DOCENTE (
 	Email VARCHAR(40) PRIMARY KEY,
+    PasswordDocente VARCHAR(20) NOT NULL,
     Nome VARCHAR (50) NOT NULL,
     Cognome VARCHAR (50) NOT NULL,
     RecapitoTelefonicoDocente INT,
@@ -15,6 +16,7 @@ CREATE TABLE DOCENTE (
 
 CREATE TABLE STUDENTE (
 	Email VARCHAR(40) PRIMARY KEY,
+    PasswordStudente VARCHAR(20) NOT NULL,
     Nome VARCHAR (20) NOT NULL,
     Cognome VARCHAR (20) NOT NULL,
     RecapitoTelefonicoStudente INT,
@@ -322,11 +324,12 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE AutenticazioneDocente (
     IN EmailTemp VARCHAR(40),
+    IN PasswordTemp VARCHAR(20),
     OUT AutenticatoTemp BOOLEAN
 )
 BEGIN
     -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
-    IF EXISTS (SELECT * FROM DOCENTE WHERE Email = EmailTemp) THEN
+    IF EXISTS (SELECT * FROM DOCENTE WHERE Email = EmailTemp AND PasswordDocente = PasswordTemp) THEN
         SET AutenticatoTemp = TRUE;
     ELSE
         SET AutenticatoTemp = FALSE;
@@ -338,11 +341,12 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE AutenticazioneStudente (
     IN EmailTemp VARCHAR(40),
+    IN PasswordTemp VARCHAR(20),
     OUT AutenticatoTemp BOOLEAN
 )
 BEGIN
     -- Verifica se l'email esiste nella tabella Utenti e corrisponde alla password fornita
-    IF EXISTS (SELECT * FROM STUDENTE WHERE Email = EmailTemp) THEN
+    IF EXISTS (SELECT * FROM STUDENTE WHERE Email = EmailTemp AND PasswordStudente = PasswordTemp) THEN
         SET AutenticatoTemp = TRUE;
     ELSE
         SET AutenticatoTemp = FALSE;
@@ -354,6 +358,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE RegistrazioneDocente (
     IN EmailTemp VARCHAR(40),
+    IN PasswordTemp VARCHAR(20),
     IN Nome VARCHAR (50),
     IN Cognome VARCHAR (50),
     IN RecapitoTelefonicoDocente INT,
@@ -364,7 +369,7 @@ BEGIN
     -- Verifica se l'email non esiste già nella tabella Docente
     IF NOT EXISTS (SELECT * FROM Docente WHERE Email = EmailTemp) THEN
         -- Inserisce l'utente nella tabella Utenti
-        INSERT INTO Docente (Email,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (EmailTemp,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
+        INSERT INTO Docente (Email,PasswordDocente,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (EmailTemp,PasswordTemp,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
     ELSE
      -- Se l'email esiste già, restituisci un messaggio di errore
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Docente";
@@ -375,6 +380,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE RegistrazioneStudente (
     IN EmailTemp VARCHAR(40),
+    IN PasswordTemp VARCHAR(20),
     IN Nome VARCHAR (20),
     IN Cognome VARCHAR (20),
     IN RecapitoTelefonicoStudente INT,
@@ -385,7 +391,7 @@ BEGIN
     -- Verifica se l'email non esiste già nella tabella Utenti
     IF NOT EXISTS (SELECT * FROM Studente WHERE Email = EmailTemp) THEN
         -- Inserisce l'utente nella tabella Utenti
-        INSERT INTO STUDENTE (Email,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico) VALUES (EmailTemp,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico);
+        INSERT INTO STUDENTE (Email,PasswordStudente,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico) VALUES (EmailTemp,PasswordTemp,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico);
     ELSE
      -- Se l'email esiste già, restituisci un messaggio di errore
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Studente";
@@ -1092,10 +1098,10 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 
 -- Test inserisciRisposta e visualizzaEsito e inserisciMessaggioStudente
 
-INSERT INTO DOCENTE VALUES("docente@gmail.com","ciao","nano", 1234589, "scienze", "corso");
-INSERT INTO DOCENTE VALUES("docente2@gmail.com","ciao2","nano2", 12345892, "scienze", "corso");
-INSERT INTO STUDENTE VALUES("studente@gmail.com", "nano", "ciao", 123456789, 2010, 1234567891234567);
-INSERT INTO STUDENTE VALUES("studente2@gmail.com", "nano", "ciao", 3333, 2010, 2234567891234567);
+INSERT INTO DOCENTE VALUES("docente@gmail.com","password", "ciao","nano", 1234589, "scienze", "corso");
+INSERT INTO DOCENTE VALUES("docente2@gmail.com","password","ciao2","nano2", 12345892, "scienze", "corso");
+INSERT INTO STUDENTE VALUES("studente@gmail.com","password", "nano", "ciao", 123456789, 2010, 1234567891234567);
+INSERT INTO STUDENTE VALUES("studente2@gmail.com","password", "nano", "ciao", 3333, 2010, 2234567891234567);
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente2@gmail.com", NULL, NULL);
@@ -1106,11 +1112,11 @@ INSERT INTO SOLUZIONE VALUES(1, "provaNr1","soluzione risposta Corretta");
 INSERT INTO QUESITORISPOSTACHIUSA VALUES(2, "provaNr1");
 INSERT INTO OPZIONERISPOSTA VALUES(1,"provaNr1",2,"opzione risposta Corretta",true);
 INSERT INTO OPZIONERISPOSTA VALUES(2,"provaNr1",2,"opzione risposta sbagliata",false);
-INSERT INTO STUDENTE VALUES("alessia@gmail.com", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
-INSERT INTO STUDENTE VALUES("tabish@gmail.com", "Tabish", "Ghazanfar", 8654678, 2010,"gdhdnbgdtjhjklmk");
-INSERT INTO STUDENTE VALUES("lorenzo@gmail.com", "Lorenzo", "Maini", 475875983,2010, "llllllllllllllll");
-INSERT INTO STUDENTE VALUES("alex@gmail.com","Alex", "Ranaulo",35111111,2010,  "aaaaaaaaaaaaaaaa");
-INSERT INTO STUDENTE VALUES("davide@gmail.com", "Davide", "De Rosa", 1211212,2010,  "dddddddddddddddd");
+INSERT INTO STUDENTE VALUES("alessia@gmail.com","password", "Alessia", "Di Sabato", 123456789, 2021, "ABCDEFGHILMNOPWR");
+INSERT INTO STUDENTE VALUES("tabish@gmail.com","password", "Tabish", "Ghazanfar", 8654678, 2010,"gdhdnbgdtjhjklmk");
+INSERT INTO STUDENTE VALUES("lorenzo@gmail.com","password", "Lorenzo", "Maini", 475875983,2010, "llllllllllllllll");
+INSERT INTO STUDENTE VALUES("alex@gmail.com","password","Alex", "Ranaulo",35111111,2010,  "aaaaaaaaaaaaaaaa");
+INSERT INTO STUDENTE VALUES("davide@gmail.com","password", "Davide", "De Rosa", 1211212,2010,  "dddddddddddddddd");
 INSERT INTO TEST VALUES("provaNr2", '2024-02-09 14:30:00', NULL ,true, "docente@gmail.com");
 INSERT INTO QUESITO VALUES(4,"provaNr2","Basso", "testo quesito a scleta", 3);
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "alessia@gmail.com", NOW(), NOW());

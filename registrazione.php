@@ -11,6 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome = $_POST['nome'];
     $cognome = $_POST['cognome'];
     $email = $_POST["email_reg"];
+    $password = $_POST["password_reg"];
     $ruolo = $_POST['ruolo'];
     $recapito_telefonico = $_POST['recapito_telefonico'];
 
@@ -30,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Chiama la procedura di registrazione dello studente
             
-            $sql = "CALL RegistrazioneStudente('$email', '$nome', '$cognome', '$recapito_telefonico', '$anno_immatricolazione', '$codice_alfanumerico')";
+            $sql = "CALL RegistrazioneStudente('$email', '$password','$nome', '$cognome', '$recapito_telefonico', '$anno_immatricolazione', '$codice_alfanumerico')";
             if ($conn->query($sql) === TRUE) {
                 echo "Registrazione avvenuta con successo!";
                 echo '<br>';
@@ -47,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nome_corso = $_POST['nome_corso'];
             $nome_dipartimento = $_POST['nome_dipartimento'];
 
-            $sql = "CALL RegistrazioneDocente('$email', '$nome', '$cognome', '$recapito_telefonico', '$nome_dipartimento', '$nome_corso')";
+            $sql = "CALL RegistrazioneDocente('$email', '$password','$nome', '$cognome', '$recapito_telefonico', '$nome_dipartimento', '$nome_corso')";
             if ($conn->query($sql) === TRUE) {
                 echo "Registrazione avvenuta con successo!";
                 echo '<br>';
