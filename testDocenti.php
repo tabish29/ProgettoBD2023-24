@@ -73,7 +73,7 @@
                     session_start();
                 }
 
-                include 'navbar.php';
+                include 'navbarDocente.php';
                 include 'connessione.php';
                 
                 if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {

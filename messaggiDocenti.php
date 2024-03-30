@@ -50,7 +50,7 @@
 <body>
     <div class="container">
         <?php
-            include 'navbar.php';
+            include 'navbarDocente.php';
             include 'connessione.php';
             
             // Verifica se l'utente è autenticato
@@ -60,7 +60,6 @@
                 exit();
             }
             
-            echo "Valore della variabile di sessione email in messaggiDocenti.php: " . $_SESSION['email']; //ELIMINARE
 
             $email_login = $_SESSION['email'];
             $ruolo_login = $_SESSION['ruolo'];
@@ -112,7 +111,7 @@
         
         <!-- Aggiungi il bottone "Invia Nuovo Messaggio" -->
         <div class="btn-container">
-            <a href="nuovoMessaggio.php" class="btn btn-primary">Invia Nuovo Messaggio</a>
+            <a href="nuovoMessaggioDocente.php" class="btn btn-primary">Invia Nuovo Messaggio</a>
         </div>
     </div>
 </body>
