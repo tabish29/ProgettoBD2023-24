@@ -241,6 +241,7 @@
                             <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Salva</button>
                         </form>
                         <a href='inserisciQuesito.php?id=" . $testId . "' class='btn'>Aggiungi Quesito</a> 
+                        <a href='inserisciTabella.php?id=" . $testId . "' class='btn'>Inserisci Tabella</a> 
                         <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
                         ";
                     
