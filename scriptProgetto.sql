@@ -1103,8 +1103,8 @@ INSERT INTO DOCENTE VALUES("docente2@gmail.com","password","ciao2","nano2", 1234
 INSERT INTO STUDENTE VALUES("studente@gmail.com","password", "nano", "ciao", 123456789, 2010, 1234567891234567);
 INSERT INTO STUDENTE VALUES("studente2@gmail.com","password", "nano", "ciao", 3333, 2010, 2234567891234567);
 INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
-INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
-INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente2@gmail.com", NULL, NULL);
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente@gmail.com", NOW(), NOW());
+INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente2@gmail.com", NOW(), NOW());
 INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
 INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
 INSERT INTO QUESITOCODICE VALUES(1, "provaNr1");
@@ -1129,7 +1129,6 @@ INSERT INTO COMPLETAMENTO (TitoloTest, EmailStudente, DataPrimaRisposta, DataUlt
 
 
 
-
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
 CALL InserimentoMessaggioDocente("testDiProva3", "Eccoci qua","Questo è un messaggio e basta",null,"docente2@gmail.com");
@@ -1149,47 +1148,50 @@ CALL CreazioneQuesitoRispostaChiusa("provaNr2","Medio","Descrizione",5,@nQ2);
 CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40,@nQ3);
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10,@nQ4);
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20,@nQ5);
+CALL CreazioneQuesitoCodice("provaNr2","Medio","Descr Quesito Codice",20,@nQ5);
 
-
+/*
 SELECT @nQ1;
 SELECT @nQ2;
 SELECT @nQ3;
 SELECT @nQ4;
 SELECT @nQ5;
+*/
 
 CALL InserimentoSoluzione("provaNr1",1,"Qui va tutto bene");
 CALL InserimentoSoluzione("provaNr1",8,"Qui va tutto bene sbagliato");
-CALL InserimentoSoluzione("TestDiProva3",8,"Anche qua funziona");
+CALL InserimentoSoluzione("provaNr2",10,"Anche qua funziona");
 CALL InserimentoSoluzione("TestDiProva3",9,"Anche qua funziona tutto");
 
 CALL InserimentoOpzioneRisposta("provaNr2",2,"Evviva Noi fatto male",true);
 CALL InserimentoOpzioneRisposta("provaNr2",6,"Evviva Noi",true);
 CALL InserimentoOpzioneRisposta("provaNr2",8,"Completamento di Lollo",false);
 
-CALL inserisciRispostaQuesitoRispostaChiusa(3,"ProvaNr1","risposta chiusa",2);
+CALL inserisciRispostaQuesitoRispostaChiusa(3,"provaNr1","risposta chiusa",2);
 CALL inserisciRispostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta sbagliata", 2);
 CALL inserisciRispostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta Corretta", 2);
 CALL inserisciRispostaQuesitoCodice(2, "provaNr1", "rispostaNonCorretta", 1);
 CALL inserisciRispostaQuesitoCodice(3, "provaNr1", "Qui va tutto bene", 1);
-CALL inserisciRispostaQuesitoCodice(4, "provaNr2", "rispostaNonCorretta", 1);
+CALL inserisciRispostaQuesitoCodice(4, "provaNr2", "Anche qua funziona", 10);
 CALL inserisciRispostaQuesitoCodice(5, "provaNr1", "rispostaNonCorretta", 1);
 
- CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
- SELECT @esitoRispostaCodice;
+#CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
+#SELECT @esitoRispostaCodice;
  
-  CALL visualizzaEsitoRisposta(3, "provaNr1",1,  @esitoRispostaCodice);
- SELECT @esitoRispostaCodice;
+#CALL visualizzaEsitoRisposta(3, "provaNr1",1,  @esitoRispostaCodice);
+#SELECT @esitoRispostaCodice;
  
- CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
- SELECT @esitoRispostaScelta;
- 
--- SELECT * FROM QUESITO;
--- SELECT * FROM QUESITORISPOSTACHIUSA;
--- SELECT * FROM OPZIONERISPOSTA;
+#CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
+#SELECT @esitoRispostaScelta;
+
+
+SELECT * FROM QUESITO;
+SELECT * FROM QUESITORISPOSTACHIUSA;
+SELECT * FROM OPZIONERISPOSTA;
 SELECT * FROM RISPOSTAQUESITORISPOSTACHIUSA;
--- SELECT * FROM QUESITOCODICE;
--- SELECT * FROM SOLUZIONE;
-SELECT * FROM RISPOSTAQUESITOCODICE;
+#SELECT * FROM QUESITOCODICE;
+#SELECT * FROM SOLUZIONE;
+#SELECT * FROM RISPOSTAQUESITOCODICE;
 SELECT * FROM COMPLETAMENTO;
 
 
