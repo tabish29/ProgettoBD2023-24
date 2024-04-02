@@ -133,7 +133,8 @@
                     if (isset($_POST['terminaTest'])) {
                         $testId = $_POST['titoloTest'];
                         
-                        $sql_settaConcluso = "UPDATE COMPLETAMENTO SET Stato = 'Concluso' WHERE NumeroProgressivo = (SELECT NumeroProgressivo FROM COMPLETAMENTO WHERE Stato <> 'Concluso' AND TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "')";
+
+                        $sql_settaConcluso = "UPDATE COMPLETAMENTO SET Stato = 'Concluso', DataPrimaRisposta = NULL, DataUltimaRisposta = NULL WHERE NumeroProgressivo = (SELECT NumeroProgressivo FROM COMPLETAMENTO WHERE Stato <> 'Concluso' AND TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "')";
                         $conn->query($sql_settaConcluso);
                         $conn->next_result();
                         echo "<p>Test terminato con successo.</p>";
