@@ -12,12 +12,19 @@
             background-color: #f4f4f4;
         }
         .container {
-            width: 80%;
+            width: 70%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .containerDomande{
+            width: 50%;
+            background-color: #edeeee;
+            margin: 20px auto;
+            align-content: center;
+            padding: 30px;
         }
         h2 {
             text-align: center;
@@ -59,19 +66,7 @@
             border-radius: 3px;
             cursor: pointer;
         }
-        .btn {
-            width: auto;
-            height: auto;
-            border: 1px solid #222222;
-            padding: 3px;
-            margin: 0px;
-            font-size: 16px;
-            font-weight: bold;
-            font-style: normal;
-            color: #222222;
-            background-color: #7cfc00; 
-        }
-        p{
+        .classQuesito{
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
@@ -82,18 +77,60 @@
             height: auto;
             border: 1px solid #222222;
             padding: 3px;
-            margin: 0px;
+            margin: 5px;
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
             background-color: #acf9ba; 
         }
+        .btnTermina{
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #7cfc00; 
+        }
+        .testH2{
+            text-align: center;
+            margin-bottom: 20px;
+            font:  sans-serif;
+            font-style: bold;
+        }
+        .classInserimento{
+            text-align: left;
+            margin-bottom: 20px;
+            font:  sans-serif;
+            font-style: italic;
+            text-decoration: underline;
+        }
+        .areaCodice{
+            width: 80%;
+            display: block;
+            margin:auto;
+        }
+        .labelVerifica{
+            text-align: center;
+            font: sans-serif;
+            font-weight: bold;
+            font-size: medium;
+            
+            color: black;
+            height: auto;
+            width: auto;
+            display: block;
+            
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Effettua il Test</h2>
+        <h2 class='testH2'>Effettua il Test</h2>
         <ul class="test-details">
             <?php
                 include 'connessione.php';
@@ -143,7 +180,6 @@
                     }
                     else if(isset($_POST['verificaRisposta'])){
                         $esito = "";
-                        echo "Esito inizio: " . $esito . "<br>";
                         $testId = $_POST['titoloTest'];
                         $numQuesito = $_POST['numeroQuesito'];
                         $tipologiaQuesito = $_POST['tipologiaQuesito'];
@@ -154,7 +190,6 @@
                         //PASSO 1: cerco l'id del completamento
                         $sql_cercaCompletamento = "SELECT NumeroProgressivo FROM COMPLETAMENTO WHERE Stato <> 'Concluso' AND TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "'";
                         $idCompletamento = $conn->query($sql_cercaCompletamento)->fetch_assoc()['NumeroProgressivo'];
-                        echo "ID Completamento: " . $idCompletamento . "<br>";
 
 
                         //PASSO 2: inserisco la risposta
@@ -189,11 +224,6 @@
                         $conn->query($sql_aggiornaDataUltima);
                         $conn->next_result();
 
-                        echo "idCompletamento: " . $idCompletamento . "<br>";
-                        echo "testId: " . $testId . "<br>";
-                        echo "rispostaData: " . $rispostaData . "<br>";
-                        echo "numQuesito: " . $numQuesito . "<br>";
-
                         //PASSO 3: verifico l'esito
                         $sql_verificaRisposta = "CALL visualizzaEsitoRisposta(?, ?, ?, @esitoQ)";
                         $stmt = $conn->prepare($sql_verificaRisposta);
@@ -211,8 +241,7 @@
                         $stmt->fetch();
                         $stmt->close();
 
-                        echo "Esito: " . $esito . "<br>";
-                        
+                       
 
                         if ($esito){
                             $testoVerifica = "Risposta corretta!";
@@ -220,7 +249,6 @@
                             $testoVerifica = "Risposta errata!";
                         }
 
-                        echo "Verifica Risposta: " . $testoVerifica;
 
                         $esito = "";
                         $numDomanda = $_POST['numeroDomanda'];
@@ -248,7 +276,7 @@
                         while ($row = $result_quesiti_test->fetch_assoc()) {
                             $num++;
                             
-                            echo "<br><p>Quesito nr." . $num . "</p>";                 
+                            echo "<br><p class ='classQuesito'>Quesito nr." . $num . "</p>";                 
                             $numeroProgressivo = $row['NumeroProgressivo'];
                             $livelloDifficolta = $row['LivelloDifficolta'];
                             $descrizione = $row['Descrizione'];
@@ -267,13 +295,13 @@
 
                             if ($result_quesitoRC->num_rows > 0) {
                                 $tipologiaQuesito = "Risposta Chiusa";
-                                echo "<p>Domanda:</p>" . $dati[2] . "<br>";
+                                echo "<p>Domanda:\n" . $dati[2] . "</p>";
                                 
                             } 
                             
                             if ($result_quesitoCodice->num_rows > 0){
                                 $tipologiaQuesito = "Codice";
-                                echo "<p>Domanda:\n" . $dati[2] . "</p><br>";
+                                echo "<p>Domanda:\n" . $dati[2] . "</p>";
                             }
 
                             
@@ -284,7 +312,7 @@
                             
                             if ($tipologiaQuesito == "Risposta Chiusa") {
                                 $contatore++;
-                                echo "<br><p>Seleziona la risposta corretta:</p>";
+                                echo "<br><p class='classInserimento'>Seleziona la risposta corretta:</p>";
                                 $sql_risposte = "SELECT * FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_risposte = $conn->query($sql_risposte);
                                 $conn->next_result();
@@ -301,7 +329,7 @@
                                     echo "<input type='hidden' name='rispostaData' id='risposta_selezionata' value=''>"; // Campo nascosto per la risposta selezionata
                                     echo "<button type='submit' name='verificaRisposta' class='btnVerifica' onclick='setRispostaSelezionata()'>Verifica Risposta</button>"; // Invoca la funzione JavaScript al clic
                                     if ($contatore == $numDomanda){
-                                        echo "<br><label>" . $testoVerifica . "</label>";
+                                        echo "<br><label class='labelVerifica'>" . $testoVerifica . "</label>";
                                     }                          
                                     echo "</form>";
                                     echo "
@@ -318,8 +346,8 @@
                                 $contatore++;
                                 
                                 echo "<form method='post' action='effettuaTest.php'>";
-                                echo "<p>Inserisci il codice:</p>";
-                                echo "<textarea id='codice' name='codice' rows='10' cols='50'></textarea>";
+                                echo "<p class = 'classInserimento'>Inserisci il codice:</p>";
+                                echo "<textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>";
                                 echo "<input type='hidden' name='tipologiaQuesito' value='$tipologiaQuesito'>";
                                 echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
                                 echo "<input type='hidden' name='numeroDomanda' value='" . $contatore . "'>";
@@ -327,7 +355,7 @@
                                 echo "<button type='submit' class='btnVerifica' name='verificaRisposta'>Verifica Risposta</button>";       
 
                                 if ($contatore == $numDomanda){
-                                    echo "<br><label>" . $testoVerifica . "</label>";
+                                    echo "<br><label class='labelVerifica'>" . $testoVerifica . "</label>";
                                 }
                                 echo "</form>";
 
@@ -339,7 +367,7 @@
                             if ($contatore == $numeroQuesitiTest) { //num = numero quesiti del test
                                 echo "<br><br>";
                                 echo "<form method='post' action='effettuaTest.php'>";
-                                echo "<input class='btn' type='submit' name='terminaTest' value='Termina Test'>";
+                                echo "<input class='btnTermina' type='submit' name='terminaTest' value='Termina Test'>";
                                 echo "<input type='hidden' name='titoloTest' value='" . $titoloTest . "'>";
                                 echo "</form>";
                             }
@@ -357,9 +385,10 @@
                     $conn->next_result();
                     if ($result_select_test->num_rows > 0) {
                         $row = $result_select_test->fetch_assoc();
-                        echo "<p>Titolo Test:\n" . $row['Titolo']. "</p><br>";
-
+                        echo "<h2 class='testH2'> " . $row['Titolo']. "</h2><br>";
+                        echo "<div class='containerDomande'>";
                         ottieniQuesiti($row['Titolo'], $testoVerifica, $numDomanda);
+                        echo "</div>";
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }
