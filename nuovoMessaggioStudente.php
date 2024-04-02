@@ -11,25 +11,26 @@
             background-color: #f4f4f4;
         }
         .container {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
+            width: auto;
+            margin: 10px auto;
+            padding: auto;
+            background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .invia-messaggio-form {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center; 
         }
         h2 {
             text-align: center;
             margin-bottom: 20px;
         }
+        .messH2{
+            text-align: center;
+            margin-bottom: 20px;
+            font:  sans-serif;
+            font-style: italic;
+            font-size: medium;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -53,12 +54,23 @@
             text-align: center;
         }
         .btn-primary {
-            background-color: #007bff;
-            color: #fff;
+            background-color: #7cfc00; 
+            color: #222222;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
+        }
+        .listBox{
+            width: auto;
+        }
+        .areaInserimento{
+            width: 60%;
+        }
+        .labelMess{
+            font-weight: bold;
+            font-size: medium;
+            padding: 1%;
         }
     </style>
 </head>
@@ -103,15 +115,12 @@
                 }
             }
         ?>
-    </div>
-
-    <div class="invia-messaggio-form">
-        <form action="nuovoMessaggioStudente.php" method="post">
-            <h2>Invia Nuovo Messaggio</h2>
+    <form action="nuovoMessaggioStudente.php" method="post">
+            <h2 class='messH2'>Invia Nuovo Messaggio</h2>
 
             <div class="form-group">
-                <label for="selectTest">Seleziona un test:</label>
-                <select id="selectTest" name="selectTest">
+                <label class="labelMess" for="selectTest">Seleziona un test:</label><br>
+                <select class="listBox" id="selectTest" name="selectTest"><br>
                     <?php
                         // Recupera i nomi dei test dal database
                         $query_test2 = "CALL visualizzaTestDisponibili()";
@@ -128,8 +137,8 @@
             </div>
 
             <div class="form-group">
-                <label for="selectDocente">Seleziona un docente:</label>
-                <select id="selectDocente" name="selectDocente">
+                <label for="selectDocente" class="labelMess">Seleziona un docente:</label><br>
+                <select class='listBox' id="selectDocente" name="selectDocente"><br>
                     <?php
                         // Recupera i nomi dei docenti dal database
                         $query_doc = "CALL VisualizzaDocenti()";
@@ -146,13 +155,13 @@
             </div>
         
             <div class="form-group">
-                <label for="oggetto">Oggetto del messaggio:</label>
-                <input type="text" id="oggetto" name="oggetto" required>
+                <label for="oggetto"class="labelMess">Oggetto del messaggio:</label><br>
+                <input type="text" class="areaInserimento" id="oggetto" name="oggetto" required>
             </div>
 
             <div class="form-group">
-                <label for="testo">Testo del messaggio:</label>
-                <textarea id="testo" name="testo" rows="5" required></textarea>
+                <label for="testo"class="labelMess">Testo del messaggio:</label><br>
+                <textarea id="testo"class="areaInserimento" name="testo" rows="5" required></textarea><br>
             </div>
 
             <div class="btn-container">
