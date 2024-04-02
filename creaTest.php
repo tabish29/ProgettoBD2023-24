@@ -11,50 +11,44 @@
             background-color: #f4f4f4;
         }
         .container {
-            width: 80%;
+            text-align: center;
+            width: 70%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align-last: center;
-            
         }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: large;
-            margin-top: 10px;
-            text-align: left;
-        }
-        .email-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .test-item {
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 5px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-        .btn {
+        
+        .creaBtn{
             width: auto;
             height: auto;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 3px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 10px;
             font-size: 16px;
-            transition: background-color 0.3s;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #acf9ba; 
+        }
+        
+        .areaInserimento{
+            width: 40%;
+            display: block;
+            margin:auto;
+        }
+        .label{
+            text-align: center;
+            font: sans-serif;
+            font-weight: bold;
+            font-size: medium;
+            padding: 1%;
+            color: black;
+            height: auto;
+            width: auto;
+            display: block;
+            
         }
     </style>
 </head>
@@ -72,14 +66,17 @@
         
                         function creaGrafica() {
                             echo "
+                            <h2 class='creaTest'>Crea Test</h2>
                             <form id='creaTestForm' action='creaTest.php' method='post'>
-                                <label for='titolo'>Titolo:</label>
-                                <input type='text' id='titolo' name='titolo' required><br>                                <label for='fotoLabel'>Foto:</label>
+                                <label class='label' for='titolo'>Titolo:</label>
+                                <input class='areaInserimento' type='text' id='titolo' name='titolo' required><br>                                
+                                <label class='label' for='fotoLabel'>Foto:</label>
                                 <input type='file'id='fotoF' name='foto'><br>
-                                <label for='visibilita'>Visibilità:</label>
+                                <label class='label'  for='visibilita'>Visibilità:</label>
                                 <input type='checkbox' id='visibilitaCB' name='visibilita'><br>
-                                <input type='hidden' name='action' value='crea'>
-                                <button type='submit' class='btn' id='creaTestButton'>Crea</button>
+                                <input  type='hidden' name='action' value='crea'>
+                                <button type='submit' class='creaBtn' id='creaTestButton'>Crea</button><br>
+                                <a href=\"testDocenti.php\" class=\"creaBtn\">Torna ai Test</a>
                             </form>
                             ";
                         }
