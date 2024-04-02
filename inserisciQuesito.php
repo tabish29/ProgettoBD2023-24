@@ -138,7 +138,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label class="label"for="livelloDifficolta">Livello di difficoltà:</label>
                     <select class="listBox" id="livelloDifficoltaSelect" name="livDifficolta">
                         <option value="Basso" selected>Basso</option>
@@ -147,22 +147,25 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label class="label" for="descrizione">Descrizione:</label>
                     <input class="areaInserimento" type="text" id="descrizione" name="descrizione">
                 </div>
 
-                <div class="form-group">
+                <div>
                     <label class="label" for="numeroRisposte">Numero di risposte:</label>
                     <input class="areaInserimento" type="text" id="numeroRisposte" name="numeroRisposte">
                 </div>
 
-                <div class="form-group">
-                    <input type="submit" class="salvaBtn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
+                <div>
+
+                <input type="submit" class="salvaBtn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
                 </div>
+
                 </VerticalPanel>
 
             </form>
+            <button id="modificaTest" class="salvaBtn" onclick="window.location.href='modificaTest.php?id=<?php echo $titoloTest; ?>'">Back</button>
 
     </div>
 
