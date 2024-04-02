@@ -12,21 +12,48 @@
             background-color: #f4f4f4;
         }
         .container {
-            width: 80%;
+            text-align: center;
+            width: 70%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h2 {
+        
+        .divQuesiti{
+            background-color: #fcfcf0;
+            margin: auto;
+            width: 30%;
+            height: 30%;
+        }
+        .creaBtn{
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #acf9ba; 
+        }
+        
+        .areaInserimento{
+            width: 40%;
+            display: block;
+            margin:auto;
+        }
+        .label {
             text-align: center;
-            margin-bottom: 20px;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: medium;
+            color: black;
+            display: block;
         }
-        .test-details {
-            list-style-type: none;
-            padding: 0;
-        }
+
         .test-item {
             padding: 10px;
             margin-bottom: 5px;
@@ -34,30 +61,8 @@
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-        .form-container {
-            margin-top: 20px;
-        }
         .form-group {
             margin-bottom: 10px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="email"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
-        .form-group input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
         }
         .btn {
             width: auto;
@@ -71,6 +76,13 @@
             color: #222222;
             background-color: #7cfc00; 
             }
+        .quesitoLabel{
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+        }
+        
     </style>
 </head>
 <body>
@@ -95,7 +107,7 @@
                     $num = 1;
                     if ($result_quesiti_test->num_rows>0) {
                         while ($row = $result_quesiti_test->fetch_assoc()) {
-                            echo "Quesito nr." . $num . "<br>"; // Attenzione non deve corrispondere al progressivo
+                            echo "<div class=\"divQuesiti\"> <br><label class='quesitoLabel'>Quesito nr." . $num . "</label><br>"; // Attenzione non deve corrispondere al progressivo
                             $numeroProgressivo = $row['NumeroProgressivo'];
                             $livelloDifficolta = $row['LivelloDifficolta'];
                             $descrizione = $row['Descrizione'];
@@ -115,32 +127,27 @@
                             if ($result_quesitoRC->num_rows>0) {
                                 $num++;
                                 $tipologiaQuesito = "Risposta Chiusa";
-                                echo "<details>";
-                                echo "<summary>Tipologia:</summary>";
-                                echo "" . $tipologiaQuesito . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Livello Difficoltà:</summary>";
-                                echo "" . $dati[1] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Descrizione:</summary>";
-                                echo "" . $dati[2] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Numero Risposte:</summary>";
-                                echo "" . $dati[3] . "";
-                                echo "</details><br>";
+                                echo "
+                                <span style=\"display: inline;\">
+                                    <label class='label' style=\"display: inline;\">Tipologia: </label>"
+                                    . $tipologiaQuesito . "<br><br>" . "
+                                    <label class='label'  style=\"display: inline;\">Livello Difficoltà: </label>"
+                                    . $dati[1] . "<br><br>" . "
+                                    <label class='label'  style=\"display: inline;\">Descrizione: </label>"
+                                    . $dati[2]  ."<br><br>" . "
+                                    <label class='label' style=\"display: inline;\">Numero Risposte: </label>"
+                                    . $dati[3] . "<br><br>";
+
 
                                 $sql_soluzioni = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_soluzioni = $conn->query($sql_soluzioni);
                                 $conn->next_result();
-                                echo "<details>";
-                                echo "<summary>Soluzioni:</summary>";
+                                
+                                echo "<label class='label'  style=\"display: inline;\">Soluzioni: </label><br>";
                                 while ($soluzione = $result_soluzioni->fetch_assoc()) {
-                                    echo "" . $soluzione['CampoTesto'] . "<br>";
+                                    echo "- " . $soluzione['CampoTesto'] . "<br>";
                                 }
-                                echo "</details><br>";
+                                echo "<br></span></div><br>";
 
                                 
 
@@ -149,32 +156,29 @@
                             if ($result_quesitoCodice->num_rows>0){
                                 $num++;
                                 $tipologiaQuesito = "Codice";
-                                echo "<details>";
-                                echo "<summary>Tipologia:</summary>";
-                                echo "" . $tipologiaQuesito . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Livello Difficoltà:</summary>";
-                                echo "" . $dati[1] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Descrizione:</summary>";
-                                echo "" . $dati[2] . "";
-                                echo "</details><br>";
-                                echo "<details>";
-                                echo "<summary>Numero Risposte:</summary>";
-                                echo "" . $dati[3] . "";
-                                echo "</details><br>";
+
+                                echo " 
+                                    <span style=\"display: inline;\">
+                                    <label class='label'style=\"display: inline;\">Tipologia: </label>"
+                                    . $tipologiaQuesito . "<br><br>" . "
+                                    <label class='label' style=\"display: inline;\">Livello Difficoltà: </label>"
+                                    . $dati[1] . "<br><br>" . "
+                                    <label class='label'  style=\"display: inline;\">Descrizione: </label>"
+                                    . $dati[2] ."<br><br>" . "
+                                    <label class='label'  style=\"display: inline;\">Numero Risposte: </label>"
+                                    . $dati[3] . "<br><br>";
+
+                                
 
                                 $sql_soluzioni = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_soluzioni = $conn->query($sql_soluzioni);
                                 $conn->next_result();
-                                echo "<details>";
-                                echo "<summary>Soluzioni:</summary>";
+                                echo "<label class='label'  style=\"display: inline;\">Soluzioni: </label><br>";
+                            
                                 while ($soluzione = $result_soluzioni->fetch_assoc()) {
-                                    echo "" . $soluzione['TestoSoluzioni'] . "<br>";
+                                    echo "- " . $soluzione['TestoSoluzione'] . "<br>";
                                 }
-                                echo "</details><br>";
+                                echo "<br></span></div><br>";
 
                             }
                         }
@@ -197,29 +201,17 @@
                     // Verifica se il test è stato trovato
                     if ($result_select_test->num_rows > 0) {
                         $row = $result_select_test->fetch_assoc();
-                        // Visualizza i dettagli del test
-                        /*
-                        echo "<li class='test-item'>Titolo: " . $row['Titolo'] . "</li>";
-                        echo "<li class='test-item'>Data Creazione: " . $row['DataCreazione'] . "</li>";
-                        echo "<li class='test-item'>Visualizza Risposte: " . $row['VisualizzaRisposte'] . "</li>";
-                        echo "<li class='test-item'>Email: " . $row['EmailDocente'] . "</li>";
-                        echo "<li class='test-item'>Quesiti:</li>";*/
-                        echo "<details>";
-                        echo "<summary>Titolo Test:</summary>";
-                        echo "" . $row['Titolo'] . "";
-                        echo "</details><br>";
-                        echo "<details>";
-                        echo "<summary>Data Creazione:</summary>";
-                        echo "" . $row['DataCreazione'] . "";
-                        echo "</details><br>";
-                        echo "<details>";
-                        echo "<summary>Visualizza Risposte:</summary>";
-                        echo "" . $row['VisualizzaRisposte'] . "";
-                        echo "</details><br>";
-                        echo "<details>";
-                        echo "<summary>Email:</summary>";
-                        echo "" . $row['EmailDocente'] . "";
-                        echo "</details><br>";
+                        echo
+                        "<span style=\"display: inline;\">
+                            <label class='label' for='titolo' style=\"display: inline;\">Titolo Test: </label>"
+                            . $row['Titolo'] . "<br><br>" . "
+                            <label class='label' for='titolo' style=\"display: inline;\">Data Creazione: </label>"
+                            . $row['DataCreazione'] . "<br><br>" . "
+                            <label class='label' for='titolo' style=\"display: inline;\">Visualizza Risposte: </label>"
+                            . $row['VisualizzaRisposte'] ."<br><br>" . "
+                            <label class='label' for='titolo' style=\"display: inline;\">Email Docente: </label>"
+                            . $row['EmailDocente'] . "<br><br>
+                        </span>";
                         
 
                         ottieniQuesiti($row['Titolo']);
@@ -237,11 +229,13 @@
                             <label for='visualizzaRisposte'>Visualizza Risposte:</label>
                             <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
                             <br>
-                            <input type='hidden' name='action' value='crea'>
+                            <input type='hidden' name='action' value='crea'><br>
                             <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Salva</button>
                         </form>
-                        <a href='inserisciQuesito.php?id=" . $testId . "' class='btn'>Aggiungi Quesito</a> 
-                        <a href='inserisciTabella.php?id=" . $testId . "' class='btn'>Inserisci Tabella</a> 
+                        <br>
+                        <button id='inserisciQuesito' class='btn' onclick=\"window.location.href='inserisciQuesito.php?id=" . $testId . "'\">Aggiungi Quesito</button>
+                        <button id='inserisciTabella' class='btn' onclick=\"window.location.href='inserisciTabella.php?id=" . $testId . "'\">Inserisci Tabella</button>
+                        
                         <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
                         ";
                     
