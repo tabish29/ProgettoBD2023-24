@@ -13,10 +13,10 @@
       margin: 20px auto; 
       padding: 20px;
       font-weight: bold;
-
       background-color: #fff8dc;
       border-radius: 5px;
     }
+
     .containerNavH2 {
       text-align: center;
       font-weight: bold;
@@ -56,22 +56,22 @@
 <body>
 
 <div class="containerNav">
-<h2 class='containerNavH2'>HomePage Studente</h2>
-  <p>Questa è la home page dello Studente. Enjoy.</p>
-</div>
-<nav class="navbar navbar-default">
-  <div>
-    <ul class="nav navbar-nav">
-    <li <?php echo basename($_SERVER['PHP_SELF']) == 'testStudenti.php' ? 'class="active"' : ''; ?>>
-          <a href="testStudenti.php">Test Disponibili</a>
-        </li>
-        <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiStudenti.php' ? 'class="active"' : ''; ?>>
-          <a href="messaggiStudenti.php">Messaggi Studente</a>
-        </li>
-    </ul>
-    <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='index.html'">Logout</button>
-  </div>
-</nav>
+  <h2 class='containerNavH2'>HomePage Studente</h2>
+      <p>Questa è la home page dello Studente. Enjoy.</p>
+    
+    <nav class="navbar navbar-default">
+      <div>
+        <ul class="nav navbar-nav">
+        <li <?php echo basename($_SERVER['PHP_SELF']) == 'testStudenti.php' ? 'class="active"' : ''; ?>>
+              <a href="testStudenti.php">Test Disponibili</a>
+            </li>
+            <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiStudenti.php' ? 'class="active"' : ''; ?>>
+              <a href="messaggiStudenti.php">Messaggi Studente</a>
+            </li>
+        </ul>
+        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='index.html'">Logout</button>
+      </div>
+    </nav>
   </div>
 </body>
 </html>

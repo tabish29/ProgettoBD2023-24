@@ -88,7 +88,7 @@
                             header("Location: testDocenti.php");
                             exit();
                         } else if ($ruolo_login === "studente") {
-                            header("Location: messaggiStudenti.php");
+                            header("Location: testStudenti.php");
                             exit();
                         }
                     
