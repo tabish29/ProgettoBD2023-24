@@ -12,65 +12,73 @@
             background-color: #f4f4f4;
         }
         .container {
-            width: 80%;
+            text-align: center;
+            width: 70%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
+        
+        .divQuesiti{
+            background-color: #fcfcf0;
+            margin: auto;
+            width: 30%;
+            height: 30%;
         }
-        form {
-            width: 50%;
-            margin: 0 auto;
+        .salvaBtn{
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #acf9ba; 
+        }
+        
+        .areaInserimento{
+            width: 40%;
+            display: block;
+            margin:auto;
+        }
+        .label {
+            text-align: center;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: medium;
+            color: black;
+            display: block;
+        }
+
+        .test-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        .add-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .add-button:hover {
-            background-color: #45a049;
-        }
-        .btn {
-            width: 100%;
-            height: 40px;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 3px;
-            cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
+       
+        .quesitoLabel{
             font-size: 16px;
-            transition: background-color 0.3s;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
         }
-        .btn:hover {
-            background-color: #45a049;
+        
+        
+        .listBox{
+            width: auto;
         }
-        .additional-fields {
-            display: none;
+        .areaInserimento{
+            width: 50%;
+            height: 50px;
         }
     </style>
 </head>
@@ -113,8 +121,8 @@
                 $result = $conn->query("SELECT @NumeroProgressivoQuesito AS NumeroProgressivo");
                 $row = $result->fetch_assoc();
                 $numeroProgressivoQuesito = $row['NumeroProgressivo'];
-                echo "<a href='inserisciQuesitoSpecifico.php?id=" . $numeroProgressivoQuesito. ";" . $tipoQuesito . "' class='btn'>Procedi per configurare le risposte</a> ";
-                
+                header('Location: inserisciQuesitoSpecifico.php?id=' . $numeroProgressivoQuesito . ';' . $tipoQuesito);
+                exit;                
 
             }
         ?>
@@ -123,16 +131,16 @@
                 <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
                 <VerticalPanel id="pannello">
                 <div class="form-group">
-                    <label for="tipoQuesito">Tipo di quesito:</label>
-                    <select id="tipoQuesito" name="tipoQuesito">
+                    <label class="label"for="tipoQuesito">Tipo di quesito:</label>
+                    <select class="listBox" id="tipoQuesito" name="tipoQuesito">
                         <option value="RC" selected>Quesito a Risposta Chiusa</option>
                         <option value="COD">Quesito di Codice</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="livelloDifficolta">Livello di difficoltà:</label>
-                    <select id="livelloDifficoltaSelect" name="livDifficolta">
+                    <label class="label"for="livelloDifficolta">Livello di difficoltà:</label>
+                    <select class="listBox" id="livelloDifficoltaSelect" name="livDifficolta">
                         <option value="Basso" selected>Basso</option>
                         <option value="Medio">Medio</option>
                         <option value="Alto">Alto</option>
@@ -140,17 +148,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="descrizione">Descrizione:</label>
-                    <input type="text" id="descrizione" name="descrizione">
+                    <label class="label" for="descrizione">Descrizione:</label>
+                    <input class="areaInserimento" type="text" id="descrizione" name="descrizione">
                 </div>
 
                 <div class="form-group">
-                    <label for="numeroRisposte">Numero di risposte:</label>
-                    <input type="text" id="numeroRisposte" name="numeroRisposte">
+                    <label class="label" for="numeroRisposte">Numero di risposte:</label>
+                    <input class="areaInserimento" type="text" id="numeroRisposte" name="numeroRisposte">
                 </div>
 
                 <div class="form-group">
-                    <input type="submit" class="btn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
+                    <input type="submit" class="salvaBtn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
                 </div>
                 </VerticalPanel>
 
