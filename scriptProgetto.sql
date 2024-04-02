@@ -1251,13 +1251,13 @@ INSERT INTO COMPLETAMENTO (TitoloTest, EmailStudente, DataPrimaRisposta, DataUlt
 
 -- fine test
 
-/* Test messaggio
+ -- Test messaggio
 CALL inserisciMessaggioStudente("studente@gmail.com", "docente@gmail.com", "provaNr1", "titoloMessaggio", "Argomento del messaggio");
 CALL InserimentoMessaggioDocente("provaNr1", "Attenzione","Questo è un messaggio importante",null,"docente@gmail.com");
 CALL InserimentoMessaggioDocente("testDiProva3", "Eccoci qua","Questo è un messaggio e basta",null,"docente2@gmail.com");
 #SELECT * FROM MESSAGGIO;
 -- fine test
-*/
+
 
 /* Test tabelle di esercizio
 CALL CreazioneTabellaEsercizio("NomeTabellaProva",NOW(),20,"docente2@gmail.com");

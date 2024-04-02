@@ -31,9 +31,11 @@
         .test-list {
             list-style-type: none;
             padding: 0;
+            width: 500px;
         }
         .test-item {
             padding: 10px;
+
             margin-bottom: 5px;
             background-color: #f9f9f9;
             border-radius: 5px;

@@ -50,9 +50,7 @@
             text-align: left; /* Allinea il testo a sinistra */
             margin: auto; 
             font-size: small;
-            font-style: arial;
-
-            
+            font-style: arial; 
         }
 
 

@@ -30,6 +30,7 @@
         .test-list {
             list-style-type: none;
             padding: 0;
+            width: 500px;
         }
         .test-item {
             padding: 10px;
