@@ -11,16 +11,21 @@
             background-color: #f4f4f4;
         }
         .container {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
+            width: auto;
+            margin: 10px auto;
+            padding: auto;
+            background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            
         }
-        h2 {
+        .messH2{
             text-align: center;
             margin-bottom: 20px;
+            font:  sans-serif;
+            font-style: italic;
+            font-size: medium;
         }
         .test-list {
             list-style-type: none;
@@ -45,6 +50,17 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .pMess{
+            font:
+            1rem 'Fira Sans',
+            arial;
+            font-size: 16px;
+            
+            border-width: auto;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -65,7 +81,7 @@
             $email_login = $_SESSION['email'];
             $ruolo_login = $_SESSION['ruolo'];
 
-            echo "<h2>Messaggi ricevuti: </h2>";
+            echo "<h2 class='messH2'>Messaggi ricevuti: </h2>";
 
             // modificato ----> DA CONTROLLARE !
             $sql_all_messagesRicevuti = "SELECT * FROM ricezionestudente as RS, messaggio as M, inviodocente as S WHERE ((RS.EmailStudenteDestinatario = '$email_login') AND (RS.TitoloTest = M.TitoloTest) AND (RS.TitoloTest = S.TitoloTest) AND (M.id = RS.Id))";
@@ -84,11 +100,11 @@
                 }
                 echo "</ul>";
             } else {
-                echo "<p>Non sono presenti messaggi ricevuti</p>";
+                echo "<p class='pMess'>Non sono presenti messaggi ricevuti</p>";
             }
 
             // modificato ----> DA CONTROLLARE !
-            echo "<h2>Messaggi inviati:</h2>";
+            echo "<h2 class ='messH2'>Messaggi inviati:</h2>";
             $sql_all_messagesInviati = "SELECT * FROM messaggio as M, inviostudente as D WHERE (M.Id = D.Id) AND ('$email_login' = D.EmailStudenteMittente)";
                 
             $result_all_messagesInviati = $conn->query($sql_all_messagesInviati);
@@ -105,7 +121,7 @@
                 }
                 echo "</ul>";
             } else {
-                echo "<p>Non sono presenti messaggi inviati</p>";
+                echo "<p class = 'pMess'>Non sono presenti messaggi inviati</p>";
             }
 
             // Chiusura della connessione

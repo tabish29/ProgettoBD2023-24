@@ -11,43 +11,62 @@
             background-color: #f9acac;
         }
         .container {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
+            width: auto;
+            margin: 10px auto;
+            padding: auto;
+            background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            
         }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        
+
         .test-list {
             list-style-type: none;
             padding: 0;
+            
         }
+
+        .testListH2{
+            text-align: center;
+            margin-bottom: 20px;
+            font:  sans-serif;
+            font-style: italic;
+            font-size: medium;
+        }
+        
+
         .test-item {
             padding: 10px;
-            margin-bottom: 5px;
+            width: 500px; 
+            height: auto; 
+            margin: auto; 
             background-color: #f9f9f9;
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-        details {
-            border-radius: 4px;
-            padding: 0.5em 0.5em 0;
-            }
 
-        summary {
-            font-weight: bold;
-            margin: -0.5em -0.5em 0;
-            padding: 0.5em;
-            }
+        .test-item p, .test-item label {
+            text-align: left; /* Allinea il testo a sinistra */
+            margin: auto; 
+            font-size: small;
+            font-style: arial;
 
-        details[open] {
-            padding: 0.5em;
-            }
+            
+        }
 
+
+
+        .test-item:hover {
+            background-color: #9c9c9c; /* Cambia colore al passaggio del mouse */
+        }
+
+        .test-item:last-child {
+            margin-bottom: 0; /* Rimuove il margine inferiore dall'ultimo elemento */
+        }
+
+        
+        
         p,
         label {
         font:
@@ -61,6 +80,10 @@
         margin: 0.4rem;
         }
         
+        .containerBtn{
+            text-align: center;
+
+        }
         
     </style>
 </head>
@@ -86,7 +109,7 @@
                 $ruolo_login = $_SESSION['ruolo'];
                 
 
-                echo "<p>Lista Test:</p>";
+                echo "<h2 class='testListH2'>Lista Test:</h2>";
                     // Query per selezionare tutti i test
                 $sql_all_tests = "CALL visualizzaTestDisponibili()";
                     
@@ -100,10 +123,8 @@
                         echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
 
                         foreach ($row as $key => $value) {
-                            echo "<details open>";
-                            echo "<summary>" . ucfirst($key) . ":</summary>";
-                            echo "" . $value . "";
-                            echo "</details><br>";
+                            echo "<p>" . ucfirst($key) . ": " . $value . "</p><br>";
+                            
                             /*
                             if ($key === 'Foto') {
                                 echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
@@ -118,7 +139,7 @@
                 }
             ?>
         </ul>
-        <div>
+        <div class = "containerBtn">
             <a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>
             <button class="btn btn-primary" onclick="openAction('modifica')">Modifica Test</button>
             <button class="btn btn-primary" onclick="openAction('cancella')">Cancella Test</button>
