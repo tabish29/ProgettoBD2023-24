@@ -102,6 +102,7 @@
                 }
 
                 
+                $primaRisposta = true;
 
                 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     $testId = $_GET['id'];
@@ -118,9 +119,10 @@
                         $stato = $result_cercaCompletamento->fetch_assoc()['Stato'];
                         if ($stato == 'Concluso') {
                             $sql_apriCompletamento = "UPDATE COMPLETAMENTO SET Stato = 'Aperto' WHERE TitoloTest = '$testId' AND EmailStudente = '" . $_SESSION['email'] . "'";
+                            $result_apriCompletamento = $conn->query($sql_apriCompletamento);
+                            $conn->next_result();
                         }
-                        $result_apriCompletamento = $conn->query($sql_apriCompletamento);
-                        $conn->next_result();
+                        
                         
                     }
                     mostraDatiTest($testId,'',-1);
@@ -172,6 +174,19 @@
                         $stmt->bind_param("issi", $idCompletamento, $testId, $rispostaData, $numQuesito);
                         $stmt->execute();
                         $stmt->close();
+
+                        //PASSO 2.1 -> setto la data della risposta inserita se è la prima risposta
+                        if ($primaRisposta){
+                            $sql_aggiornaDataPrima = "UPDATE COMPLETAMENTO SET DataPrimaRisposta = NOW() WHERE NumeroProgressivo = $idCompletamento AND DataPrimaRisposta IS NULL";
+                            $conn->query($sql_aggiornaDataPrima);
+                            $conn->next_result();
+                            $primaRisposta = false;
+                        }
+
+                        //PASSO 2.2 -> setto la data della risposta inserita come data dell'ultima risposta
+                        $sql_aggiornaDataUltima = "UPDATE COMPLETAMENTO SET DataUltimaRisposta = NOW() WHERE NumeroProgressivo = $idCompletamento";
+                        $conn->query($sql_aggiornaDataUltima);
+                        $conn->next_result();
 
                         echo "idCompletamento: " . $idCompletamento . "<br>";
                         echo "testId: " . $testId . "<br>";
