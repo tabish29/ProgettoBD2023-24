@@ -133,7 +133,7 @@
         <h2 class='testH2'>Effettua il Test</h2>
         <ul class="test-details">
             <?php
-                include 'connessione.php';
+                include '../connessione.php';
                 if (!isset($_SESSION)){
                     session_start();
                 }
@@ -261,7 +261,7 @@
                 
 
                 function ottieniQuesiti($titoloTest, $testoVerifica, $numDomanda) {
-                    include 'connessione.php';
+                    include '../connessione.php';
                     
                     $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
                     $result_quesiti_test = $conn->query($sql_quesiti_test);
@@ -378,7 +378,7 @@
                 }
 
                 function mostraDatiTest($testId,$testoVerifica,$numDomanda) {
-                    include 'connessione.php';
+                    include '../connessione.php';
 
                     $sql_select_test = "SELECT * FROM TEST WHERE Titolo = '$testId'";
                     $result_select_test = $conn->query($sql_select_test);

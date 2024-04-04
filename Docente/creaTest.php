@@ -55,7 +55,7 @@
 <body>
     <div class="container">
         <?php
-            include 'connessione.php';
+            include '../connessione.php';
             if (!isset($_SESSION)){
                 session_start();
             }

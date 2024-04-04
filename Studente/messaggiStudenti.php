@@ -68,7 +68,7 @@
     <div class="container">
         <?php
             include 'navbarStudente.php';
-            include 'connessione.php';
+            include '../connessione.php';
 
             // Verifica se l'utente è autenticato
             if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {

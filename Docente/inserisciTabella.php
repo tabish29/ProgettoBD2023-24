@@ -58,7 +58,7 @@
         <h2>Inserisci Tabella</h2>
         <ul>
             <?php
-                include 'connessione.php';
+                include '../connessione.php';
                 if (!isset($_SESSION)){
                     session_start();
                 }

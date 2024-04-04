@@ -95,11 +95,11 @@
                 }
 
                 include 'navbarDocente.php';
-                include 'connessione.php';
+                include '../connessione.php';
                 
                 if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
                     // Redirect a una pagina di login se l'utente non è autenticato
-                    header("Location: index.html");
+                    header("Location: ../index.html");
                     exit();
                 }
                 

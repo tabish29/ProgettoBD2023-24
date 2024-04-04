@@ -90,7 +90,7 @@
         <h2>Modifica Test</h2>
         <ul>
         <?php
-            include 'connessione.php';
+            include '../connessione.php';
             if (!isset($_SESSION)){
                 session_start();
             }
@@ -99,7 +99,7 @@
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
                 function ottieniQuesiti($titoloTest){
-                    include 'connessione.php';
+                    include '../connessione.php';
                     
                     $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
                     $result_quesiti_test = $conn->query($sql_quesiti_test);
@@ -190,7 +190,7 @@
                 }             
 
                 function mostraDatiTest(){
-                    include 'connessione.php';
+                    include '../connessione.php';
                     // Preleva il Titolo del test dalla query string
                     $testId = $_GET['id'];
 

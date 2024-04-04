@@ -77,8 +77,8 @@
 <body>
     <div class="container">
         <?php
-            include 'navbarStudente.php';
-            include 'connessione.php';
+            include 'navbarDocente.php';
+            include '../connessione.php';
             
         
             // Verifica se l'utente è autenticato
@@ -87,21 +87,20 @@
                 header("Location: index.html");
                 exit();
             }
-
+        
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Verifica se sono stati inviati i dati del form
-                if (isset($_POST['selectDocente']) && isset($_POST['selectTest']) && isset($_POST['oggetto']) && isset($_POST['testo'])) {
+                if (isset($_POST['selectTest']) && isset($_POST['oggetto']) && isset($_POST['testo'])) {
                     // Recupera i dati dal form
-                    $email_docente = $_POST['selectDocente'];
                     $titoloTest = $_POST['selectTest'];
                     $oggetto = $_POST['oggetto'];
                     $testo = $_POST['testo'];
 
                     $email_login = $_SESSION['email'];
                     // Esempio: Salva nel database
-                    $sql = "CALL inserisciMessaggioStudente('$email_login','$email_docente','$titoloTest', '$oggetto', '$testo')";
+                    $sql = "CALL inserimentoMessaggioDocente('$titoloTest', '$oggetto', '$testo', NOW(), '$email_login')";
                     if ($conn->query($sql) === TRUE) {
                         echo "Messaggio inviato con successo!";
                     } else {
@@ -109,66 +108,40 @@
                     }
 
                     // Chiudi la connessione al database
-                    // $conn->close();
+                   // $conn->close();
                 } else {
                     echo "Campi del modulo non validi.";
                 }
             }
         ?>
-    <form action="nuovoMessaggioStudente.php" method="post">
+        <form action="nuovoMessaggioDocente.php" method="post">
             <h2 class='messH2'>Invia Nuovo Messaggio</h2>
-
+            
             <div class="form-group">
-                <label class="labelMess" for="selectTest">Seleziona un test:</label><br>
-                <select class="listBox" id="selectTest" name="selectTest"><br>
+                <label for="selectTest" class="labelMess">Seleziona un test:</label><br>
+                <select class='listBox'id="selectTest" name="selectTest">
                     <?php
                         // Recupera i nomi dei test dal database
-                        $query_test2 = "CALL visualizzaTestDisponibili()";
-                        $result_test2 = $conn->query($query_test2);
+                        $query_test = "CALL visualizzaTestDisponibili()";
+                        $result_test = $conn->query($query_test);
 
                         // Aggiungi opzioni alla ListBox
-                        while ($row_test = $result_test2->fetch_assoc()) {
+                        while ($row_test = $result_test->fetch_assoc()) {
                             echo "<option value='" . $row_test['Titolo'] . "'>" . $row_test['Titolo'] . "</option>";
                         }
-                        $conn-> next_result();
 
                     ?>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="selectDocente" class="labelMess">Seleziona un docente:</label><br>
-                <select class='listBox' id="selectDocente" name="selectDocente"><br>
-                    <?php
-                        // Recupera i nomi dei docenti dal database
-                        $query_doc = "CALL VisualizzaDocenti()";
-                        $result_doc = $conn->query($query_doc);
-
-                        // Aggiungi opzioni alla ListBox
-                        while ($row_test = $result_doc->fetch_assoc()) {
-                            echo "<option value='" . $row_test['Email'] . "'>" . $row_test['Email'] . "</option>";
-                        }
-                        $conn-> next_result();
-
-                    ?>
-                </select>
-            </div>
-        
-            <div class="form-group">
-                <label for="oggetto"class="labelMess">Oggetto del messaggio:</label><br>
-                <input type="text" class="areaInserimento" id="oggetto" name="oggetto" required>
-            </div>
-
-            <div class="form-group">
-                <label for="testo"class="labelMess">Testo del messaggio:</label><br>
-                <textarea id="testo"class="areaInserimento" name="testo" rows="5" required></textarea><br>
-            </div>
-
-            <div class="btn-container">
-                <button type="submit" id="inviaMessaggioBtn" class="btn btn-primary">Invia Messaggio</button>
-            </div>
-
+                <label for="oggetto" class="labelMess">Oggetto del messaggio:</label><br>
+                <input type="text" class="areaInserimento"id="oggetto" name="oggetto" required><br>
             
+
+                <label for="testo"class="labelMess">Testo del messaggio:</label><br>
+                <textarea id="testo" class="areaInserimento"name="testo" rows="5" required></textarea><br>
+
+                <button type="submit" id="inviaMessaggioBtn" class="btn btn-primary">Invia Messaggio</button>
         </form>
     </div>
 </body>

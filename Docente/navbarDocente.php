@@ -64,7 +64,7 @@
             <a href="messaggiDocenti.php">Messaggi</a>
           </li>
         </ul>
-        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='index.html'">Logout</button>
+        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../index.html'">Logout</button>
 
       </div>
     </nav>

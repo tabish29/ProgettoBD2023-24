@@ -86,7 +86,7 @@
     <div class="container">
         <h2>Creazione Quesito</h2>
         <?php
-            include 'connessione.php';
+            include '../connessione.php';
             if (!isset($_SESSION)){
                 session_start();
             }
