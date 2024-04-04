@@ -67,11 +67,11 @@
                         function creaGrafica() {
                             echo "
                             <h2 class='creaTest'>Crea Test</h2>
-                            <form id='creaTestForm' action='creaTest.php' method='post'>
+                            <form id='creaTestForm' action='creaTest.php' method='post' enctype='multipart/form-data'>
                                 <label class='label' for='titolo'>Titolo:</label>
                                 <input class='areaInserimento' type='text' id='titolo' name='titolo' required><br>                                
                                 <label class='label' for='fotoLabel'>Foto:</label>
-                                <input type='file'id='fotoF' name='foto'><br>
+                                <input type='file' id='foto' name='foto'><br>
                                 <label class='label'  for='visibilita'>Visibilità:</label>
                                 <input type='checkbox' id='visibilitaCB' name='visibilita'><br>
                                 <input  type='hidden' name='action' value='crea'>
@@ -99,10 +99,12 @@
 
 
                     $titolo = $_POST['titolo'];
-                    $foto = $_POST['foto']; //TODO: Andrebbe messo _FILES['foto'] e sistemato l'html ma non so come fare per passare l'immagine
-                    
+                    $foto = "Immagini/default.png";
+                    if (isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
+                        $nomeFileFoto = $_FILES['foto']['name'];
+                        $foto = "Immagini/" . $nomeFileFoto;
+                    }                 
                     $visibilita = isset($_POST['visibilita']) ? true : false; // Se il checkbox è stato selezionato, $visibilita sarà 1, altrimenti sarà 0
-                    
 
                     $data = date('Y-m-d H:i:s');// Data e ora correnti
                     

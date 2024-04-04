@@ -121,14 +121,15 @@
                         echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>"; 
 
                         foreach ($row as $key => $value) {
-                            echo "<p>" . ucfirst($key) . ": " . $value . "</p><br>";
                             
-                            /*
+                            
+                            
                             if ($key === 'Foto') {
-                                echo "<img src='data:image/png;base64," . base64_encode($value) . "' alt='Immagine del test'> <br>";
+                                echo "<img src='". $value . "'  width=200px height=200px />";
+                                //TODO: foto sono caricate in locale, andrebbero messe su db
                             } else {
-                                echo ucfirst($key) . ": " . $value . "<br>";
-                            }*/
+                                echo "<p>" . ucfirst($key) . ": " . $value . "</p><br>";
+                            } 
                         }
                         echo "</li>";
                     }

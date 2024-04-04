@@ -28,7 +28,7 @@ CREATE TABLE STUDENTE (
 CREATE TABLE TEST (
 	Titolo VARCHAR(20) PRIMARY KEY,
     DataCreazione DATETIME,
-    Foto BLOB,											-- METTIAMO BLOB
+    Foto VARCHAR(100),											
     VisualizzaRisposte BOOLEAN,
     EmailDocente VARCHAR(40) NOT NULL,
     
@@ -447,7 +447,7 @@ DELIMITER //
 CREATE PROCEDURE CreazioneTest (
     IN TitoloTest VARCHAR(50),
     IN DataCreazione datetime,
-    IN Foto BLOB,
+    IN Foto VARCHAR(100),
     IN VisualizzaRisposte BOOLEAN,
     IN EmailDocente VARCHAR(40)
 )
