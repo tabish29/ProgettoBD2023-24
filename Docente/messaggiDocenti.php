@@ -134,7 +134,7 @@
                             echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p><br>";
                         }                    
                     }
-                    echo "</li>";
+                    echo "</li><br>";
                 }
                 echo "</ul>";
             } else {
