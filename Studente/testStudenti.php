@@ -1,3 +1,8 @@
+<?php
+    if (!isset($_SESSION)){
+        session_start();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,20 +10,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             width: 100%;
             height: 100%;
-            margin: 0;
-            padding: 0; 
+            background-color: #f9acac;
         }
-
+        
         .container {
             width: 100%;
             height: 100%;
             margin: 0;
             padding: 0;
-            background-color: #fff8dc;
-            align-items: center;
-            background-color: #fff8dc;
+            background-color: #f9acac;
+            border-radius: 5px;
+            
         }
 
         .test-list {
@@ -82,7 +89,16 @@
             text-align: center;
 
         }
-        
+        .buttonEffettua{
+            margin-top: 20px;
+            background-color: greenyellow;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
         
     </style>
 </head>
@@ -142,7 +158,7 @@
             ?>
         </ul>
         <div class="containerBtn">
-            <button class="btn btn-primary" onclick="openAction('effettua')">Effettua il Test</button>
+            <button class="buttonEffettua" onclick="openAction('effettua')">Effettua il Test</button>
         </div>
                     
         <script>

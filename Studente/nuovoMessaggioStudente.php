@@ -1,3 +1,8 @@
+<?php
+    if (!isset($_SESSION)){
+        session_start();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,13 +13,17 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f9acac;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
         }
         .container {
             width: auto;
             margin: 10px auto;
             padding: auto;
-            background-color: #fff8dc;
+            background-color: #f9acac;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center; 
@@ -103,9 +112,9 @@
                     // Esempio: Salva nel database
                     $sql = "CALL inserisciMessaggioStudente('$email_login','$email_docente','$titoloTest', '$oggetto', '$testo')";
                     if ($conn->query($sql) === TRUE) {
-                        echo "Messaggio inviato con successo!";
+                        echo '<script>window.alert("Messaggio inviato con successo!");</script>';
                     } else {
-                        echo "Errore durante l'invio del messaggio: " . $conn->error;
+                        echo '<script>window.alert("Errore nell\'invio del messaggio.");</script>';
                     }
 
                     // Chiudi la connessione al database

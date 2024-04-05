@@ -1,3 +1,8 @@
+<?php
+    if (!isset($_SESSION)){
+        session_start();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,14 +17,14 @@
             height: 100%;
             background-color: #f9acac;
         }
+        
         .container {
             width: 100%;
             height: 100%;
             margin: 0;
             padding: 0;
-            background-color: #fff8dc;
+            background-color: #f9acac;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             
         }
         
@@ -53,7 +58,7 @@
             text-align: left; /* Allinea il testo a sinistra */
             margin: auto; 
             font-size: small;
-            font-style: arial; 
+            font: Arial; 
         }
 
 
@@ -67,15 +72,6 @@
         }
 
         
-        
-        p,
-        label {
-        font:
-            1rem 'Fira Sans',
-            arial;
-        font-size: 16px;
-        }
-        
 
         input {
         margin: 0.4rem;
@@ -85,7 +81,12 @@
             text-align: center;
 
         }
-        
+        .labelBold{
+            font-weight: bold;
+        }
+        .test-item p, .test-item label{
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
@@ -93,9 +94,7 @@
         <ul class="test-list">
             <?php
 
-                if (!isset($_SESSION)){
-                    session_start();
-                }
+                
 
                 include 'navbarDocente.php';
                 include '../connessione.php';
@@ -128,10 +127,11 @@
                             
                             
                             if ($key === 'Foto') {
+                                echo "<Label class='labelBold'>Foto:</label><br>";
                                 echo "<img src='". $value . "'  width=200px height=200px />";
                                 //TODO: foto sono caricate in locale, andrebbero messe su db
                             } else {
-                                echo "<p>" . ucfirst($key) . ": " . $value . "</p><br>";
+                                echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p><br>";
                             } 
                         }
                         echo "</li>";

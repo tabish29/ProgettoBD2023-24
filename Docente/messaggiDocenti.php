@@ -1,3 +1,8 @@
+<?php
+    if (!isset($_SESSION)){
+        session_start();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,10 +21,11 @@
             min-height: 100%;
             margin: 0;
             padding: 0;
-            background-color: #fff8dc;
+            background-color: #f9acac;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            word-wrap: break-word; /* Imposta il wrapping del testo */
+
             
         }
         .messH2{
@@ -33,15 +39,19 @@
         .test-list {
             list-style-type: none;
             padding: 0;
-            width: 500px;
+            width: 100%;
+            margin: 0 auto; /* Centra la lista */
+            text-align: center; /* Allinea il testo a sinistra all'interno della lista */
         }
         .test-item {
+            width: 50%;
             padding: 10px;
-
             margin-bottom: 5px;
             background-color: #f9f9f9;
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: left; /* Allinea il testo a sinistra all'interno degli elementi della lista */
+            display: inline-block; /* Imposta gli elementi della lista come blocchi inline */
         }
         .btn-container {
             text-align: center;
@@ -66,14 +76,37 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
             display: inline-block;
         }
+        .buttonInvia{
+            margin-top: 20px;
+            background-color: greenyellow;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .labelBold{
+            font-weight: bold;
+        }
+        .test-item p, .test-item label{
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+
+        
         <?php
+        
             include 'navbarDocente.php';
             include '../connessione.php';
-            
+        ?>
+        <div class="btn-container">
+            <a href="nuovoMessaggioDocente.php" class="buttonInvia">Invia Nuovo Messaggio</a>
+        </div>
+        <?php 
             // Verifica se l'utente è autenticato
             if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
                 // Redirect a una pagina di login se l'utente non è autenticato
@@ -97,7 +130,9 @@
                 while ($row = $result_all_messagesRicevuti->fetch_assoc()) {
                     echo "<li class='test-item'>";
                     foreach ($row as $key => $value) {
-                        echo ucfirst($key) . ": " . $value . "<br>";
+                        if ($key !== 'Id'){
+                            echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p><br>";
+                        }                    
                     }
                     echo "</li>";
                 }
@@ -117,9 +152,11 @@
                 while ($row = $result_all_messagesInviati->fetch_assoc()) {
                     echo "<li class='test-item'>";
                     foreach ($row as $key => $value) {
-                        echo ucfirst($key) . ": " . $value . "<br>";
+                        if ($key !== 'Id'){
+                            echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p><br>";
+                        }
                     }
-                    echo "</li>";
+                    echo "</li><br>";
                 }
                 echo "</ul>";
             } else {
@@ -130,10 +167,7 @@
             //$conn->close();
         ?>
         
-        <!-- Aggiungi il bottone "Invia Nuovo Messaggio" -->
-        <div class="btn-container">
-            <a href="nuovoMessaggioDocente.php" class="btn btn-primary">Invia Nuovo Messaggio</a>
-        </div>
+        
     </div>
 </body>
 </html>

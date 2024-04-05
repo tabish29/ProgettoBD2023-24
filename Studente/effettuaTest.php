@@ -9,16 +9,22 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            width: 100%;
+            height: 100%;
+            background-color: #f9acac;
         }
+        
         .container {
-            width: 70%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff8dc;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f9acac;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word; /* Imposta il wrapping del testo */
+
         }
+
         .containerDomande{
             width: 50%;
             background-color: #edeeee;

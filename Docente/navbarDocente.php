@@ -7,19 +7,27 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f9acac;
+    }
     .containerNav {
-      width: 50%; 
+      width: 100%; 
       margin: 20px auto; 
       padding: 20px;
       font-weight: bold;
-      background-color: #fff8dc;
+      background-color: #f9acac;
       border-radius: 5px;
     }
     .containerNavH2 {
       text-align: center;
       font-weight: bold;
       margin-bottom: 20px;
-      font-size: large;
+      font-size: 40px;
     }
    
     .btnLogout{
@@ -36,18 +44,17 @@
       top:0;
       right: 0;
     }
-    p{
+    .containerNav p{
       text-align: center;
       font: sans-serif;
       font-weight: bold;
       font-size: medium;
-      background-color: #f9f9f9;
       margin: 10px;
       border-radius: 5px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       height: auto;
       width: auto;
     }
+    
   </style>
 </head>
 <body>

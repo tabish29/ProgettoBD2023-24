@@ -40,7 +40,7 @@ CREATE TABLE MESSAGGIO (
 	Id INT auto_increment,
     TitoloTest VARCHAR(20) NOT NULL,
     TitoloMessaggio VARCHAR(20),
-    CampoTesto VARCHAR(60),
+    CampoTesto VARCHAR(500),
     Data DATETIME,
     
     PRIMARY KEY(Id, TitoloTest),
@@ -571,7 +571,7 @@ DELIMITER //
 CREATE PROCEDURE InserimentoMessaggioDocente(
     IN TitoloTest_t VARCHAR(20),
     IN TitoloMessaggio_t VARCHAR(20),
-    IN CampoTesto_t VARCHAR(60),
+    IN CampoTesto_t VARCHAR(500),
     IN Data_t DATETIME,
     IN EmailDocenteMittente_t VARCHAR(40)
 )
@@ -835,7 +835,7 @@ CREATE PROCEDURE inserisciMessaggioStudente(
     IN emailDocenteTemp VARCHAR(40),
     IN titoloTestTemp VARCHAR(20),
     IN titoloMess VARCHAR(20),
-    IN testoMess VARCHAR(60)
+    IN testoMess VARCHAR(500)
 )
 BEGIN
 	DECLARE IDMess INT;

@@ -144,7 +144,7 @@
                     // Gestisci altre eccezioni
                     echo "Errore durante l'esecuzione dell'operazione': " . $e->getMessage();
                     echo '<br>';
-                    echo '<a href="index.html">Torna alla schermata principale</a>'; // Aggiungi un link per tornare alla schermata principale
+                    echo '<a href="../">Torna alla schermata principale</a>'; // Aggiungi un link per tornare alla schermata principale
                 } 
 
 
