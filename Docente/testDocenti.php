@@ -8,12 +8,15 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
             background-color: #f9acac;
         }
         .container {
-            width: auto;
-            margin: 10px auto;
-            padding: auto;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -142,6 +145,7 @@
             <a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>
             <button class="btn btn-primary" onclick="openAction('modifica')">Modifica Test</button>
             <button class="btn btn-primary" onclick="openAction('cancella')">Cancella Test</button>
+            <br>
         </div>
                     
         <script>

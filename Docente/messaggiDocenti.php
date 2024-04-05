@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=100%, initial-scale=1.0">
     <style>
         body {
+            height: 100%;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
         }
         .container {
-            width: auto;
-            margin: 10px auto;
-            padding: auto;
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
             background-color: #fff8dc;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
