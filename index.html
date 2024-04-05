@@ -1,173 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrazione e Login Utente</title>
-    <!-- Stile CSS per il form -->
+    <meta charset="utf-8">
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #d41717;
-            text-align: center; 
-        }
-        
-
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: rgb(0, 0, 0);
-            font-size: medium;
-            padding: 10px 20px;
-            border:rgb(0, 0, 0);
-            border-radius: 5px;
-            cursor: pointer;
-            width: auto;
-            height: auto;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-
-        .forms-container {
-            text-align: center; 
+        .parteSuperiore {
+            height: 10%;
+            background-color: #ddd7d7;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 20px;
         }
 
-        .registration-form,
-        .login-form {
-            display: inline-block;
-            width: 300px; /* Larghezza dei form */
-            height: auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            margin: 20px; /* Spaziatura tra i form */
+        .parteInferiore {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ff0000;
         }
 
-        .registration-form h2,
-        .login-form h2 {
+        .collegamenti {
+            color: #000;
+            text-decoration: none;
+            margin-left: 20px;
+            font-family: sans-serif;
+            font-size: auto;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .titolo {
+            font-size: 50px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            
+        }
+
+        .messaggioBenvenuto {
+            font-size: 20px;
             text-align: center;
         }
-
-        
-        .labelReg{
-            font-size: medium;
-            font-weight: bold;
-            width: 100%;
-        }
-        .areaIns{
-            margin-top: 10px;
-            margin-bottom: 10px;
-            height: 15px;
-            width: 90%;
-        }
-        .areaInsRuolo{
-            margin-top: 10px;
-            margin-bottom: 10px;
-            height: auto;
-            width: 90%;
-        }
-        
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <div class="registration-form">
-            <!-- Form per la registrazione -->
-            <form action="Accesso/registrazione.php" method="POST">
-                <h2>Registrazione Utente</h2>
-
-                <label class='labelReg'for="ruolo">Ruolo:</label>
-                <select class='areaInsRuolo'id="ruolo" name="ruolo">
-                    <option value="docente">Docente</option>
-                    <option value="studente">Studente</option>
-                </select>
-
-
-                <label class='labelReg' for="nome">Nome:</label>
-                <input class='areaIns'type="text" id="nome" name="nome" required>
-
-                <label class='labelReg' for="cognome">Cognome:</label>
-                <input class='areaIns'type="text" id="cognome" name="cognome" required>
-
-                <label class='labelReg' for="email_reg">Email:</label>
-                <input class='areaIns'type="email" id="email_reg" name="email_reg" required>
-
-                <label class='labelReg' for="password_reg">Password:</label>
-                <input class='areaIns'type="password" id="password_reg" name="password_reg" required>
-
-                <label class='labelReg' for="recapito_telefonico">Recapito Telefonico:</label>
-                <input class='areaIns'type="text" id="recapito_telefonico" name="recapito_telefonico">
-
-                <!-- Campi aggiuntivi per studenti -->
-                <div id="studente-fields" style="display: none;">
-                    <label class='labelReg' for="codice_alfanumerico">Codice Alfanumerico (16 cifre):</label>
-                    <input class='areaIns'type="text" id="codice_alfanumerico" name="codice_alfanumerico" pattern="[0-9a-zA-Z]{16}">
-
-                    <label class='labelReg' for="anno_immatricolazione">Anno Immatricolazione:</label>
-                    <input class='areaIns'type="number" id="anno_immatricolazione" name="anno_immatricolazione" min="1900" max="2099">
-                </div>
-
-                <!-- Campi aggiuntivi per docenti -->
-                <div id="docente-fields" style="display: none;">
-                    <label class='labelReg' for="nome_dipartimento">Nome Dipartimento:</label>
-                    <input class='areaIns'type="text" id="nome_dipartimento" name="nome_dipartimento">
-
-                    <label class='labelReg' for="nome_corso">Nome Corso:</label>
-                    <input class='areaIns'type="text" id="nome_corso" name="nome_corso">
-                </div>
-
-                <input type="submit" value="Registrati">
-            </form>
-        </div>
-
-        <div class="login-form">
-            <!-- Form per il login -->
-            <form action="Accesso/login.php" method="POST">
-                <h2>Login Utente</h2>
-                <label class='labelReg' for="ruolo_login">Ruolo:</label>
-                <select class='areaInsRuolo'for="ruolo_login" name="ruolo_login">
-                    <option value="docente">Docente</option>
-                    <option value="studente">Studente</option>
-                </select>
-                
-                <label class='labelReg' for="email_login">Email:</label>
-                <input class='areaIns'type="email" id="email_login" name="email_login" required>
-
-                <label class='labelReg' for="password_login">Password:</label><br>
-                <input class='areaIns' type="password" id="password_login" name="password_login" required>
-                    
-                <input type="submit" value="Accedi">
-            </form>
-        </div>
+    <div class="parteSuperiore">
+        <a href="Accesso/registrazione.php" class="collegamenti">Registrati</a>
+        <a href="Accesso/login.php" class="collegamenti">Accedi</a>
+        <a href="Accesso/Contatti.php" class="collegamenti">Contatti</a>
     </div>
 
-    <!-- Script JavaScript per la gestione dinamica dei campi aggiuntivi -->
-    <script>
-        // Funzione per gestire la visibilità dei campi aggiuntivi in base al ruolo selezionato
-        function gestisciCampiAggiuntivi() {
-            var ruolo = document.getElementById('ruolo').value;
-            var campiStudente = document.getElementById('studente-fields');
-            var campiDocente = document.getElementById('docente-fields');
-
-            // Mostra i campi aggiuntivi per studenti
-            if (ruolo === 'studente') {
-                campiStudente.style.display = 'block';
-                campiDocente.style.display = 'none';
-            } else if (ruolo === 'docente') {
-                campiStudente.style.display = 'none';
-                campiDocente.style.display = 'block';
-            } else {
-                campiStudente.style.display = 'none';
-                campiDocente.style.display = 'none';
-            }
-        }
-
-        // Aggiungi un event listener per l'evento onchange al menu a discesa del ruolo
-        document.getElementById('ruolo').addEventListener('change', gestisciCampiAggiuntivi);
-
-        // Esegui la funzione una volta all'avvio per assicurarsi che i campi siano correttamente visualizzati/nascosti
-        gestisciCampiAggiuntivi();
-    </script>
+    <div class="parteInferiore">
+        <div>
+            <div class="titolo">Test SQL</div>
+            <div class="messaggioBenvenuto">Benvenuto nella nostra pagina!</div>
+        </div>
+    </div>
 </body>
 </html>

@@ -8,13 +8,19 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <style>
+    body{
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     .containerNav {
-      width: 50%; 
-      margin: 20px auto; 
-      padding: 20px;
+      width: 100%; 
+      margin: 0; 
+      padding: 0;
       font-weight: bold;
       background-color: #fff8dc;
-      border-radius: 5px;
     }
 
     .containerNavH2 {
