@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,22 +16,24 @@
       height: 100%;
       background-color: #f9acac;
     }
+
     .containerNav {
-      width: 100%; 
-      margin: 20px auto; 
+      width: 100%;
+      margin: 20px auto;
       padding: 20px;
       font-weight: bold;
       background-color: #f9acac;
       border-radius: 5px;
     }
+
     .containerNavH2 {
       text-align: center;
       font-weight: bold;
       margin-bottom: 20px;
       font-size: 40px;
     }
-   
-    .btnLogout{
+
+    .btnLogout {
       font: sans-serif;
       font-weight: bold;
       font-size: medium;
@@ -41,10 +44,11 @@
       height: auto;
       width: auto;
       position: absolute;
-      top:0;
+      top: 0;
       right: 0;
     }
-    .containerNav p{
+
+    .containerNav p {
       text-align: center;
       font: sans-serif;
       font-weight: bold;
@@ -54,29 +58,28 @@
       height: auto;
       width: auto;
     }
-    
   </style>
 </head>
 
 <body>
 
-<div class="containerNav">
-  <h2 class='containerNavH2'>HomePage Studente</h2>
-      <p>Questa è la home page dello Studente. Enjoy.</p>
-    
+  <div class="containerNav">
+    <h2 class='containerNavH2'>HomePage Studente</h2>
+
     <nav class="navbar navbar-default">
       <div>
         <ul class="nav navbar-nav">
-        <li <?php echo basename($_SERVER['PHP_SELF']) == 'testStudenti.php' ? 'class="active"' : ''; ?>>
-              <a href="testStudenti.php">Test Disponibili</a>
-            </li>
-            <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiStudenti.php' ? 'class="active"' : ''; ?>>
-              <a href="messaggiStudenti.php">Messaggi Studente</a>
-            </li>
+          <li <?php echo basename($_SERVER['PHP_SELF']) == 'testStudenti.php' ? 'class="active"' : ''; ?>>
+            <a href="testStudenti.php">Test Disponibili</a>
+          </li>
+          <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiStudenti.php' ? 'class="active"' : ''; ?>>
+            <a href="messaggiStudenti.php">Messaggi Studente</a>
+          </li>
         </ul>
-        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../index.html'">Logout</button>
+        <button type="button" class="btnLogout btn btn-secondary" onclick="window.location.href='../index.html'">Logout</button>
       </div>
     </nav>
   </div>
 </body>
+
 </html>

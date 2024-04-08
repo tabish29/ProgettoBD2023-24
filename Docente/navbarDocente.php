@@ -60,7 +60,6 @@
 <body>
   <div class="containerNav">
     <h2 class='containerNavH2'>HomePage Docente</h2>
-    <p>Questa è la home page dove puoi gestire i tuoi dati.</p>
     <nav class="navbar navbar-default">
       <div>
         <ul class="nav navbar-nav">
