@@ -81,6 +81,18 @@
             font-style: normal;
             color: #222222;
         }
+        .labelVerde{
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: green;
+        }
+        .labelRosso{
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: red;
+        }
         
     </style>
 </head>
@@ -138,13 +150,17 @@
                                     . $dati[3] . "<br><br>";
 
 
-                                $sql_soluzioni = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+                                $sql_soluzioni = "SELECT CampoTesto, RispostaCorretta FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
                                 $result_soluzioni = $conn->query($sql_soluzioni);
                                 $conn->next_result();
                                 
                                 echo "<label class='label'  style=\"display: inline;\">Soluzioni: </label><br>";
                                 while ($soluzione = $result_soluzioni->fetch_assoc()) {
-                                    echo "- " . $soluzione['CampoTesto'] . "<br>";
+                                    if ($soluzione['RispostaCorretta'] == 1) {
+                                        echo "<label class='labelVerde'> - " . $soluzione['CampoTesto'] . "</label><br>";
+                                    } else {
+                                        echo "<label class='labelRosso'> - " . $soluzione['CampoTesto'] . "</label><br>";
+                                    }
                                 }
                                 echo "<br></span></div><br>";
 
