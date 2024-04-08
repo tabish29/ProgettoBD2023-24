@@ -6,11 +6,11 @@
     
     $servername = "localhost"; // Il tuo server
     $username = "root"; // Il tuo username
-    $password = ""; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
-    $dbname = "esql"; // Il nome del tuo database
+    $password = "root"; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
+    $dbname = "ESQL"; // Il nome del tuo database
 
     // Connessione al database
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $conn = new mysqli($servername, $username, $password, $dbname, 8889);
 
     // Verifica della connessione
     if ($conn->connect_error) {

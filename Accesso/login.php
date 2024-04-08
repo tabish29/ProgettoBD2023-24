@@ -1,10 +1,11 @@
 <?php
-    if (!isset($_SESSION)){
-        session_start();
-    } // Avvia la sessione
+if (!isset($_SESSION)) {
+    session_start();
+} // Avvia la sessione
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +32,7 @@
         }
 
         .forms-container {
-            text-align: center; 
+            text-align: center;
         }
 
         .labelReg {
@@ -84,13 +85,15 @@
 
         .login-form {
             display: inline-block;
-            width: 300px; /* Larghezza dei form */
+            width: 300px;
+            /* Larghezza dei form */
             height: auto;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #f9f9f9;
-            margin: 20px; /* Spaziatura tra i form */
+            margin: 20px;
+            /* Spaziatura tra i form */
         }
 
         .login-form h2 {
@@ -98,11 +101,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="parteSuperiore">
-        <a href="registrazione.php" class="collegamenti">Registrati</a>
         <a href="login.php" class="collegamenti">Accedi</a>
-        <a href="Contatti.php" class="collegamenti">Contatti</a>
+        <a href="registrazione.php" class="collegamenti">Registrati</a>
     </div>
     <div class='parteInferiore'>
         <div class="login-form">
@@ -110,68 +113,68 @@
             <form action="login.php" method="POST">
                 <h2>Login Utente</h2>
                 <label class='labelReg' for="ruolo_login">Ruolo:</label>
-                <select class='areaInsRuolo'for="ruolo_login" name="ruolo_login">
+                <select class='areaInsRuolo' for="ruolo_login" name="ruolo_login">
                     <option value="docente">Docente</option>
                     <option value="studente">Studente</option>
                 </select>
-                
+
                 <label class='labelReg' for="email_login">Email:</label>
-                <input class='areaIns'type="email" id="email_login" name="email_login" required>
+                <input class='areaIns' type="email" id="email_login" name="email_login" required>
 
                 <label class='labelReg' for="password_login">Password:</label><br>
                 <input class='areaIns' type="password" id="password_login" name="password_login" required>
-                    
+
                 <input type="submit" value="Accedi">
             </form>
         </div>
     </div>
 
     <?php
-        include '../connessione.php';
-        
-        if ($_SERVER["REQUEST_METHOD"] == "GET"){
-            $_SESSION['email'] = "";
-            $_SESSION['ruolo'] = "";
-        }
+    include '../connessione.php';
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Recupera l'email dal form di login
-            $email_login = isset($_POST['email_login']) ? $_POST['email_login'] : '';
-            $ruolo_login = isset($_POST['ruolo_login']) ? $_POST['ruolo_login'] : '';
-            $password_login = isset($_POST['password_login']) ? $_POST['password_login'] : '';
+    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        $_SESSION['email'] = "";
+        $_SESSION['ruolo'] = "";
+    }
 
-            // Verifica se email_login, ruolo_login e password_login sono presenti
-            if (empty($email_login) || empty($ruolo_login) || empty($password_login)) {
-                echo '<script>window.alert("Email e ruolo devono essere specificati");</script>';
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Recupera l'email dal form di login
+        $email_login = isset($_POST['email_login']) ? $_POST['email_login'] : '';
+        $ruolo_login = isset($_POST['ruolo_login']) ? $_POST['ruolo_login'] : '';
+        $password_login = isset($_POST['password_login']) ? $_POST['password_login'] : '';
+
+        // Verifica se email_login, ruolo_login e password_login sono presenti
+        if (empty($email_login) || empty($ruolo_login) || empty($password_login)) {
+            echo '<script>window.alert("Email e ruolo devono essere specificati");</script>';
+        } else {
+            // Query per verificare se l'email esiste nella tabella del ruolo selezionato
+            $sql_check_email = "";
+            if ($ruolo_login === "docente") {
+                $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login' AND PasswordDocente = '$password_login'";
+            } else if ($ruolo_login === "studente") {
+                $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login' AND PasswordStudente = '$password_login'";
+            }
+
+            $result_check_email = $conn->query($sql_check_email);
+
+            // Verifica se l'email esiste nella tabella del ruolo selezionato
+            if ($result_check_email->num_rows <= 0) {
+                echo '<script>window.alert("Credenziali errate!");</script>';
             } else {
-                // Query per verificare se l'email esiste nella tabella del ruolo selezionato
-                $sql_check_email = "";
+                //Imposta le variabili di sessione
+                $_SESSION['email'] = $email_login; //NON SPOSTARE DA QUI
+                $_SESSION['ruolo'] = $ruolo_login; //NON SPOSTARE DA QUI
                 if ($ruolo_login === "docente") {
-                    $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login' AND PasswordDocente = '$password_login'";
+                    header("Location: ../Docente/testDocenti.php");
+                    exit();
                 } else if ($ruolo_login === "studente") {
-                    $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login' AND PasswordStudente = '$password_login'";
-                }
-
-                $result_check_email = $conn->query($sql_check_email);
-
-                // Verifica se l'email esiste nella tabella del ruolo selezionato
-                if ($result_check_email->num_rows <= 0) {
-                    echo '<script>window.alert("Credenziali errate!");</script>';
-
-                } else {
-                    //Imposta le variabili di sessione
-                    $_SESSION['email'] = $email_login; //NON SPOSTARE DA QUI
-                    $_SESSION['ruolo'] = $ruolo_login; //NON SPOSTARE DA QUI
-                    if ($ruolo_login === "docente") {
-                        header("Location: ../Docente/testDocenti.php");
-                        exit();
-                    } else if ($ruolo_login === "studente") {
-                        header("Location: ../Studente/testStudenti.php");
-                        exit();
-                    }
+                    header("Location: ../Studente/testStudenti.php");
+                    exit();
                 }
             }
         }
+    }
     ?>
 </body>
+
 </html>
