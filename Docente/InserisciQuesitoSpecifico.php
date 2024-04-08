@@ -117,22 +117,20 @@
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['datiTestAttuale']) && !empty($_SESSION['datiTestAttuale'])) {
                 $datiTest = $_SESSION['datiTestAttuale'];
-                $soluzioneCorretta = "";
-                if ($datiTest[1]=="RC"){
-                    $soluzioneCorretta = isset($_POST['soluzioneCorretta']) ? $_POST['soluzioneCorretta'] : 0;
-
-                }
+                
                 $valoreInserito = $_POST['soluzioneT'];
                 $_SESSION['datiTestAttuale'][4] = $datiTest[4] + 1;
                 $datiTest = $_SESSION['datiTestAttuale'];
                 
                 //Scommentare dopo la realizzazione delle query
                 $sql_queryNuovaOpzioneOSoluzione = ''; 
+                $titolo = $datiTest[2];
+                $numProgressivoQuesito = $datiTest[0];
                 if ($datiTest[3] - $datiTest[4] > 0){
                     echo "Devi inserire ancora " . ($datiTest[3] - $datiTest[4]) . " risposte";
 
                     if ($datiTest[1] == "RC"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',$soluzioneCorretta)";
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
 
                         
                     } else if ($datiTest[1] == "COD"){
@@ -148,7 +146,7 @@
                     }
                 } else if ($datiTest[3] - $datiTest[4] == 0){
                     if ($datiTest[1] == "RC"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',$soluzioneCorretta)";
+                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
 
                         
                     } else if ($datiTest[1] == "COD"){
@@ -161,9 +159,13 @@
                     echo "<p>Numero massimo di risposte raggiunto</p>";
                     $titolo = $datiTest[2];
                     unset($_SESSION['datiTestAttuale']);
-                    header("Location: modificaTest.php?id=$titolo");
+                    header('Location: selezionaRispostaCorretta.php?id=' . $titolo . ";" . $numProgressivoQuesito);
                     exit;
+                /*
+                    header("Location: modificaTest.php?id=$titolo");
+                    exit;*/
                 } 
+                
                 
             }
         ?>
@@ -173,16 +175,7 @@
                 <label class="label"for="soluzioneT">Testo soluzione:</label>
                 <input type="text" class="areaInserimento" id="soluzioneT" name="soluzioneT">
             </div>
-            <?php
-            if ($datiTest[1] == "RC") { // Se il tipo di quesito è a risposta chiusa
-                echo '<div class="form-group">';
-                echo '<label class="label" for="soluzioneCorretta">Soluzione corretta:</label>';
-                echo '<input type="checkbox" id="soluzioneCorretta" name="soluzioneCorretta" value="1">';
-                echo '<br><label class="label"> Attenzione, inserisci solo un\'opzione corretta</label>';
-                echo '</div>';
-            }
-            ?>
-            <input type="submit" class="salvaBtn" id="salvataggioSoluzione" value="Salva Soluzione">
+            <input type="submit" class="salvaBtn" id="settaRispostaCorretta" value="Salva Soluzione">
         </form>
 
             

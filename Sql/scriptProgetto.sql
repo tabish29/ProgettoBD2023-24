@@ -1224,7 +1224,7 @@ INSERT INTO DOCENTE VALUES("docente@gmail.com","password", "ciao","nano", 123458
 INSERT INTO DOCENTE VALUES("docente2@gmail.com","password","ciao2","nano2", 12345892, "scienze", "corso");
 INSERT INTO STUDENTE VALUES("studente@gmail.com","password", "nano", "ciao", 123456789, 2010, 1234567891234567);
 INSERT INTO STUDENTE VALUES("studente2@gmail.com","password", "nano", "ciao", 3333, 2010, 2234567891234567);
-INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,true, "docente@gmail.com");
+INSERT INTO TEST VALUES("provaNr1", '2024-02-07 14:30:00', NULL ,false, "docente@gmail.com");
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente@gmail.com", NULL, NULL);
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "studente2@gmail.com", NULL, NULL);
 INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
@@ -1239,7 +1239,7 @@ INSERT INTO STUDENTE VALUES("tabish@gmail.com","password", "Tabish", "Ghazanfar"
 INSERT INTO STUDENTE VALUES("lorenzo@gmail.com","password", "Lorenzo", "Maini", 475875983,2010, "llllllllllllllll");
 INSERT INTO STUDENTE VALUES("alex@gmail.com","password","Alex", "Ranaulo",35111111,2010,  "aaaaaaaaaaaaaaaa");
 INSERT INTO STUDENTE VALUES("davide@gmail.com","password", "Davide", "De Rosa", 1211212,2010,  "dddddddddddddddd");
-INSERT INTO TEST VALUES("provaNr2", '2024-02-09 14:30:00', NULL ,true, "docente@gmail.com");
+INSERT INTO TEST VALUES("provaNr2", '2024-02-09 14:30:00', NULL ,false, "docente@gmail.com");
 INSERT INTO QUESITO VALUES(4,"provaNr2","Basso", "testo quesito a scleta", 3);
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr1", "alessia@gmail.com", NULL, NULL);
 INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, DataUltimaRisposta) VALUES("Aperto", "provaNr2", "alessia@gmail.com", NULL, NULL);
