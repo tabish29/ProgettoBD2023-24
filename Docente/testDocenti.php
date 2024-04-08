@@ -110,7 +110,7 @@ if (!isset($_SESSION)) {
 
             if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
                 // Redirect a una pagina di login se l'utente non è autenticato
-                header("Location: ../index.html");
+                header("Location: ../");
                 exit();
             }
 
@@ -133,8 +133,6 @@ if (!isset($_SESSION)) {
 
                     foreach ($row as $key => $value) {
 
-
-
                         if ($key === 'Foto') {
                             echo "<Label class='labelBold'>Foto:</label><br>";
                             echo "<img src='" . $value . "'  width=200px height=200px />";
@@ -154,6 +152,7 @@ if (!isset($_SESSION)) {
             <a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>
             <button class="btn btn-primary" onclick="openAction('modifica')">Modifica Test</button>
             <button class="btn btn-primary" onclick="openAction('cancella')">Cancella Test</button>
+            <button class="btn btn-primary" onclick="openAction('visualizzaTabelle')">Visualizza tabelle</button>
             <br>
         </div>
 
@@ -172,6 +171,8 @@ if (!isset($_SESSION)) {
                     if (confirmDelete) {
                         window.location.href = 'cancellaTest.php?id=' + testId;
                     }
+                } else if (action === 'visualizzaTabelle') {
+                    window.location.href = 'visualizzaTabelle.php?id=' + testId;
                 }
             }
         </script>
