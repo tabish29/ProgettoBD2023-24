@@ -8,16 +8,15 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f9acac;
         }
         .container {
             text-align: center;
             width: 70%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #fff8dc;
+            background-color: #f9acac;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         
         .creaBtn{
