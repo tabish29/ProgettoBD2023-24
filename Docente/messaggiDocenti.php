@@ -77,11 +77,8 @@ if (!isset($_SESSION)) {
         }
 
         .pMess {
-            font:
-                1rem 'Fira Sans',
-                arial;
+            font: 1rem 'Fira Sans', ßß arial;
             font-size: 16px;
-
             border-width: auto;
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
@@ -103,7 +100,8 @@ if (!isset($_SESSION)) {
             font-weight: bold;
         }
 
-        .test-item p,.test-item label {
+        .test-item p,
+        .test-item label {
             font-size: 15px;
         }
     </style>
@@ -125,7 +123,6 @@ if (!isset($_SESSION)) {
             header("Location: index.html");
             exit();
         }
-
 
         $email_login = $_SESSION['email'];
         $ruolo_login = $_SESSION['ruolo'];
@@ -178,7 +175,6 @@ if (!isset($_SESSION)) {
         // Chiusura della connessione
         //$conn->close();
         ?>
-
 
     </div>
 </body>
