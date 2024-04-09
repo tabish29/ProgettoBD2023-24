@@ -697,7 +697,6 @@ END//
 DELIMITER ;
 
 
-
 DELIMITER //
 
 CREATE PROCEDURE inserisciRispostaQuesitoRispostaChiusa(
@@ -1230,7 +1229,7 @@ INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente, DataPrimaRisposta, 
 INSERT INTO QUESITO VALUES(1,"provaNr1","Basso", "testo quesito di codice", 3);
 INSERT INTO QUESITO VALUES(2,"provaNr1","Basso", "testo quesito a scleta", 3);
 INSERT INTO QUESITOCODICE VALUES(1, "provaNr1");
-INSERT INTO SOLUZIONE VALUES(1, "provaNr1","soluzione risposta Corretta");
+INSERT INTO SOLUZIONE VALUES(1, "provaNr1","SELECT * FROM QUESITO");
 INSERT INTO QUESITORISPOSTACHIUSA VALUES(2, "provaNr1");
 INSERT INTO OPZIONERISPOSTA VALUES(1,"provaNr1",2,"opzione risposta Corretta",true);
 INSERT INTO OPZIONERISPOSTA VALUES(2,"provaNr1",2,"opzione risposta sbagliata",false);
@@ -1284,7 +1283,7 @@ CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40,@nQ3)
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10,@nQ4);
 CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20,@nQ5);
 
-CALL InserimentoSoluzione("provaNr1",1,"Qui va tutto bene");
+CALL InserimentoSoluzione("provaNr1",1,"SELECT * FROM TEST");
 CALL InserimentoSoluzione("provaNr1",8,"Qui va tutto bene sbagliato");
 CALL InserimentoSoluzione("provaNr2",10,"Anche qua funziona");
 CALL InserimentoSoluzione("TestDiProva3",9,"Anche qua funziona tutto");
