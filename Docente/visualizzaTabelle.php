@@ -15,12 +15,19 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
 
 
 // Assicurati che l'ID del test sia passato come parametro nell'URL, per esempio: test.php?idTest=TitoloDelTest
-$idTest = isset($_GET['idTest']) ? $_GET['idTest'] : '';
+if (isset($_GET['id'])) {
+    $titoloTest = $_GET['id'];
+} else {
+    // Gestisci il caso in cui 'id' non sia presente nell'URL
+    echo "ID del test non specificato.";
+    exit;
+}
+echo "Il nome del test è: $titoloTest\n";
 
 // Prima query per ottenere i nomi delle tabelle di esercizio legate al titolo del test
 $queryCostituzione = "SELECT NomeTabella FROM COSTITUZIONE WHERE TitoloTest = ?";
 $stmt = $conn->prepare($queryCostituzione);
-$stmt->bind_param("s", $idTest);
+$stmt->bind_param("s", $titoloTest);
 $stmt->execute();
 $resultCostituzione = $stmt->get_result();
 

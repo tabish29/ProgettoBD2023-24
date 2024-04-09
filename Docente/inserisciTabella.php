@@ -113,6 +113,8 @@
                     $nomeTabella = preg_replace('/[^A-Za-z0-9_]/', '', $nomeTabella);
 
                     echo "Il nome della tabella è: $nomeTabella\n";
+
+                    
                 } else {
                     echo "Nome della tabella non trovato nel codice SQL fornito.\n";
                 }
@@ -154,7 +156,7 @@
                         echo "ID del test non specificato.";
                         exit;
                     }
-                    
+
 
                     // Query per inserire una riga in COSTITUZIONE
                     $queryInserimento = "INSERT INTO COSTITUZIONE (TitoloTest, NumeroProgressivoQuesito, NomeTabella) VALUES (?, ?, ?)";
