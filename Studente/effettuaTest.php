@@ -135,6 +135,7 @@
     </style>
 </head>
 <body>
+<a href="testStudenti.php" class="btnTermina">Indietro</a>
     <div class="container">
         <h2 class='testH2'>Effettua il Test</h2>
         <ul class="test-details">
@@ -411,3 +412,7 @@
     </div>
 </body>
 </html>
+
+
+
+
