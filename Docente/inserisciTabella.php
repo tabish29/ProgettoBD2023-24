@@ -189,9 +189,30 @@
                 $result = $conn->query($query);
 
                 if ($result) {
-                    echo "Attributi e Tipi per la tabella $nomeTabella:\n";
                     while ($row = $result->fetch_assoc()) {
-                        echo "Nome Attributo: " . $row['Field'] . ", Tipo: " . $row['Type'] . "\n";
+                        $nomeAttributo = $row['Field'];
+                        $tipo = $row['Type'];
+
+                        // Prepara la query per inserire nella tabella ATTRIBUTO
+                        $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
+                        $stmt = $conn->prepare($insertQuery);
+
+                        // Controlla se lo statement è stato preparato correttamente
+                        if ($stmt === false) {
+                            echo "Errore nella preparazione della query: " . $conn->error;
+                            continue; // Salta all'iterazione successiva del ciclo
+                        }
+
+                        // Esegui il binding dei parametri e la query
+                        $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
+                        if ($stmt->execute()) {
+                            echo "Inserimento dell'attributo $nomeAttributo di tipo $tipo per la tabella $nomeTabella avvenuto con successo.<br>";
+                        } else {
+                            echo "Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
+                        }
+
+                        // Chiudi lo statement
+                        $stmt->close();
                     }
                 } else {
                     echo "Errore nell'esecuzione della query DESCRIBE: " . $conn->error;
