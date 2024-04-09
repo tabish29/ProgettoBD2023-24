@@ -76,7 +76,7 @@
             }
 
             ?>
-            <form action="inserisciTabella.php" method="post">
+            <form action="inserisciTabella.php?id=<?php echo htmlspecialchars($_GET['id']); ?>" method="post">
                     <div class="form-group">
                         <label class="label">Scrivi il codice SQL della Tabella:</label><br>
                         <textarea id='codiceTabella' name='codiceTabella' rows='20' cols='100'></textarea>

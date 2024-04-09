@@ -120,7 +120,7 @@
 
                     // Verifica se ci sono errori nella query
                     if ($risultato === TRUE && mysqli_affected_rows($conn) > 0) {
-                        echo "Test creato correttamente. <br>";
+                        echo "Test creato correttamente. <ƒbr>";
                         echo '<a href="testDocenti.php">Torna ai Test</a>';
                     } else {
                         echo "Errore durante la creazione del test o nessuna riga è stata inserita nel database.";
