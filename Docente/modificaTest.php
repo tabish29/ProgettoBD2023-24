@@ -102,6 +102,8 @@
         <ul>
         <?php
             include '../connessione.php';
+            include 'Test.php';
+
             if (!isset($_SESSION)){
                 session_start();
             }
@@ -109,100 +111,58 @@
            
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-                function ottieniQuesiti($titoloTest){
-                    include '../connessione.php';
+                function creaGraficaQuesiti($titoloTest){
+                    global $test;
+                    $test = new Test();
+                    $quesiti = $test->ottieniQuesiti($titoloTest);
                     
-                    $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
-                    $result_quesiti_test = $conn->query($sql_quesiti_test);
-                    $conn->next_result();
-                    $num = 1;
-                    if ($result_quesiti_test->num_rows>0) {
-                        while ($row = $result_quesiti_test->fetch_assoc()) {
-                            echo "<div class=\"divQuesiti\"> <br><label class='quesitoLabel'>Quesito nr." . $num . "</label><br>"; // Attenzione non deve corrispondere al progressivo
-                            $numeroProgressivo = $row['NumeroProgressivo'];
-                            $livelloDifficolta = $row['LivelloDifficolta'];
-                            $descrizione = $row['Descrizione'];
-                            $numeroRisposte = $row['NumeroRisposte'];
-                            $dati = [$numeroProgressivo, $livelloDifficolta,$descrizione,$numeroRisposte];
-
-                            $tipologiaQuesito = "";
-
-                            $sql_quesitoRC = "SELECT * FROM QUESITORISPOSTACHIUSA WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                            $result_quesitoRC = $conn->query($sql_quesitoRC);
-                            $conn->next_result();
-
-                            $sql_quesitoCodice = "SELECT * FROM QUESITOCODICE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                            $result_quesitoCodice = $conn->query($sql_quesitoCodice);
-                            $conn->next_result();
-
-                            if ($result_quesitoRC->num_rows>0) {
-                                $num++;
-                                $tipologiaQuesito = "Risposta Chiusa";
-                                echo "
-                                <span style=\"display: inline;\">
-                                    <label class='label' style=\"display: inline;\">Tipologia: </label>"
-                                    . $tipologiaQuesito . "<br><br>" . "
-                                    <label class='label'  style=\"display: inline;\">Livello Difficoltà: </label>"
-                                    . $dati[1] . "<br><br>" . "
-                                    <label class='label'  style=\"display: inline;\">Descrizione: </label>"
-                                    . $dati[2]  ."<br><br>" . "
-                                    <label class='label' style=\"display: inline;\">Numero Risposte: </label>"
-                                    . $dati[3] . "<br><br>";
-
-
-                                $sql_soluzioni = "SELECT CampoTesto, RispostaCorretta FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                                $result_soluzioni = $conn->query($sql_soluzioni);
-                                $conn->next_result();
-                                
-                                echo "<label class='label'  style=\"display: inline;\">Soluzioni: </label><br>";
-                                while ($soluzione = $result_soluzioni->fetch_assoc()) {
-                                    if ($soluzione['RispostaCorretta'] == 1) {
-                                        echo "<label class='labelVerde'> - " . $soluzione['CampoTesto'] . "</label><br>";
-                                    } else {
-                                        echo "<label class='labelRosso'> - " . $soluzione['CampoTesto'] . "</label><br>";
+                    if (empty($quesiti)) {
+                        echo "<li class='test-item'>Nessun quesito presente.</li>";
+                    } else {
+                        foreach ($quesiti as $quesito) {
+                            echo "<span style=\"display: inline;\">";
+                
+                            // Accesso ai dati del quesito
+                            foreach ($quesito as $chiave => $valore) {
+                                echo "<label class='label'>" . $chiave . ": </label>" . $valore . "<br>";
+                            }
+                
+                            // Verifica della tipologia del quesito
+                            if ($quesito['Tipologia'] == "Risposta Chiusa") {
+                                // Se è una risposta chiusa, ottieni e visualizza le soluzioni
+                                $soluzioni = $test->ottieniRisposte($quesito['NumeroProgressivo'], $titoloTest);
+                                echo "<label class='label'>Soluzioni:</label><br>";
+                                if (empty($soluzioni)) {
+                                    echo "<label class='label'>Nessuna soluzione presente.</label><br>";
+                                } else {
+                                    foreach ($soluzioni as $soluzione) {
+                                        echo "<label class='label'>Campo Testo: </label>" . $soluzione['CampoTesto'] . "<br>";
                                     }
                                 }
-                                echo "<br></span></div><br>";
-
-                                
-
-                            } 
-                            
-                            if ($result_quesitoCodice->num_rows>0){
-                                $num++;
-                                $tipologiaQuesito = "Codice";
-
-                                echo " 
-                                    <span style=\"display: inline;\">
-                                    <label class='label'style=\"display: inline;\">Tipologia: </label>"
-                                    . $tipologiaQuesito . "<br><br>" . "
-                                    <label class='label' style=\"display: inline;\">Livello Difficoltà: </label>"
-                                    . $dati[1] . "<br><br>" . "
-                                    <label class='label'  style=\"display: inline;\">Descrizione: </label>"
-                                    . $dati[2] ."<br><br>" . "
-                                    <label class='label'  style=\"display: inline;\">Numero Risposte: </label>"
-                                    . $dati[3] . "<br><br>";
-
-                                
-
-                                $sql_soluzioni = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-                                $result_soluzioni = $conn->query($sql_soluzioni);
-                                $conn->next_result();
-                                echo "<label class='label'  style=\"display: inline;\">Soluzioni: </label><br>";
-                            
-                                while ($soluzione = $result_soluzioni->fetch_assoc()) {
-                                    echo "- " . $soluzione['TestoSoluzione'] . "<br>";
+                            } else if ($quesito['Tipologia'] == "Codice") {
+                                // Se è un quesito di tipo Codice, ottieni e visualizza le soluzioni
+                                $soluzioni = $test->ottieniSoluzioni($quesito['NumeroProgressivo'], $titoloTest);
+                                echo "<label class='label'>Soluzioni:</label><br>";
+                                if (empty($soluzioni)) {
+                                    echo "<label class='label'>Nessuna soluzione presente.</label><br>";
+                                } else {
+                                    $num = 1;
+                                    foreach ($soluzioni as $soluzione) {
+                                        echo "<label class='label'>" . $num . " - Testo Soluzione: </label>" . $soluzione['TestoSoluzione'] . "<br>";
+                                        $num++;
+                                    }
                                 }
-                                echo "<br></span></div><br>";
-
                             }
+                
+                            echo "</span><br>";
                         }
-
-                    } else {
-                        echo "Nessun quesito presente";
-                    
                     }
-                }             
+                }
+                
+                
+
+                    
+                      
 
                 function mostraDatiTest(){
                     include '../connessione.php';
@@ -229,13 +189,13 @@
                         </span>";
                         
 
-                        ottieniQuesiti($row['Titolo']);
+                        creaGraficaQuesiti($row['Titolo']);
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }
                 }
                 
-                function creaGrafica() {
+                function creaGraficaValoriComuni() {
                     $testId = $_GET['id'];
                     echo "
                         <form id='modificaTestForm' action='modificaTest.php' method='post'>
@@ -260,7 +220,7 @@
 
                 mostraDatiTest();
 
-                creaGrafica();
+                creaGraficaValoriComuni();
         
                         
         }
