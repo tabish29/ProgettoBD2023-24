@@ -628,13 +628,12 @@ CREATE PROCEDURE inserisciRispostaQuesitoCodice(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(20),
     IN valoreRispostaTemp VARCHAR(2000),
-    IN numeroQuesitoTemp INT
+    IN numeroQuesitoTemp INT,
+    IN esitoRisposta BOOLEAN
 )
 BEGIN
 
     DECLARE numRispostaAperta INT;
-    DECLARE esitoRisposta BOOLEAN;
-    DECLARE rispostaCorretta VARCHAR(40);
     DECLARE num_risposte INT;
     
 
@@ -648,25 +647,9 @@ BEGIN
     
 
     IF numRispostaAperta = 1 THEN
-        SET esitoRisposta = FALSE;
 		
-        IF EXISTS (
-			SELECT TestoSoluzione
-			FROM QUESITOCODICE AS QC
-			INNER JOIN SOLUZIONE ON QC.NumeroProgressivo = SOLUZIONE.NumeroProgressivo
-			WHERE QC.NumeroProgressivo = numeroQuesitoTemp
-			  AND QC.TitoloTest IN (
-					SELECT C1.TitoloTest
-					FROM COMPLETAMENTO AS C1
-					WHERE idCompletamentoTemp = C1.NumeroProgressivo
-			  )
-			  AND TestoSoluzione = valoreRispostaTemp
-		) THEN
-			SET esitoRisposta = TRUE;
-		END IF;
-
-
         
+
 
         -- Controllo se è già presente una risposta al quesito
         SELECT COUNT(*) INTO num_risposte

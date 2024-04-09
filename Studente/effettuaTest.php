@@ -172,24 +172,27 @@
                     $contatore = $_POST['numeroDomanda'];
                     salvaDatiTest($testId, $contatore);
                     // Chiudi il test
-                    $test->chiudiTest($testId, $_SESSION['email']);
                     echo "<p>Test terminato con successo.</p>";
                     header("Location: testStudenti.php");
                     exit();
                 } else if (isset($_POST['verificaRisposta'])) {
                     // Verifica la risposta
                     $testId = $_POST['titoloTest'];
-                    $numQuesito = $_POST['numeroQuesito'];
-                    $tipologiaQuesito = $_POST['tipologiaQuesito'];
+                    //NON SO COME GESTIRE IL CONTATORE QUINDI ORA TESTO INSERENDO IL VALORE MANUALMENTE
+
+                    $domanda = 1;
+                    $numQuesito = $_POST['numeroQuesito' . ";" . $domanda];
+                    $tipologiaQuesito = $_POST['tipologiaQuesito' . ";" . $domanda];
+
                     $rispostaData = $_POST['codice'];
-
-                    $rispostaData = "";
-
+                    echo "risposta data: $rispostaData<br>";
+                    echo "numero quesito: $numQuesito<br>";
+                    echo "test id: $testId<br>";
                     $idCompletamento = $test->trovaIdCompletamento($testId, $_SESSION['email']);
 
                     $quesitoOgg = new Quesito();
-
-                    $risultatoVerifica = $quesitoOgg->verificaRispostaQuesitoCodice($testId, $numQuesito, $rispostaData);
+                    $rispostaCorretta = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
+                    $risultatoVerifica = $quesitoOgg->verificaRispostaCodice($testId, $numQuesito, $rispostaData, $rispostaCorretta);
                     if ($risultatoVerifica) {
                         $esito = "Risposta corretta";
                     } else {
@@ -285,11 +288,12 @@
             for ($i = 1; $i <= $numeroDomandePresenti; $i++) {
                 $numeroQuesito = $_POST['numeroQuesito' . ";" . $i];
                 $tipologiaQuesito = $_POST['tipologiaQuesito' . ";" . $i];
-                $rispostaData = $_POST['risposta' . ";" . $i];
                 $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
                 if ($tipologiaQuesito == "Risposta Chiusa") {
+                    $rispostaData = $_POST['risposta' . ";" . $i];
                     $test->inserisciRispostaQuesitoRispostaChiusa($idCompletamento, $titoloTest, $rispostaData, $numeroQuesito);
                 } else if ($tipologiaQuesito == "Codice") {
+                    $rispostaData = $_POST['risposta' . ";" . $i]; // Sbagliato, ma non so come fare
                     $test->inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numeroQuesito);
                 }
             }
