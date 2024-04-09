@@ -153,6 +153,7 @@
                 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     if (isset($_GET['id'])) {
                         $testId = $_GET['id'];
+                        echo "<form method='post' action='effettuaTest.php'>";
                         // Verifica se il completamento esiste e aprilo se necessario
                         $test->creaOApriCompletamento($testId, $_SESSION['email']);
                         mostraDatiTest($testId, '', -1);
@@ -168,6 +169,8 @@
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (isset($_POST['terminaTest'])) {
                     $testId = $_POST['titoloTest'];
+                    $contatore = $_POST['numeroDomanda'];
+                    salvaDatiTest($testId, $contatore);
                     // Chiudi il test
                     $test->chiudiTest($testId, $_SESSION['email']);
                     echo "<p>Test terminato con successo.</p>";
@@ -231,27 +234,26 @@
                     $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($titoloTest, $numeroProgressivo);
 
                     echo "<p>Domanda:\n" . $descrizione . "</p>";
+                    echo "<input type='hidden' name='numeroQuesito" . ";" . $contatore . "' value='$numeroProgressivo'>";
+                    echo "<input type='hidden' name='tipologiaQuesito" . ";" . $contatore . "' value='$tipologiaQuesito'>";
+                    echo "<input type='hidden' name='numeroDomanda' value='$contatore'>";
+                    echo "<input type='hidden' name='titoloTest' value='$titoloTest'>";
 
                     // Gestione grafica delle risposte
                     if ($tipologiaQuesito == "Risposta Chiusa") {
                         echo "<br><p class='classInserimento'>Seleziona la risposta corretta:</p>";
                         $soluzioni = $test->ottieniRisposte($numeroProgressivo, $titoloTest);
                         if (!empty($soluzioni)) {
+                            
                             foreach ($soluzioni as $soluzione) {
                                 $risposta = $soluzione['CampoTesto'];
-                                echo "<input type='radio' name='risposta' value='$risposta' data-quesito='$numeroProgressivo'>$risposta<br>";
+                                echo "<input type='radio' name='risposta" . ";" . $contatore . "' value='$risposta' data-quesito='$numeroProgressivo'>$risposta<br>";
                             }
                         }
                     } elseif ($tipologiaQuesito == "Codice") {
-                        echo "<form method='post' action='effettuaTest.php'>";
                         echo "<p class='classInserimento'>Inserisci il codice:</p>";
                         echo "<textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>";
-                        echo "<input type='hidden' name='tipologiaQuesito' value='$tipologiaQuesito'>";
-                        echo "<input type='hidden' name='numeroQuesito' value='$numeroProgressivo'>";
-                        echo "<input type='hidden' name='numeroDomanda' value='$contatore'>";
-                        echo "<input type='hidden' name='titoloTest' value='$titoloTest'><br>";
                         echo "<button type='submit' class='btnVerifica' name='verificaRisposta'>Verifica Risposta</button>";
-                        echo "</form>";
                     }
 
                     // Visualizza l'esito se disponibile
@@ -262,7 +264,6 @@
                     // Visualizza il pulsante per terminare il test se si è all'ultimo quesito
                     if ($contatore == count($quesiti)) {
                         echo "<br><br>";
-                        echo "<form method='post' action='effettuaTest.php'>";
                         echo "<input class='btnTermina' type='submit' name='terminaTest' value='Termina Test'>";
                         echo "<input type='hidden' name='titoloTest' value='$titoloTest'>";
                         echo "</form>";
@@ -277,7 +278,26 @@
             echo "<input type='hidden' id='titoloTest' name='titoloTest' value=" . $testId . ">";
             echo "<br>";
         }
-            ?>
+        
+        function salvaDatiTest($titoloTest, $numeroDomandePresenti){
+            global $test;
+            
+            for ($i = 1; $i <= $numeroDomandePresenti; $i++) {
+                $numeroQuesito = $_POST['numeroQuesito' . ";" . $i];
+                $tipologiaQuesito = $_POST['tipologiaQuesito' . ";" . $i];
+                $rispostaData = $_POST['risposta' . ";" . $i];
+                $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
+                if ($tipologiaQuesito == "Risposta Chiusa") {
+                    $test->inserisciRispostaQuesitoRispostaChiusa($idCompletamento, $titoloTest, $rispostaData, $numeroQuesito);
+                } else if ($tipologiaQuesito == "Codice") {
+                    $test->inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numeroQuesito);
+                }
+            }
+            echo "<script>alert('Test terminato con successo.');</script>";
+            header("Location: testStudenti.php");
+            exit();
+        }
+         ?>
         </ul>
     </div>
 </body>
