@@ -113,11 +113,13 @@
                     $nomeTabella = preg_replace('/[^A-Za-z0-9_]/', '', $nomeTabella);
 
                     echo "Il nome della tabella è: $nomeTabella\n";
-
-                    
                 } else {
                     echo "Nome della tabella non trovato nel codice SQL fornito.\n";
                 }
+
+
+
+
 
                 // Logica per eseguire il codice SQL
 
@@ -181,6 +183,18 @@
                     $stmtInserimento->close();
                 } else {
                     echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query: " . $conn->error . "</label>";
+                }
+
+                $query = "DESCRIBE " . $nomeTabella;
+                $result = $conn->query($query);
+
+                if ($result) {
+                    echo "Attributi e Tipi per la tabella $nomeTabella:\n";
+                    while ($row = $result->fetch_assoc()) {
+                        echo "Nome Attributo: " . $row['Field'] . ", Tipo: " . $row['Type'] . "\n";
+                    }
+                } else {
+                    echo "Errore nell'esecuzione della query DESCRIBE: " . $conn->error;
                 }
             }
             ?>
