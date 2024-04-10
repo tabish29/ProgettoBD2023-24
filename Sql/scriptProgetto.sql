@@ -1335,10 +1335,9 @@ CALL inserisciRispostaQuesitoCodice(5, "provaNr1", "rispostaNonCorretta", 1, fal
 #CALL visualizzaEsitoRisposta(3, "provaNr1",1,  @esitoRispostaCodice);
 #SELECT @esitoRispostaCodice;
  
-CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
-SELECT @esitoRispostaScelta;
+#CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
+#SELECT @esitoRispostaScelta;
 
-SELECT * FROM TEST;
 
 -- TEST VIEW
 
