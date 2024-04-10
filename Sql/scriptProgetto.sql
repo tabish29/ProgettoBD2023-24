@@ -1176,6 +1176,10 @@ END;
 //
 DELIMITER ;
 
+
+-- VIEW
+
+
 CREATE VIEW ClassificaQuesitiPerRisposte AS
 SELECT  QUESITO.NumeroProgressivo,QUESITO.TitoloTest,COUNT(RC.NumeroProgressivoCompletamento) + COUNT(RCC.NumeroProgressivoCompletamento) AS NumeroTotaleRisposte
 FROM QUESITO 
@@ -1183,6 +1187,8 @@ JOIN RISPOSTAQUESITORISPOSTACHIUSA AS RC ON QUESITO.NumeroProgressivo = RC.Numer
 JOIN RISPOSTAQUESITOCODICE AS RCC ON QUESITO.NumeroProgressivo = RCC.NumeroProgressivoQuesito AND QUESITO.TitoloTest = RCC.TitoloTest
 GROUP BY QUESITO.NumeroProgressivo, QUESITO.TitoloTest
 ORDER BY NumeroTotaleRisposte DESC;
+
+
 
 CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 	SELECT
@@ -1195,6 +1201,41 @@ CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
 		STUDENTE.CodiceAlfaNumerico
 	ORDER BY
 		num_test_completati DESC;
+        
+        
+-- NUOVE VIEW
+        
+
+CREATE VIEW classifica_test_completati AS
+	SELECT s.CodiceAlfaNumerico, COUNT(*) AS numero_test_completati
+	FROM STUDENTE AS s LEFT JOIN COMPLETAMENTO AS c ON s.Email = c.EmailStudente
+	WHERE c.Stato = 'Concluso'
+	GROUP BY s.CodiceAlfaNumerico;
+        
+
+# QUI BISOGNA LAVORARCI, VANNO UNITE LE DUE, NON POSSONO ESSERE SEPARATE
+CREATE VIEW classifica_studenti AS
+	SELECT s.CodiceAlfaNumerico, 
+    ROUND((COUNT(CASE WHEN rc.Esito = TRUE THEN 1 ELSE 0 END) / COUNT(rc.NumeroProgressivoCompletamento)) * 100, 2) AS percentuale_risposte_chiuse_corrette,
+    ROUND((COUNT(CASE WHEN rc.Esito = TRUE THEN 1 ELSE 0 END) / COUNT(rcc.NumeroProgressivoCompletamento)) * 100, 2) AS percentuale_risposte_codice_corrette
+	FROM STUDENTE AS s 
+    LEFT JOIN REALIZZAZIONE AS rz ON s.Email = rz.EmailStudente
+	LEFT JOIN RISPOSTAQUESITORISPOSTACHIUSA AS rc ON rz.NumeroProgressivoCompletamento = rc.NumeroProgressivoCompletamento
+    LEFT JOIN RISPOSTAQUESITORISPOSTACHIUSA AS rcc ON rz.NumeroProgressivoCompletamento = rcc.NumeroProgressivoCompletamento
+	GROUP BY s.CodiceAlfaNumerico;
+        
+
+CREATE VIEW classifica_quesiti AS
+	SELECT q.NumeroProgressivo, q.TitoloTest, COUNT(r.NumeroProgressivoCompletamento) AS num_risposte_codice_inserite, 
+		COUNT(rc.NumeroProgressivoCompletamento) AS num_risposte_chiuse_inserite
+	FROM QUESITO AS q
+	LEFT JOIN RISPOSTAQUESITOCODICE AS r ON q.NumeroProgressivo = r.NumeroProgressivoQuesito
+    LEFT JOIN RISPOSTAQUESITORISPOSTACHIUSA AS rc ON q.NumeroProgressivo = rc.NumeroProgressivoQuesito
+	GROUP BY q.NumeroProgressivo, q.TitoloTest;
+
+
+
+
 
 
 -- AREA PER I TEST
@@ -1276,14 +1317,17 @@ CALL InserimentoOpzioneRisposta("provaNr2",6,"Evviva Noi",true);
 CALL InserimentoOpzioneRisposta("provaNr2",8,"Completamento di Lollo",false);
 -- fine test
 
-/* test inserimento risposte
+
+
+
+-- test inserimento risposte
 CALL inserisciRispostaQuesitoRispostaChiusa(3,"ProvaNr1","risposta chiusa",2);
 CALL inserisciRispostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta sbagliata", 2);
 CALL inserisciRispostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta Corretta", 2);
-CALL inserisciRispostaQuesitoCodice(2, "provaNr1", "rispostaNonCorretta", 1);
-CALL inserisciRispostaQuesitoCodice(3, "provaNr1", "Qui va tutto bene", 1);
-CALL inserisciRispostaQuesitoCodice(4, "provaNr2", "Anche qua funziona", 10);
-CALL inserisciRispostaQuesitoCodice(5, "provaNr1", "rispostaNonCorretta", 1);
+CALL inserisciRispostaQuesitoCodice(2, "provaNr1", "rispostaNonCorretta", 1, null);
+CALL inserisciRispostaQuesitoCodice(3, "provaNr1", "Qui va tutto bene", 1, true);
+CALL inserisciRispostaQuesitoCodice(4, "provaNr2", "Anche qua funziona", 10, false);
+CALL inserisciRispostaQuesitoCodice(5, "provaNr1", "rispostaNonCorretta", 1, false);
 
 #CALL visualizzaEsitoRisposta(5, "provaNr1",1,  @esitoRispostaCodice);
 #SELECT @esitoRispostaCodice;
@@ -1291,12 +1335,22 @@ CALL inserisciRispostaQuesitoCodice(5, "provaNr1", "rispostaNonCorretta", 1);
 #CALL visualizzaEsitoRisposta(3, "provaNr1",1,  @esitoRispostaCodice);
 #SELECT @esitoRispostaCodice;
  
- CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
- SELECT @esitoRispostaScelta;
- 
+CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
+SELECT @esitoRispostaScelta;
 
--- Fine test
-*/
+SELECT * FROM TEST;
+
+-- TEST VIEW
+
+SELECT * FROM ClassificaQuesitiPerRisposte;
+SELECT * FROM classificaTestCompletati;
+
+SELECT * FROM classifica_test_completati;
+SELECT * FROM classifica_studenti;
+SELECT * FROM classifica_quesiti;
+
+
+
 /*
 
 DELIMITER //
