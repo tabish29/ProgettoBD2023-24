@@ -112,7 +112,7 @@
                     // Rimuove eventuali parentesi o caratteri speciali dal nome della tabella
                     $nomeTabella = preg_replace('/[^A-Za-z0-9_]/', '', $nomeTabella);
 
-                    echo "Il nome della tabella è: $nomeTabella\n";
+                    echo "<br>Il nome della tabella è: $nomeTabella\n";
                 } else {
                     echo "Nome della tabella non trovato nel codice SQL fornito.\n";
                 }
