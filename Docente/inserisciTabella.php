@@ -181,41 +181,89 @@
 
                     // Chiudi lo statement
                     $stmtInserimento->close();
-                } else {
-                    echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query: " . $conn->error . "</label>";
-                }
+                    $query = "DESCRIBE " . $nomeTabella;
+                    $result = $conn->query($query);
 
-                $query = "DESCRIBE " . $nomeTabella;
-                $result = $conn->query($query);
+                    if ($result) {
+                        while ($row = $result->fetch_assoc()) {
+                            $nomeAttributo = $row['Field'];
+                            $tipo = $row['Type'];
 
-                if ($result) {
-                    while ($row = $result->fetch_assoc()) {
-                        $nomeAttributo = $row['Field'];
-                        $tipo = $row['Type'];
+                            // Prepara la query per inserire nella tabella ATTRIBUTO
+                            $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
+                            $stmt = $conn->prepare($insertQuery);
 
-                        // Prepara la query per inserire nella tabella ATTRIBUTO
-                        $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
-                        $stmt = $conn->prepare($insertQuery);
+                            // Controlla se lo statement è stato preparato correttamente
+                            if ($stmt === false) {
+                                echo "Errore nella preparazione della query: " . $conn->error;
+                                continue; // Salta all'iterazione successiva del ciclo
+                            }
 
-                        // Controlla se lo statement è stato preparato correttamente
-                        if ($stmt === false) {
-                            echo "Errore nella preparazione della query: " . $conn->error;
-                            continue; // Salta all'iterazione successiva del ciclo
+                            // Esegui il binding dei parametri e la query
+                            $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
+                            if ($stmt->execute()) {
+                                echo "Inserimento dell'attributo $nomeAttributo di tipo $tipo per la tabella $nomeTabella avvenuto con successo.<br>";
+                            } else {
+                                echo "Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
+                            }
+
+                            // Chiudi lo statement
+                            $stmt->close();
                         }
+                    } else {
+                        echo "Errore nell'esecuzione della query DESCRIBE: " . $conn->error;
+                    }
 
-                        // Esegui il binding dei parametri e la query
-                        $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
-                        if ($stmt->execute()) {
-                            echo "Inserimento dell'attributo $nomeAttributo di tipo $tipo per la tabella $nomeTabella avvenuto con successo.<br>";
+
+                    // Assumendo che $conn sia la tua connessione al database e $codiceTabella sia la query SQL inserita dall'utente
+                    if (strpos(strtoupper($codiceTabella), 'FOREIGN KEY') !== false) {
+                        // La query contiene "FOREIGN KEY", quindi procedi con la verifica delle foreign key
+
+                        // Query per trovare le foreign key della tabella appena creata
+                        $queryForeignKey = "SELECT TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
+                                            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                                            WHERE TABLE_SCHEMA = 'ESQL' AND TABLE_NAME = ? AND REFERENCED_TABLE_NAME IS NOT NULL";
+
+                        $stmtFk = $conn->prepare($queryForeignKey);
+                        $stmtFk->bind_param("s", $nomeTabella);
+                        $stmtFk->execute();
+                        $resultFk = $stmtFk->get_result();
+                        $emailDocente = "docente2@gmail.com"; //(da eliminare e fare in modo che riesca a prenderlo in maniera dinamica)
+                        if ($resultFk->num_rows > 0) {
+                            while ($rowFk = $resultFk->fetch_assoc()) {
+                                // Qui inserisci i dettagli della foreign key in APPARTENENZA
+                                $queryInserimentoAppartenenza = "INSERT INTO APPARTENENZA (NomeTabellaUno, NomeAttributoUno, NomeTabellaDue, NomeAttributoDue, EmailDocente) VALUES (?, ?, ?, ?, ?)";
+                                $stmtAppartenenza = $conn->prepare($queryInserimentoAppartenenza);
+                                $stmtAppartenenza->bind_param("sssss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $rowFk['REFERENCED_TABLE_NAME'], $rowFk['REFERENCED_COLUMN_NAME'], $emailDocente);
+                                $stmtAppartenenza->execute();
+
+                                /*controllo errato perchè la query la esegue correttamente(da capire)
+                                if (!$stmtAppartenenza->execute()) {
+                                    echo "Errore nell'inserimento in APPARTENENZA: " . $stmtAppartenenza->error;
+                                }*/
+
+                                // Ora inserisci i dettagli della foreign key in VINCOLODIINTEGRITA
+                                $queryInserimentoVincolo = "INSERT INTO VINCOLODIINTEGRITA (NomeTabella, NomeAttributo, EmailDocente) VALUES (?, ?, ?)";
+                                $stmtVincolo = $conn->prepare($queryInserimentoVincolo);
+                                // Il NomeTabella e NomeAttributo in VINCOLODIINTEGRITA corrispondono a TABLE_NAME e COLUMN_NAME di KEY_COLUMN_USAGE
+                                $stmtVincolo->bind_param("sss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $emailDocente);
+                                $stmtVincolo->execute();
+                                if (!$stmtVincolo->execute()) {
+                                    echo "Errore nell'inserimento in VINCOLODIINTEGRITA: " . $stmtVincolo->error;
+                                }
+
+                                $stmtVincolo->close();
+                            }
                         } else {
-                            echo "Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
+                            echo "Nessuna foreign key trovata per la tabella $nomeTabella.";
                         }
 
-                        // Chiudi lo statement
-                        $stmt->close();
+                        $stmtFk->close();
+                    } else {
+                        echo "La query inserita non contiene foreign key.";
                     }
                 } else {
-                    echo "Errore nell'esecuzione della query DESCRIBE: " . $conn->error;
+                    echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query: " . $conn->error . "</label>";
                 }
             }
             ?>

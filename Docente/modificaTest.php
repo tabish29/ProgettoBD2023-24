@@ -213,9 +213,6 @@
                         
                         <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
                         ";
-                    
-                    
-                    
                 }
 
                 mostraDatiTest();
