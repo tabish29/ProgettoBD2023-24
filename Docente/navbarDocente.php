@@ -10,15 +10,19 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
+      padding-top: 20px; 
       width: 100%;
-      height: 100%;
+      height: auto;
       background-color: #f9acac;
+
     }
     .containerNav {
       width: 100%; 
+      height: auto;
       margin: 20px auto; 
-      padding: 20px;
+      padding-top: 20px;
+      padding-left: 0;
+      padding-right: 0;
       font-weight: bold;
       background-color: #f9acac;
       border-radius: 5px;
@@ -40,9 +44,8 @@
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       height: auto;
       width: auto;
-      position: absolute;
-      top:0;
-      right: 0;
+      float: right; 
+
     }
     .containerNav p{
       text-align: center;
@@ -54,7 +57,17 @@
       height: auto;
       width: auto;
     }
-    
+    .navbar ul{
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+    }
+    .navbar{
+      padding: 0;
+      margin: 0;
+      width: auto;
+    }
   </style>
 </head>
 <body>

@@ -177,7 +177,6 @@ CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
     IN TitoloTestTemp VARCHAR(20),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
     IN DescrizioneTemp VARCHAR(50),
-    IN NumeroRisposteTemp INT,
     OUT numProgressivo INT
 )
 BEGIN
@@ -186,7 +185,7 @@ BEGIN
     SET TestEsistente = (SELECT COUNT(*) FROM TEST WHERE Titolo = TitoloTestTemp);
     IF (TestEsistente = 1) THEN
         INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
-        VALUES (TitoloTestTemp, LivelloDifficoltaTemp, DescrizioneTemp, NumeroRisposteTemp);
+        VALUES (TitoloTestTemp, LivelloDifficoltaTemp, DescrizioneTemp, 0);
 
         SET UltimoNumeroProgressivo = (SELECT MAX(NumeroProgressivo) FROM QUESITO WHERE TitoloTest = TitoloTestTemp);
         INSERT INTO QUESITORISPOSTACHIUSA(NumeroProgressivo, TitoloTest) VALUES (UltimoNumeroProgressivo, TitoloTestTemp);
@@ -205,7 +204,6 @@ CREATE PROCEDURE CreazioneQuesitoCodice (
     IN TitoloTestTemp VARCHAR(20),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
     IN DescrizioneTemp VARCHAR(50),
-    IN NumeroRisposteTemp INT,
     OUT numProgressivo INT
 )
 BEGIN
@@ -215,7 +213,7 @@ BEGIN
 
 	IF (TestEsistente = 1) THEN
 		INSERT INTO QUESITO(TitoloTest, LivelloDifficolta, Descrizione, NumeroRisposte) 
-		VALUES (TitoloTestTemp, LivelloDifficoltaTemp, DescrizioneTemp, NumeroRisposteTemp);
+		VALUES (TitoloTestTemp, LivelloDifficoltaTemp, DescrizioneTemp, 0);
         
         SET UltimoNumeroProgressivo = (SELECT MAX(NumeroProgressivo) FROM QUESITO WHERE TitoloTest = TitoloTestTemp);
 		INSERT INTO QUESITOCODICE(TitoloTest,NumeroProgressivo) VALUES (TitoloTestTemp, UltimoNumeroProgressivo);

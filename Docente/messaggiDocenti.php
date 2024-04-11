@@ -2,6 +2,8 @@
 if (!isset($_SESSION)) {
     session_start();
 }
+include 'navbarDocente.php';
+include '../connessione.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,14 +17,12 @@ if (!isset($_SESSION)) {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f9acac;
         }
 
         .container {
             width: 100%;
             min-height: 100%;
-            margin: 0;
-            padding: 0;
             background-color: #f9acac;
             border-radius: 5px;
             text-align: center;
@@ -109,10 +109,6 @@ if (!isset($_SESSION)) {
 
 <body>
     <div class="container">
-        <?php
-        include 'navbarDocente.php';
-        include '../connessione.php';
-        ?>
         <div class="btn-container">
             <a href="nuovoMessaggioDocente.php" class="buttonInvia">Invia Nuovo Messaggio</a>
         </div>
@@ -140,7 +136,7 @@ if (!isset($_SESSION)) {
                 echo "<li class='test-item'>";
                 foreach ($row as $key => $value) {
                     if ($key !== 'Id') {
-                        echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p><br>";
+                        echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";
                     }
                 }
                 echo "</li><br>";
@@ -162,7 +158,7 @@ if (!isset($_SESSION)) {
                 echo "<li class='test-item'>";
                 foreach ($row as $key => $value) {
                     if ($key !== 'Id') {
-                        echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p><br>";
+                        echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";
                     }
                 }
                 echo "</li><br>";

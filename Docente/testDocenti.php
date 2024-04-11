@@ -2,6 +2,8 @@
 if (!isset($_SESSION)) {
     session_start();
 }
+include 'navbarDocente.php';
+include '../connessione.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,14 +16,14 @@ if (!isset($_SESSION)) {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
             background-color: #f9acac;
         }
 
         .container {
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
             margin: 0;
             padding: 0;
             background-color: #f9acac;
@@ -92,15 +94,39 @@ if (!isset($_SESSION)) {
         .test-item label {
             font-size: 15px;
         }
+        .test-item {
+        display: inline-block; /* Aggiunta di display inline-block */
+        margin-left : 20px; /* Aggiunta di margine a sinistra per separare i test */
+        margin-right: 20px; /* Aggiunta di margine a destra per separare i test */
+        margin-bottom: 20px; /* Aggiunta di margine inferiore per separare i test */
+        padding: 10px;
+        width: auto; /* Modifica della larghezza del singolo test */
+        height: auto;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    button{
+        color: white;
+        background-color: #9c9c9c;
+        border: none;
+        padding: 10px 20px;
+    }
     </style>
 </head>
 
 <body>
     <div class="container">
         <ul class="test-list">
+            <div class="containerBtn">
+                <button class="button" onclick="window.location.href='creaTest.php'">Crea nuovo Test</button>
+                <button class="button" onclick="openAction('modifica')">Modifica Test</button>
+                <button class="button" onclick="openAction('cancella')">Cancella Test</button>
+                <button class="button" onclick="openAction('visualizzaTabelle')">Visualizza tabelle</button>
+                <br>
+            </div>
             <?php
-            include 'navbarDocente.php';
-            include '../connessione.php';
+            
 
             if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
                 // Redirect a una pagina di login se l'utente non è autenticato
@@ -132,23 +158,19 @@ if (!isset($_SESSION)) {
                             echo "<img src='" . $value . "'  width=200px height=200px />";
                             //TODO: foto sono caricate in locale, andrebbero messe su db
                         } else {
-                            echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p><br>";
+                            echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";
                         }
                     }
                     echo "</li>";
                 }
                 echo "<input type='hidden' name='action' id='actionField'>";
                 echo "</form>";
+            } else {
+                echo "<p class='testListH2'>Non sono presenti test.</label>";
             }
             ?>
         </ul>
-        <div class="containerBtn">
-            <a href='creaTest.php' class='btn btn-primary'>Crea nuovo Test</a>
-            <button class="btn btn-primary" onclick="openAction('modifica')">Modifica Test</button>
-            <button class="btn btn-primary" onclick="openAction('cancella')">Cancella Test</button>
-            <button class="btn btn-primary" onclick="openAction('visualizzaTabelle')">Visualizza tabelle</button>
-            <br>
-        </div>
+        
 
         <script>
             function openAction(action) {

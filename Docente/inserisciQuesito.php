@@ -113,9 +113,9 @@
 
             $sql_creaQuesitoQuery = '';
             if ($tipoQuesito == 'RC') {
-                $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', $numeroRisposte, @numeroProgressivoQuesito)";
+                $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
             } else if ($tipoQuesito == 'COD') {
-                $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', $numeroRisposte, @numeroProgressivoQuesito)";
+                $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
             }
             if ($conn->query($sql_creaQuesitoQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
 
@@ -157,7 +157,7 @@
                 </div>
 
                 <div>
-                    <label class="label" for="numeroRisposte">Numero di risposte:</label>
+                    <label class="label" for="numeroRisposte">Quante soluzioni vuoi inserire:</label>
                     <input class="areaInserimento" type="number" id="numeroRisposte" name="numeroRisposte" min="1" max="5" step="1">
                 </div>
 
