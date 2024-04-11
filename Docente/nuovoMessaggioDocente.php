@@ -2,6 +2,9 @@
     if (!isset($_SESSION)){
         session_start();
     }
+    include '../connessione.php';
+    include '../Condiviso/Messaggio.php';
+    include '../Condiviso/Test.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,12 +23,11 @@
             align-items: center;
         }
         .container {
-            width: auto;
+            width: 80%;
             margin: 10px auto;
             padding: auto;
             background-color: #f9acac;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center; 
         }
         h2 {
@@ -59,16 +61,17 @@
         textarea {
             resize: vertical;
         }
-        .btn-container {
-            text-align: center;
-        }
-        .btn-primary {
-            background-color: #7cfc00; 
+        .btnInvia {
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 0px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
             color: #222222;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+            background-color: #7cfc00;
         }
         .listBox{
             width: auto;
@@ -86,16 +89,7 @@
 <body>
     <div class="container">
         <?php
-            include 'navbarDocente.php';
-            include '../connessione.php';
             
-        
-            // Verifica se l'utente è autenticato
-            if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
-                // Redirect a una pagina di login se l'utente non è autenticato
-                header("Location: index.html");
-                exit();
-            }
         
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -109,15 +103,17 @@
 
                     $email_login = $_SESSION['email'];
                     // Esempio: Salva nel database
-                    $sql = "CALL inserimentoMessaggioDocente('$titoloTest', '$oggetto', '$testo', NOW(), '$email_login')";
-                    if ($conn->query($sql) === TRUE) {
-                        echo '<script>window.alert("Messaggio inviato con successo!");</script>';
+                    $messaggio = new Messaggio();
+                    $risultato = $messaggio->inserisciMessaggioDocente($titoloTest, $oggetto, $testo, $email_login);
+                    if ($risultato) {
+                        echo '<script>window.alert("Messaggio inviato con successo!");
+                                window.location.href = "messaggiDocenti.php";
+                            </script>';
+
                     } else {
                         echo '<script>window.alert("Errore nell\'invio del messaggio.");</script>';
                     }
 
-                    // Chiudi la connessione al database
-                   // $conn->close();
                 } else {
                     echo "Campi del modulo non validi.";
                 }
@@ -130,13 +126,12 @@
                 <label for="selectTest" class="labelMess">Seleziona un test:</label><br>
                 <select class='listBox'id="selectTest" name="selectTest">
                     <?php
+                        $test = new Test();
                         // Recupera i nomi dei test dal database
-                        $query_test = "CALL visualizzaTestDisponibili()";
-                        $result_test = $conn->query($query_test);
-
+                        $testOttenuti = $test->ottieniTuttiITest();
                         // Aggiungi opzioni alla ListBox
-                        while ($row_test = $result_test->fetch_assoc()) {
-                            echo "<option value='" . $row_test['Titolo'] . "'>" . $row_test['Titolo'] . "</option>";
+                        while ($datiTest = $testOttenuti->fetch_assoc()) {
+                            echo "<option value='" . $datiTest['Titolo'] . "'>" . $datiTest['Titolo'] . "</option>";
                         }
 
                     ?>
@@ -150,7 +145,8 @@
                 <label for="testo"class="labelMess">Testo del messaggio:</label><br>
                 <textarea id="testo" class="areaInserimento"name="testo" rows="5" required></textarea><br>
 
-                <button type="submit" id="inviaMessaggioBtn" class="btn btn-primary">Invia Messaggio</button>
+                <button type="submit" id="inviaMessaggioBtn" class="btnInvia">Invia Messaggio</button>
+                <button class='btnInvia'onclick="window.location.href='messaggiDocenti.php'">Torna alla lista dei messaggi</button>
         </form>
     </div>
 </body>
