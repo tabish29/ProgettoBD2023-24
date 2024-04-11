@@ -1,5 +1,6 @@
 <?php
 include '../connessione.php';
+include '../Condiviso/Utente.php';
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -9,22 +10,12 @@ if (!isset($_SESSION)) {
 
 <head>
     <style>
-        /* Per Chrome, Safari, Edge, Opera */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* Per Firefox */
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-
+        
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
+            background-color: red;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -151,7 +142,7 @@ if (!isset($_SESSION)) {
 
                 <label class='labelReg' for="password_reg">Password:</label>
                 <input class='areaIns' type="password" id="password_reg" name="password_reg" required>
-                <label for="mostra_password" id="mostra_password_label">Mostra Password</label>
+                <label class='labelReg' for="mostra_password" id="mostra_password_label">Mostra Password</label>
                 <input type="checkbox" id="mostra_password" onchange="mostraPassword()"><br>
 
                 <label class='labelReg' for="recapito_telefonico">Recapito Telefonico:</label>
@@ -220,6 +211,7 @@ if (!isset($_SESSION)) {
 <?php
 // Verifica se è stata inviata una richiesta POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $utente = new Utente();
     // Recupero i dati inseriti nel form di registrazione
     $nome = $_POST['nome'];
     $cognome = $_POST['cognome'];
@@ -243,9 +235,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $anno_immatricolazione = $_POST['anno_immatricolazione'];
 
             // Chiama la procedura di registrazione dello studente
-            $sql = "CALL RegistrazioneStudente('$email', '$password','$nome', '$cognome', '$recapito_telefonico', '$anno_immatricolazione', '$codice_alfanumerico')";
+            $risultatoStudente = $utente->registrazioneStudente($email, $password, $nome, $cognome, $recapito_telefonico, $anno_immatricolazione, $codice_alfanumerico);
 
-            if ($conn->query($sql) === TRUE) {
+            if ($risultatoStudente) {
                 echo '<script>window.alert("Registrazione avvenuta con successo!");</script>';
             } else {
                 echo '<script>window.alert("Errore, riprova!");</script>';
@@ -257,9 +249,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $nome_corso = $_POST['nome_corso'];
             $nome_dipartimento = $_POST['nome_dipartimento'];
 
-            $sql = "CALL RegistrazioneDocente('$email', '$password','$nome', '$cognome', '$recapito_telefonico', '$nome_dipartimento', '$nome_corso')";
-            if ($conn->query($sql) === TRUE) {
-                echo '<script>window.alert("Registrazione avvenuta con successo!");</script>';
+            $risultatoDocente = $utente->registrazioneDocente($email, $password, $nome, $cognome, $recapito_telefonico, $nome_dipartimento, $nome_corso);
+            if ($risultatoDocente) {
+                echo '<script>window.alert("Registrazione avvenuta con successo!");
+                            window.location.href = "login.php";
+                        </script>';
             } else {
                 echo '<script>window.alert("Errore, riprova!");</script>';
             }
