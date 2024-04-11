@@ -1,90 +1,111 @@
 <?php
+include '../connessione.php';
+include '../Condiviso/Tabella.php';
 if (!isset($_SESSION)) {
     session_start();
 }
 
-include 'navbarDocente.php';
-include '../connessione.php';
-
-if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
-    // Redirect a una pagina di login se l'utente non è autenticato
-    header("Location: ../");
-    exit();
-}
-
-// Assicurati che l'ID del test sia passato come parametro nell'URL, per esempio: test.php?idTest=TitoloDelTest
-if (isset($_GET['id'])) {
-    $titoloTest = $_GET['id'];
-} else {
-    // Gestisci il caso in cui 'id' non sia presente nell'URL
-    echo "ID del test non specificato.";
-    exit;
-}
-//echo "Il nome del test è: $titoloTest\n";(da eliminare)
-
-// Prima query per ottenere i nomi delle tabelle di esercizio legate al titolo del test
-$queryCostituzione = "SELECT NomeTabella FROM COSTITUZIONE WHERE TitoloTest = ?";
-$stmt = $conn->prepare($queryCostituzione);
-$stmt->bind_param("s", $titoloTest);
-$stmt->execute();
-$resultCostituzione = $stmt->get_result();
-
-$nomiTabella = [];
-while ($row = $resultCostituzione->fetch_assoc()) {
-    $nomiTabella[] = $row['NomeTabella'];
-}
-$stmt->close();
-
-// Verifica se sono stati trovati nomi di tabella
-if (count($nomiTabella) > 0) {
-    // Seconda query per ottenere informazioni dalle tabelle di esercizio
-    $placeholders = implode(',', array_fill(0, count($nomiTabella), '?')); // Crea una stringa di placeholders
-    $queryTabellaEsercizio = "SELECT Nome, DataCreazione, num_righe, EmailDocente FROM TABELLADIESERCIZIO WHERE Nome IN ($placeholders)";
-    $stmt = $conn->prepare($queryTabellaEsercizio);
-    $stmt->bind_param(str_repeat('s', count($nomiTabella)), ...$nomiTabella); // Assegna dinamicamente i parametri alla query
-    $stmt->execute();
-    $resultTabellaEsercizio = $stmt->get_result();
 ?>
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                background-color: #f9acac;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9acac;
+        }
 
-            .container {
-                width: 100%;
-                padding: 20px;
-                background-color: #f9acac;
-                border-radius: 5px;
-            }
-        </style>
-    </head>
+        .container {
+            text-align: center;
+            width: 70%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9acac;
+            border-radius: 5px;
+        }
 
-    <body>
-        <div class="container">
-            <h2>Informazioni sulle Tabelle di Esercizio per il Test: <?php echo htmlspecialchars($idTest); ?></h2>
-            <ul>
-                <?php
-                while ($row = $resultTabellaEsercizio->fetch_assoc()) {
-                    echo "<li>Nome: " . htmlspecialchars($row['Nome']) . ", Data Creazione: " . htmlspecialchars($row['DataCreazione']) . ", Numero righe: " . htmlspecialchars($row['num_righe']) . ", Email Docente: " . htmlspecialchars($row['EmailDocente']) . "</li>";
-                }
-                ?>
-            </ul>
-        </div>
-    </body>
+        .divTabella {
+            background-color: #fcfcf0;
+            margin: auto;
+            width: 30%;
+            height: 30%;
+        }
 
-    </html>
-<?php
-    $stmt->close();
-} else {
-    echo "<p>Nessuna tabella di esercizio trovata per questo test.</p>";
-}
-?>
+        .label {
+            text-align: center;
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: medium;
+            color: black;
+            display: block;
+        }
+
+        .btn{
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <?php
+
+        $titoloTest = $_GET['id'];
+    
+        $tabella = new Tabella();
+
+        $nomiTabella = $tabella->tabelleDelTest($titoloTest);
+
+    // Verifica se sono stati trovati nomi di tabella
+    if (count($nomiTabella) > 0) {
+        
+        ?>
+        <body>
+            <div class="container">
+                <h2>Informazioni sulle Tabelle di Esercizio per il Test: <?php echo htmlspecialchars($titoloTest); ?></h2>
+                <ul>
+                    <?php
+                    $dati = $tabella->ottieniDatiTabella($nomiTabella);
+                    ?>
+                    
+                    <?php
+                        while ($row = $dati->fetch_assoc()) {
+                            echo "<div class=\"divTabella\">";
+                            echo "<label class='label'>Nome Tabella: </label>";
+                            echo "<p>".$row['Nome']."</p>";
+                            echo "<label class='label'>Data Creazione: </label>";
+                            echo "<p>".$row['DataCreazione']."</p>";
+                            echo "<label class='label'>Numero Righe: </label>";
+                            echo "<p>".$row['num_righe']."</p>";
+                            echo "<label class='label'>Email Docente: </label>";
+                            echo "<p>".$row['EmailDocente']."</p>";
+                            echo "</div>";
+                        }
+                    ?>
+                </ul>
+                <div>
+                    <button class='btn'onclick="window.location.href='testDocenti.php'">Torna alla lista dei test</button>
+                </div>
+            </div>
+        <?php
+    } else {
+        echo "<p>Nessuna tabella di esercizio trovata per questo test.</p>";
+    }
+    ?>
+</body>
+</html>
