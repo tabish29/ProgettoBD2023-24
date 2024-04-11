@@ -56,4 +56,3 @@ CREATE VIEW classifica_quesiti AS
 	LEFT JOIN RISPOSTAQUESITOCODICE AS r ON q.NumeroProgressivo = r.NumeroProgressivoQuesito
     LEFT JOIN RISPOSTAQUESITORISPOSTACHIUSA AS rc ON q.NumeroProgressivo = rc.NumeroProgressivoQuesito
 	GROUP BY q.NumeroProgressivo, q.TitoloTest;
-

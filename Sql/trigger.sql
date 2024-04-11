@@ -2,9 +2,6 @@ USE ESQL;
 
 
 -- TRIGGER
-
-
-
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
