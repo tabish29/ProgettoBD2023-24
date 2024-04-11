@@ -1,7 +1,9 @@
 <?php
 if (!isset($_SESSION)) {
     session_start();
-} // Avvia la sessione
+} 
+include '../connessione.php';
+include '../Condiviso/Utente.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +19,7 @@ if (!isset($_SESSION)) {
             height: 100vh;
             display: flex;
             flex-direction: column;
+            background-color: #ff0000;
         }
 
         input[type="submit"] {
@@ -130,8 +133,7 @@ if (!isset($_SESSION)) {
     </div>
 
     <?php
-    include '../connessione.php';
-
+    $utente = new Utente();
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $_SESSION['email'] = "";
         $_SESSION['ruolo'] = "";
@@ -148,28 +150,29 @@ if (!isset($_SESSION)) {
             echo '<script>window.alert("Email e ruolo devono essere specificati");</script>';
         } else {
             // Query per verificare se l'email esiste nella tabella del ruolo selezionato
-            $sql_check_email = "";
+            $emailPresente = "";
             if ($ruolo_login === "docente") {
-                $sql_check_email = "SELECT email FROM docente WHERE email = '$email_login' AND PasswordDocente = '$password_login'";
+                $emailPresente = $utente->emailPresenteDocente($email_login, $password_login);
             } else if ($ruolo_login === "studente") {
-                $sql_check_email = "SELECT email FROM studente WHERE email = '$email_login' AND PasswordStudente = '$password_login'";
+                $emailPresente = $utente->emailPresenteStudente($email_login, $password_login);
             }
 
-            $result_check_email = $conn->query($sql_check_email);
 
             // Verifica se l'email esiste nella tabella del ruolo selezionato
-            if ($result_check_email->num_rows <= 0) {
+            if ($emailPresente->num_rows <= 0) {
                 echo '<script>window.alert("Credenziali errate!");</script>';
             } else {
                 //Imposta le variabili di sessione
                 $_SESSION['email'] = $email_login; //NON SPOSTARE DA QUI
                 $_SESSION['ruolo'] = $ruolo_login; //NON SPOSTARE DA QUI
                 if ($ruolo_login === "docente") {
-                    header("Location: ../Docente/testDocenti.php");
-                    exit();
+                    echo '<script>window.alert("Accesso effettuato!");
+                            window.location.href = "../Docente/testDocenti.php";
+                        </script>';
                 } else if ($ruolo_login === "studente") {
-                    header("Location: ../Studente/testStudenti.php");
-                    exit();
+                    echo '<script>window.alert("Accesso effettuato!");
+                            window.location.href = "../Studente/testStudenti.php";
+                        </script>';
                 }
             }
         }
