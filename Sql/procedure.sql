@@ -543,3 +543,22 @@ BEGIN
 
 END
 // DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE eliminaTest(
+    IN titoloTest VARCHAR(20)
+)
+BEGIN
+    DELETE FROM TEST WHERE Titolo = titoloTest;
+END
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE eliminaQuesito(
+    IN titoloTestTemp VARCHAR(20),
+    IN numeroProgressivoTemp INT
+)
+BEGIN
+    DELETE FROM QUESITO WHERE TitoloTest = titoloTestTemp AND NumeroProgressivo = numeroProgressivoTemp;
+END
+// DELIMITER ;

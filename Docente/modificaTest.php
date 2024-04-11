@@ -1,3 +1,11 @@
+<?php
+    include '../connessione.php';
+    include '../Condiviso/Test.php';
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,25 +36,6 @@
             height: 30%;
         }
 
-        .creaBtn {
-            width: auto;
-            height: auto;
-            border: 1px solid #222222;
-            padding: 3px;
-            margin: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            font-style: normal;
-            color: #222222;
-            background-color: #acf9ba;
-        }
-
-        .areaInserimento {
-            width: 40%;
-            display: block;
-            margin: auto;
-        }
-
         .label {
             text-align: center;
             font-family: sans-serif;
@@ -56,17 +45,6 @@
             display: block;
         }
 
-        .test-item {
-            padding: 10px;
-            margin-bottom: 5px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-        }
 
         .btn {
             width: auto;
@@ -105,102 +83,110 @@
 </head>
 
 <body>
+    
     <div class="container">
         <h2>Modifica Test</h2>
         <ul>
             <?php
-            include '../connessione.php';
-            include '../Condiviso/Test.php';
-
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-
+     
+            
             function creaGraficaQuesiti($titoloTest)
-                {
-                    
-                    global $test;
-                    echo "titolo test:" .  $titoloTest . "<br>";
-                    $test = new Test();
-                    echo "prova 1" . "<br>";
-                    $quesiti = $test->ottieniQuesiti($titoloTest);
-                    echo "prova 2". "<br>";
+            {
+                global $test;
+                $test = new Test();
+                $quesiti = $test->ottieniQuesiti($titoloTest);
 
-                    if (empty($quesiti)) {
-                        echo "<li class='test-item'>Nessun quesito presente.</li>";
-                    } else {
-                        foreach ($quesiti as $quesito) {
-                            echo "<span style=\"display: inline;\">";
-
-                            // Accesso ai dati del quesito
-                            foreach ($quesito as $chiave => $valore) {
-                                echo "<label class='label'>" . $chiave . ": </label>" . $valore . "<br>";
+                if (empty($quesiti)) {
+                    echo "<li class='test-item'>Nessun quesito presente.</li>";
+                } else {
+                    $QuesitoOggetto = new Quesito();
+                    foreach ($quesiti as $quesito) {
+                        //Vedo la tipologia del Quesito
+                        $tipologia = $QuesitoOggetto->ottieniTipologiaQuesito($titoloTest, $quesito['NumeroProgressivo']);
+                        echo "TIPOLOGIA: " . $tipologia . "<br>"; //TODO: sono bloccata qui perchè non crea più i quesiti
+                        echo "<div class='divQuesiti'>";
+                        echo "<span style=\"display: inline;\">";
+                        // Aggiungi un campo di input di tipo checkbox con il nome del quesito come valore
+                        echo "<input type='radio' name='quesito_selezionato' value='" . $quesito['NumeroProgressivo'] . "'>";
+                        // Accesso ai dati del quesito
+                        foreach ($quesito as $chiave => $valore) {
+                            if ($chiave == "TitoloTest") {
+                                continue;
                             }
-
-                            // Verifica della tipologia del quesito
-                            if ($quesito['Tipologia'] == "Risposta Chiusa") {
-                                // Se è una risposta chiusa, ottieni e visualizza le soluzioni
-                                $soluzioni = $test->ottieniRisposte($quesito['NumeroProgressivo'], $titoloTest);
-                                echo "<label class='label'>Soluzioni:</label><br>";
-                                if (empty($soluzioni)) {
-                                    echo "<label class='label'>Nessuna soluzione presente.</label><br>";
-                                } else {
-                                    foreach ($soluzioni as $soluzione) {
-                                        echo "<label class='label'>Campo Testo: </label>" . $soluzione['CampoTesto'] . "<br>";
-                                    }
-                                }
-                            } else if ($quesito['Tipologia'] == "Codice") {
-                                // Se è un quesito di tipo Codice, ottieni e visualizza le soluzioni
-                                $soluzioni = $test->ottieniSoluzioni($quesito['NumeroProgressivo'], $titoloTest);
-                                echo "<label class='label'>Soluzioni:</label><br>";
-                                if (empty($soluzioni)) {
-                                    echo "<label class='label'>Nessuna soluzione presente.</label><br>";
-                                } else {
-                                    $num = 1;
-                                    foreach ($soluzioni as $soluzione) {
-                                        echo "<label class='label'>" . $num . " - Testo Soluzione: </label>" . $soluzione['TestoSoluzione'] . "<br>";
-                                        $num++;
-                                    }
-                                }
-                            }
-
-                            echo "</span><br>";
+                            echo "<label class='label'>" . $chiave . ": </label>" . $valore . "<br>";
                         }
+                        echo "TIPOLOGIA: " . $tipologia . "<br>";
+                        // Verifica della tipologia del quesito
+                        if ($tipologia == "Risposta Chiusa") {
+                            // Se è una risposta chiusa, ottieni e visualizza le soluzioni
+                            $soluzioni = $test->ottieniRisposte($quesito['NumeroProgressivo'], $titoloTest);
+                            echo "<label class='label'>Soluzioni:</label>";
+                            if (empty($soluzioni)) {
+                                echo "<label class='label'>Nessuna soluzione presente.</label><br>";
+                            } else {
+                                foreach ($soluzioni as $soluzione) {
+                                    if ($soluzione['RispostaCorretta'] == 1) {
+                                        echo "<label class='labelVerde'>" . $soluzione['CampoTesto'] . "</label><br>";
+                                    } else {
+                                        echo "<label class='labelRosso'>" . $soluzione['CampoTesto'] . "</label><br>";
+                                    }
+                                }
+                            }
+                        } else if ($tipologia == "Codice") {
+                            // Se è un quesito di tipo Codice, ottieni e visualizza le soluzioni
+                            $soluzioni = $test->ottieniSoluzioni($quesito['NumeroProgressivo'], $titoloTest);
+                            echo "<label class='label'>Soluzioni:</label><br>";
+                            if (empty($soluzioni)) {
+                                echo "<label class='label'>Nessuna soluzione presente.</label><br>";
+                            } else {
+                                $num = 1;
+                                foreach ($soluzioni as $soluzione) {
+                                    echo "<label class='label'>" . $num . " - Testo Soluzione: </label>" . $soluzione['TestoSoluzione'] . "<br>";
+                                    $num++;
+                                }
+                            }
+                        }
+                        echo "</div>";
+                        echo "</span><br>";
                     }
                 }
+            }
+
 
             function mostraDatiTest()
                 {
-                    include '../connessione.php';
+                    //include '../connessione.php';
                     // Preleva il Titolo del test dalla query string
                     $testId = $_GET['id'];
-
+                    $test = new Test();
                     // Esegue la query per selezionare il test dal database
-                    $sql_select_test = "SELECT * FROM TEST WHERE Titolo = '$testId'";
-                    $result_select_test = $conn->query($sql_select_test);
-                    $conn->next_result();
+                    $sql_select_test = $test->ottieniTest($testId);
+                    
                     // Verifica se il test è stato trovato
-                    if ($result_select_test->num_rows > 0) {
-                        $row = $result_select_test->fetch_assoc();
+                    if ($sql_select_test!= null) {
+                        
                         echo
                         "<span style=\"display: inline;\">
                             <label class='label' for='titolo' style=\"display: inline;\">Titolo Test: </label>"
-                            . $row['Titolo'] . "<br><br>" . "
+                            . $sql_select_test['Titolo'] . "<br><br>" . "
                             <label class='label' for='titolo' style=\"display: inline;\">Data Creazione: </label>"
-                            . $row['DataCreazione'] . "<br><br>" . "
+                            . $sql_select_test['DataCreazione'] . "<br><br>" . "
                             <label class='label' for='titolo' style=\"display: inline;\">Visualizza Risposte: </label>"
-                            . $row['VisualizzaRisposte'] . "<br><br>" . "
+                            . $sql_select_test['VisualizzaRisposte'] . "<br><br>" . "
                             <label class='label' for='titolo' style=\"display: inline;\">Email Docente: </label>"
-                            . $row['EmailDocente'] . "<br><br>
+                            . $sql_select_test['EmailDocente'] . "<br><br>
                         </span>";
 
 
-                        creaGraficaQuesiti($row['Titolo']);
+                        creaGraficaQuesiti($sql_select_test['Titolo']);
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }
-                }
+            }
 
+            
+            
+            
             function creaGraficaValoriComuni()
                 {
                     $testId = $_GET['id'];
@@ -217,12 +203,14 @@
                         <br>
                         <button id='inserisciQuesito' class='btn' onclick=\"window.location.href='inserisciQuesito.php?id=" . $testId . "'\">Aggiungi Quesito</button>
                         <button id='inserisciTabella' class='btn' onclick=\"window.location.href='inserisciTabella.php?id=" . $testId . "'\">Inserisci Tabella</button>
-                        
+                        <button class='btn' onclick='eliminaQuesito(\"". $testId . "\")'>Elimina Quesito</button>
                         <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
                         ";
-                }
+            }
 
                 
+        
+            
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             
                 mostraDatiTest();
@@ -242,16 +230,37 @@
 
                 // Esegue la query di aggiornamento
                 if ($conn->query($sql_update_test) === TRUE && mysqli_affected_rows($conn) > 0) {
-                    echo "Test aggiornato con successo.";
-                    echo '<a href="testDocenti.php">Torna ai Test</a>';
+                    echo '<script>
+                                window.alert("Test aggiornato con successo.");
+                                window.location.href = "testDocenti.php"; 
+                            </script>';
+                        exit(); 
                 } else {
-                    echo "Errore durante l'aggiornamento del test: " . $conn->error;
-                    echo '<a href="testDocenti.php">Torna ai Test</a>';
+                    echo '<script>
+                            window.alert("Errore durante l\'aggiornamento del test. Attenzione, forse non hai modificato nessun campo.");
+                            window.location.href = "modificaTest.php?id=' . $titolo . '";
+                        </script>';
+
                 }
             }
             ?>
         </ul>
     </div>
+    <script>
+        function eliminaQuesito(idTest) {
+            var quesitoSelezionato = document.querySelector('input[name="quesito_selezionato"]:checked');
+            if (!quesitoSelezionato) {
+                alert('Seleziona un quesito da eliminare.');
+                return;
+            }
+            // Recupera l'id del quesito selezionato dall'utente
+            var idQuesitoSelezionato = quesitoSelezionato.value;
+            // Reindirizza alla pagina di eliminazione con l'id del test e del quesito selezionati
+            window.location.href = 'eliminaQuesito.php?idTest=' + idTest + ';' + idQuesitoSelezionato;
+        }
+
+    </script>
 </body>
+
 
 </html>

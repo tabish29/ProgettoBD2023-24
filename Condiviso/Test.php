@@ -4,7 +4,36 @@ include 'Quesito.php';
 
     class Test{
 
+        function ottieniTuttiITest(){
+            $sql_all_tests = "CALL visualizzaTestDisponibili()";
+            $result_all_tests = $_SESSION['conn']->query($sql_all_tests);
+            $_SESSION['conn']->next_result();
+            return $result_all_tests;
+        }
+        
+        function creaTest($titolo, $foto,){
+            $email_login = $_SESSION['email'];
+            $sql = "CALL CreazioneTest('$titolo', NOW(), '$foto', 0, '$email_login')";
+            $risultato = $_SESSION['conn']->query($sql);
+            $_SESSION['conn']->next_result();
+            return $risultato;
+           
+        }
 
+        function cancellaTest($titoloTest){
+            $sql_delete_test = "CALL eliminaTest('$titoloTest')";
+            $risultato = $_SESSION['conn']->query($sql_delete_test);
+            $_SESSION['conn']->next_result();
+            return $risultato;
+        }
+
+        function cancellaQuesito($titoloTest, $numeroProgressivo){
+            $sql_delete_quesito = "CALL eliminaQuesito('$titoloTest', $numeroProgressivo)";
+            $risultato = $_SESSION['conn']->query($sql_delete_quesito);
+            $_SESSION['conn']->next_result();
+            return $risultato;
+        }
+        
         function trovaIdCompletamento($testId, $emailStudente) {
              
             // Cerca l'ID del completamento per il test e lo studente specificati
@@ -112,27 +141,15 @@ include 'Quesito.php';
         }
     
         function ottieniQuesiti($titoloTest) {
-            echo "sono in ottieniQuesiti". "<br>";
             $datiQuesiti = array();
             $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
-            echo "call eseguita". "<br>";
             $result_quesiti_test = $_SESSION['conn']->query($sql_quesiti_test);
            
             $_SESSION['conn']->next_result();
-            echo "next result eseguito". "<br>";
-            echo "ciao 1". "<br>";
             if ($result_quesiti_test->num_rows > 0) {
-                echo "ciao 2". "<br>";
                 while ($row = $result_quesiti_test->fetch_assoc()) {
-                    echo "ciao 3". "<br>";
                     $datiQuesiti[] = $row;
-                    $QuesitoOggetto = new Quesito();
-                    if ($QuesitoOggetto->verificaTipologiaRispostaChiusa($titoloTest, $row['NumeroProgressivo'])) {
-                        $datiQuesiti[count($datiQuesiti) - 1]['Tipologia'] = "Risposta Chiusa";
-                    } else if ($QuesitoOggetto->verificaTipologiaCodice($titoloTest, $row['NumeroProgressivo'])) {
-                        $datiQuesiti[count($datiQuesiti) - 1]['Tipologia'] = "Codice";
-                    }
-                    echo "ciao 4". "<br>";
+                    
                 }
             } else {
                 echo "Nessun quesito presente";

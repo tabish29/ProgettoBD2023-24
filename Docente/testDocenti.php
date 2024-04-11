@@ -4,6 +4,7 @@ if (!isset($_SESSION)) {
 }
 include 'navbarDocente.php';
 include '../connessione.php';
+include '../Condiviso/Test.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,6 +44,7 @@ include '../connessione.php';
             margin-bottom: 20px;
             font: sans-serif;
             font-style: italic;
+            font-weight: bold;
             font-size: medium;
         }
 
@@ -111,6 +113,7 @@ include '../connessione.php';
         background-color: #9c9c9c;
         border: none;
         padding: 10px 20px;
+        margin-right: 10px;
     }
     </style>
 </head>
@@ -120,32 +123,26 @@ include '../connessione.php';
         <ul class="test-list">
             <div class="containerBtn">
                 <button class="button" onclick="window.location.href='creaTest.php'">Crea nuovo Test</button>
-                <button class="button" onclick="openAction('modifica')">Modifica Test</button>
-                <button class="button" onclick="openAction('cancella')">Cancella Test</button>
-                <button class="button" onclick="openAction('visualizzaTabelle')">Visualizza tabelle</button>
-                <br>
-            </div>
+                
             <?php
             
-
-            if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
-                // Redirect a una pagina di login se l'utente non è autenticato
-                header("Location: ../");
-                exit();
+            function graficaConTestPresenti(){
+                echo "<button class='button' onclick='openAction(\"modifica\")'>Modifica Test</button>";
+                echo "<button class='button' onclick='openAction(\"cancella\")'>Cancella Test</button>";
+                echo "<button class='button' onclick='openAction(\"visualizzaTabelle\")'>Visualizza Tabelle</button>";
+                echo "</div>";
             }
 
-            $email_login = $_SESSION['email'];
-            $ruolo_login = $_SESSION['ruolo'];
 
-
-            echo "<h2 class='testListH2'>Lista Test:</h2>";
             // Query per selezionare tutti i test
-            $sql_all_tests = "CALL visualizzaTestDisponibili()";
-
-            $result_all_tests = $conn->query($sql_all_tests);
+            $test = new Test();
+            $result_all_tests = $test->ottieniTuttiITest();
             $conn->next_result(); //Se no entra in conflitto con la query di funzioniPerTest
             // Verifica se ci sono test 
             if ($result_all_tests->num_rows > 0) {
+                graficaConTestPresenti();
+                echo "<h2 class='testListH2'>Lista Test:</h2>";
+
                 echo "<form id='testForm'>";
                 while ($row = $result_all_tests->fetch_assoc()) {
                     echo "<li class='test-item'>";
@@ -166,7 +163,9 @@ include '../connessione.php';
                 echo "<input type='hidden' name='action' id='actionField'>";
                 echo "</form>";
             } else {
+                echo "</div>"; //Chiudo il div dei bottoni
                 echo "<p class='testListH2'>Non sono presenti test.</label>";
+                
             }
             ?>
         </ul>

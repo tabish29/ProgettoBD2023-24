@@ -26,32 +26,30 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Cancella Test</h2>
         <ul>
         <?php
-            
-
-           
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                $titoloTest = $_GET['id'];
+                $campiSchermataPrecedente = explode(";",$_GET['idTest']);
+                $titoloTest = $campiSchermataPrecedente[0];
+                $numeroProgressivo = $campiSchermataPrecedente[1];
                 $test = new Test();
-
-                $risultato = $test->cancellaTest($titoloTest);
+                $risultato = $test->cancellaQuesito($titoloTest, $numeroProgressivo);
 
                 if ($risultato === TRUE) {
                     echo '<script>
-                                window.alert("Test cancellato correttamente!");
-                                window.location.href = "testDocenti.php"; 
+                                window.alert("Quesito cancellato correttamente!");
+                                window.location.href = "modificaTest.php?id='.$titoloTest.'";
                             </script>';
                     exit(); 
                 } else {
                     echo '<script>
-                                window.alert("Errore nella cancellazione del test!");
-                                window.location.href = "testDocenti.php"; 
+                                window.alert("Errore nella cancellazione del quesito!");
+                                window.location.href = "modificaTest.php?id='.$titoloTest.'";
                             </script>';
                     exit();
                 }
