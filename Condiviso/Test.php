@@ -6,11 +6,10 @@ include 'Quesito.php';
 
 
         function trovaIdCompletamento($testId, $emailStudente) {
-            global $conn;
-    
+             
             // Cerca l'ID del completamento per il test e lo studente specificati
             $sql_trovaCompletamento = "SELECT NumeroProgressivo FROM COMPLETAMENTO WHERE TitoloTest = '$testId' AND EmailStudente = '$emailStudente'";
-            $result_trovaCompletamento = $conn->query($sql_trovaCompletamento);
+            $result_trovaCompletamento = $_SESSION['conn']->query($sql_trovaCompletamento);
     
             if ($result_trovaCompletamento->num_rows > 0) {
                 // Se trova un completamento, restituisce il suo ID
@@ -22,35 +21,33 @@ include 'Quesito.php';
             }
         }
 
-        
-
         function creaOApriCompletamento($testId, $emailStudente) {
-            global $conn;
+             
     
             // Controlla se esiste già un completamento per questo test e questo studente
             $sql_cercaCompletamento = "SELECT * FROM COMPLETAMENTO WHERE TitoloTest = '$testId' AND EmailStudente = '$emailStudente'";
-            $result_cercaCompletamento = $conn->query($sql_cercaCompletamento);
+            $result_cercaCompletamento = $_SESSION['conn']->query($sql_cercaCompletamento);
     
             if ($result_cercaCompletamento->num_rows == 0) {
                 // Se non esiste, crea un nuovo completamento
                 $sql_creaCompletamento = "INSERT INTO COMPLETAMENTO (Stato, TitoloTest, EmailStudente) VALUES ('Aperto', '$testId', '$emailStudente')";
-                $conn->query($sql_creaCompletamento);
-                $conn->next_result();
+                $_SESSION['conn']->query($sql_creaCompletamento);
+                $_SESSION['conn']->next_result();
             } else {
                 // Se esiste, apri il completamento se è stato concluso
                 $stato = $result_cercaCompletamento->fetch_assoc()['Stato'];
                 if ($stato == 'Concluso') {
                     $sql_apriCompletamento = "UPDATE COMPLETAMENTO SET Stato = 'Aperto' WHERE TitoloTest = '$testId' AND EmailStudente = '$emailStudente'";
-                    $conn->query($sql_apriCompletamento);
-                    $conn->next_result();
+                    $_SESSION['conn']->query($sql_apriCompletamento);
+                    $_SESSION['conn']->next_result();
                 }
             }
         }
 
         function ottieniTest($titoloTest) {
-            global $conn;
+             
             $sql_select_test = "SELECT * FROM TEST WHERE Titolo = ?";
-            $stmt = $conn->prepare($sql_select_test);
+            $stmt = $_SESSION['conn']->prepare($sql_select_test);
             $stmt->bind_param("s", $titoloTest);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -60,9 +57,9 @@ include 'Quesito.php';
         }
     
         function ottieniQuesitiPerTest($titoloTest) {
-            global $conn;
+             
             $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest(?)";
-            $stmt = $conn->prepare($sql_quesiti_test);
+            $stmt = $_SESSION['conn']->prepare($sql_quesiti_test);
             $stmt->bind_param("s", $titoloTest);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -75,41 +72,38 @@ include 'Quesito.php';
         }
     
         function inserisciRispostaQuesitoRispostaChiusa($idCompletamento, $testId, $rispostaData, $numQuesito) {
-            global $conn;
+             
             $sql = "CALL inserisciRispostaQuesitoRispostaChiusa(?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
+            $stmt = $_SESSION['conn']->prepare($sql);
             $stmt->bind_param("issi", $idCompletamento, $testId, $rispostaData, $numQuesito);
             $stmt->execute();
             $stmt->close();
         }
-    
-        
-        
+         
         function inserisciRispostaQuesitoCodice($idCompletamento, $testId, $rispostaData, $numQuesito) {
-            global $conn;
+             
             $quesitoOgg = new Quesito();
             $rispostaCorretta = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
             $esito = $quesitoOgg->verificaRispostaCodice($testId, $numQuesito, $rispostaData, $rispostaCorretta);
             $sql = "CALL inserisciRispostaQuesitoCodice(?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
+            $stmt = $_SESSION['conn']->prepare($sql);
             $stmt->bind_param("issib", $idCompletamento, $testId, $rispostaData, $numQuesito, $esito);
             $stmt->execute();
             $stmt->close();
         }
-    
-        
+       
         function visualizzaEsitoRisposta($idCompletamento, $testId, $numQuesito) {
-            global $conn;
+             
             $esito = false;
             $sql = "CALL visualizzaEsitoRisposta(?, ?, ?, @esito)";
-            $stmt = $conn->prepare($sql);
+            $stmt = $_SESSION['conn']->prepare($sql);
             $stmt->bind_param("isi", $idCompletamento, $testId, $numQuesito);
             $stmt->execute();
             $stmt->close();
     
             // Ora esegui una query separata per recuperare il valore del parametro di output
             $sql_output = "SELECT @esito AS esito";
-            $result = $conn->query($sql_output);
+            $result = $_SESSION['conn']->query($sql_output);
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
                 $esito = $row['esito'];
@@ -117,16 +111,20 @@ include 'Quesito.php';
             return $esito;
         }
     
-        
-
         function ottieniQuesiti($titoloTest) {
+            echo "sono in ottieniQuesiti". "<br>";
             $datiQuesiti = array();
             $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
+            echo "call eseguita". "<br>";
             $result_quesiti_test = $_SESSION['conn']->query($sql_quesiti_test);
+            echo "Errore: " . $result_quesiti_test->error;
             $_SESSION['conn']->next_result();
-            
+            echo "next result eseguito". "<br>";
+            echo "ciao 1". "<br>";
             if ($result_quesiti_test->num_rows > 0) {
+                echo "ciao 2". "<br>";
                 while ($row = $result_quesiti_test->fetch_assoc()) {
+                    echo "ciao 3". "<br>";
                     $datiQuesiti[] = $row;
                     $QuesitoOggetto = new Quesito();
                     if ($QuesitoOggetto->verificaTipologiaRispostaChiusa($titoloTest, $row['NumeroProgressivo'])) {
@@ -134,6 +132,7 @@ include 'Quesito.php';
                     } else if ($QuesitoOggetto->verificaTipologiaCodice($titoloTest, $row['NumeroProgressivo'])) {
                         $datiQuesiti[count($datiQuesiti) - 1]['Tipologia'] = "Codice";
                     }
+                    echo "ciao 4". "<br>";
                 }
             } else {
                 echo "Nessun quesito presente";

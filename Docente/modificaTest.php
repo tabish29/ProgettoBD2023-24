@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
             padding: 0;
             background-color: #f9acac;
         }
+
         .container {
             text-align: center;
             width: 70%;
@@ -19,14 +20,15 @@
             background-color: #f9acac;
             border-radius: 5px;
         }
-        
-        .divQuesiti{
+
+        .divQuesiti {
             background-color: #fcfcf0;
             margin: auto;
             width: 30%;
             height: 30%;
         }
-        .creaBtn{
+
+        .creaBtn {
             width: auto;
             height: auto;
             border: 1px solid #222222;
@@ -36,14 +38,15 @@
             font-weight: bold;
             font-style: normal;
             color: #222222;
-            background-color: #acf9ba; 
+            background-color: #acf9ba;
         }
-        
-        .areaInserimento{
+
+        .areaInserimento {
             width: 40%;
             display: block;
-            margin:auto;
+            margin: auto;
         }
+
         .label {
             text-align: center;
             font-family: sans-serif;
@@ -60,9 +63,11 @@
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
+
         .form-group {
             margin-bottom: 10px;
         }
+
         .btn {
             width: auto;
             height: auto;
@@ -73,60 +78,65 @@
             font-weight: bold;
             font-style: normal;
             color: #222222;
-            background-color: #7cfc00; 
-            }
-        .quesitoLabel{
+            background-color: #7cfc00;
+        }
+
+        .quesitoLabel {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
         }
-        .labelVerde{
+
+        .labelVerde {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: green;
         }
-        .labelRosso{
+
+        .labelRosso {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: red;
         }
-        
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Modifica Test</h2>
         <ul>
-        <?php
+            <?php
             include '../connessione.php';
             include '../Condiviso/Test.php';
 
-            if (!isset($_SESSION)){
+            if (!isset($_SESSION)) {
                 session_start();
             }
 
-           
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-                function creaGraficaQuesiti($titoloTest){
-                    global $test;
-                    $test = new Test();
-                    $quesiti = $test->ottieniQuesiti($titoloTest);
+            function creaGraficaQuesiti($titoloTest)
+                {
                     
+                    global $test;
+                    echo "titolo test:" .  $titoloTest . "<br>";
+                    $test = new Test();
+                    echo "prova 1" . "<br>";
+                    $quesiti = $test->ottieniQuesiti($titoloTest);
+                    echo "prova 2". "<br>";
+
                     if (empty($quesiti)) {
                         echo "<li class='test-item'>Nessun quesito presente.</li>";
                     } else {
                         foreach ($quesiti as $quesito) {
                             echo "<span style=\"display: inline;\">";
-                
+
                             // Accesso ai dati del quesito
                             foreach ($quesito as $chiave => $valore) {
                                 echo "<label class='label'>" . $chiave . ": </label>" . $valore . "<br>";
                             }
-                
+
                             // Verifica della tipologia del quesito
                             if ($quesito['Tipologia'] == "Risposta Chiusa") {
                                 // Se è una risposta chiusa, ottieni e visualizza le soluzioni
@@ -153,18 +163,14 @@
                                     }
                                 }
                             }
-                
+
                             echo "</span><br>";
                         }
                     }
                 }
-                
-                
 
-                    
-                      
-
-                function mostraDatiTest(){
+            function mostraDatiTest()
+                {
                     include '../connessione.php';
                     // Preleva il Titolo del test dalla query string
                     $testId = $_GET['id'];
@@ -183,19 +189,20 @@
                             <label class='label' for='titolo' style=\"display: inline;\">Data Creazione: </label>"
                             . $row['DataCreazione'] . "<br><br>" . "
                             <label class='label' for='titolo' style=\"display: inline;\">Visualizza Risposte: </label>"
-                            . $row['VisualizzaRisposte'] ."<br><br>" . "
+                            . $row['VisualizzaRisposte'] . "<br><br>" . "
                             <label class='label' for='titolo' style=\"display: inline;\">Email Docente: </label>"
                             . $row['EmailDocente'] . "<br><br>
                         </span>";
-                        
+
 
                         creaGraficaQuesiti($row['Titolo']);
                     } else {
                         echo "<li class='test-item'>Nessun test trovato con l'ID specificato.</li>";
                     }
                 }
-                
-                function creaGraficaValoriComuni() {
+
+            function creaGraficaValoriComuni()
+                {
                     $testId = $_GET['id'];
                     echo "
                         <form id='modificaTestForm' action='modificaTest.php' method='post'>
@@ -215,36 +222,36 @@
                         ";
                 }
 
+                
+            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            
                 mostraDatiTest();
 
                 creaGraficaValoriComuni();
-        
-                        
-        }
-        
+            }
 
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                    $titolo = $_POST['titoloTest'];
-                    $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
+                $titolo = $_POST['titoloTest'];
+                $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
 
-                    // Query SQL per aggiornare il test nel database
-                    $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
+                // Query SQL per aggiornare il test nel database
+                $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
 
 
-                    // Esegue la query di aggiornamento
-                    if ($conn->query($sql_update_test) === TRUE && mysqli_affected_rows($conn) > 0) {
-                        echo "Test aggiornato con successo.";
-                        echo '<a href="testDocenti.php">Torna ai Test</a>';
-                    } else {
-                        echo "Errore durante l'aggiornamento del test: " . $conn->error;
-                        echo '<a href="testDocenti.php">Torna ai Test</a>';
-                    }
-                
+                // Esegue la query di aggiornamento
+                if ($conn->query($sql_update_test) === TRUE && mysqli_affected_rows($conn) > 0) {
+                    echo "Test aggiornato con successo.";
+                    echo '<a href="testDocenti.php">Torna ai Test</a>';
+                } else {
+                    echo "Errore durante l'aggiornamento del test: " . $conn->error;
+                    echo '<a href="testDocenti.php">Torna ai Test</a>';
+                }
             }
-        ?>
+            ?>
         </ul>
     </div>
 </body>
+
 </html>

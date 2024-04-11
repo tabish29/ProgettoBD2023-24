@@ -44,7 +44,6 @@ if (!isset($_SESSION)) {
             font-size: medium;
         }
 
-
         .test-item {
             padding: 10px;
             width: 500px;
@@ -63,8 +62,6 @@ if (!isset($_SESSION)) {
             font-size: small;
             font: Arial;
         }
-
-
 
         .test-item:hover {
             background-color: #9c9c9c;
@@ -102,9 +99,6 @@ if (!isset($_SESSION)) {
     <div class="container">
         <ul class="test-list">
             <?php
-
-
-
             include 'navbarDocente.php';
             include '../connessione.php';
 

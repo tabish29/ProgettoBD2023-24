@@ -59,7 +59,6 @@
 </head>
 <body>
   <div class="containerNav">
-    <h2 class='containerNavH2'>HomePage Docente</h2>
     <nav class="navbar navbar-default">
       <div>
         <ul class="nav navbar-nav">
@@ -73,7 +72,9 @@
         <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../index.html'">Logout</button>
 
       </div>
+
     </nav>
+    <h2 class='containerNavH2'>HomePage Docente</h2>
 
   </div>
 </body>
