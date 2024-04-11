@@ -4,7 +4,6 @@
     if (!isset($_SESSION)){
         session_start();
     }
-//test dg gadufg usdg  git ignore dopo l'uso di rm 
 ?>
 <!DOCTYPE html>
 <html lang="en">
