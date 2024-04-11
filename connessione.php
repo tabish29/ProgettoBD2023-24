@@ -3,7 +3,7 @@
     if (!isset($_SESSION)){
         session_start();
     }
-    
+    //commetto test del git ignore
     $servername = "localhost"; // Il tuo server
     $username = "root"; // Il tuo username
     $password = "root"; // La tua password (di solito è vuota di default in ambiente di sviluppo come XAMPP)
