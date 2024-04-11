@@ -117,7 +117,7 @@ include 'Quesito.php';
             $sql_quesiti_test = "CALL VisualizzaQuesitiPerTest('$titoloTest')";
             echo "call eseguita". "<br>";
             $result_quesiti_test = $_SESSION['conn']->query($sql_quesiti_test);
-            echo "Errore: " . $result_quesiti_test->error;
+           
             $_SESSION['conn']->next_result();
             echo "next result eseguito". "<br>";
             echo "ciao 1". "<br>";
