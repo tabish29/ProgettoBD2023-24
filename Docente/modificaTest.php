@@ -202,7 +202,6 @@
                         </form>
                         <br>
                         <button id='inserisciQuesito' class='btn' onclick=\"window.location.href='inserisciQuesito.php?id=" . $testId . "'\">Aggiungi Quesito</button>
-                        <button id='inserisciTabella' class='btn' onclick=\"window.location.href='inserisciTabella.php?id=" . $testId . "'\">Inserisci Tabella</button>
                         <button class='btn' onclick='eliminaQuesito(\"". $testId . "\")'>Elimina Quesito</button>
                         <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
                         ";
