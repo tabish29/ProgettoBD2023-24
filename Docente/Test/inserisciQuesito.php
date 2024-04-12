@@ -100,10 +100,8 @@ include '../../Condiviso/Tabella.php';
         <h2>Creazione Quesito</h2>
         <?php
 
-        // Creazione di un'istanza della classe Tabella
-        $tabella = new Tabella();
-
         // Ottenere tutte le tabelle di esercizio
+        $tabella = new Tabella();
         $resultTabelle = $tabella->ottieniTutteTabelle();
         
 
@@ -119,6 +117,7 @@ include '../../Condiviso/Tabella.php';
             $livDifficolta = $_POST['livDifficolta'];
             $descrizione = $_POST['descrizione'];
             $numeroRisposte = $_POST['numeroRisposte'];
+            $TabDaCollegare = $_POST['TabDaCollegare'];
 
             $sql_creaQuesitoQuery = '';
             if ($tipoQuesito == 'RC') {
@@ -130,6 +129,18 @@ include '../../Condiviso/Tabella.php';
 
                 echo "<p>Errore nella creazione del quesito: " . $conn->error . "</p>";
             }
+
+            // Collegamento del quesito alla tabella
+            $sql_creaCostituzioneQuery = '';
+            if($resultTabelle->num_rows > 0){
+                $sql_creaCostituzioneQuery = "CALL CreazioneCostituzione(@numeroProgressivoQuesito, '$titoloTest', '$TabDaCollegare')";
+            }
+            if ($conn->query($sql_creaCostituzioneQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
+                echo "<p>Errore nel collegamento del quesito alla tabella: " . $conn->error . "</p>";
+            } else {
+                echo "<p>Quesito collegato alla tabella con successo!</p>";
+            }
+            
 
             // Recupero del valore di output
             $result = $conn->query("SELECT @NumeroProgressivoQuesito AS NumeroProgressivo");
@@ -171,6 +182,12 @@ include '../../Condiviso/Tabella.php';
                 </div>
 
                 <div>
+                    <input type="submit" class="salvaBtn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
+                </div>
+
+                <div>
+                    <h4>Collegamento Quesito a Tabella</h4>
+                    <h5>Dopo aver salvato il Quesito, seleziona una o più tabelle a cui vuoi collegare il quesito</h5>
                     <label class="label" for="LabelTab">A quale tabella vuoi collegare il quesito:</label>
                     <select class="listBox" id="TabelleDaCollegare" name="TabDaCollegare">
                         <?php while ($row = $resultTabelle->fetch_assoc()) {
@@ -180,13 +197,9 @@ include '../../Condiviso/Tabella.php';
                         } 
                         ?>
                     </select>
-                    <input type="button" class="salvaBtn" id="collegaTabella" value="Collega">
-                    <label class="label" for="TabellaCollegata">Tabelle Collegate al Quesito:</label>
+                    <input type="submit" class="salvaBtn" id="collegaTabella" value="Collega" data-action="collegaTabella">
+                    <label class="label" for="TabellaCollegata">Tabelle Attualmente Collegate al Quesito:</label>
                     <input class="areaInserimento" type="text" id="TabellaCollegata" name="TabellaCollegata" readonly>
-                </div>
-
-                <div>
-                    <input type="submit" class="salvaBtn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
                 </div>
 
             </VerticalPanel>
