@@ -119,11 +119,16 @@ include '../../Condiviso/Tabella.php';
             $numeroRisposte = $_POST['numeroRisposte'];
             $TabDaCollegare = $_POST['TabDaCollegare'];
 
+            $booleanCreazioneQuesito = false;
+            $booleanCreazioneCostituzione = false;
+
             $sql_creaQuesitoQuery = '';
             if ($tipoQuesito == 'RC') {
                 $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
+                $booleanCreazioneQuesito = true;
             } else if ($tipoQuesito == 'COD') {
                 $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
+                $booleanCreazioneQuesito = true;
             }
             if ($conn->query($sql_creaQuesitoQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
                 echo "<p>Errore nella creazione del quesito: " . $conn->error . "</p>";
@@ -133,17 +138,20 @@ include '../../Condiviso/Tabella.php';
             $sql_creaCostituzioneQuery = '';
             if($resultTabelle->num_rows > 0){
                 $sql_creaCostituzioneQuery = "CALL CreazioneCostituzione(@numeroProgressivoQuesito, '$titoloTest', '$TabDaCollegare')";
+                $booleanCreazioneCostituzione = true;
             }
             if ($conn->query($sql_creaCostituzioneQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
                 echo "<p>Errore nel collegamento del quesito alla tabella: " . $conn->error . "</p>";
             }
 
-            // Recupero del valore di output
-            $result = $conn->query("SELECT @NumeroProgressivoQuesito AS NumeroProgressivo");
-            $row = $result->fetch_assoc();
-            $numeroProgressivoQuesito = $row['NumeroProgressivo'];
-            header('Location: inserisciQuesitoSpecifico.php?id=' . $numeroProgressivoQuesito . ';' . $tipoQuesito);
-            exit;
+            if($booleanCreazioneQuesito && $booleanCreazioneCostituzione){
+                // Recupero del valore di output
+                $result = $conn->query("SELECT @NumeroProgressivoQuesito AS NumeroProgressivo");
+                $row = $result->fetch_assoc();
+                $numeroProgressivoQuesito = $row['NumeroProgressivo'];
+                header('Location: inserisciQuesitoSpecifico.php?id=' . $numeroProgressivoQuesito . ';' . $tipoQuesito);
+                exit;
+            }
         }
         ?>
 
