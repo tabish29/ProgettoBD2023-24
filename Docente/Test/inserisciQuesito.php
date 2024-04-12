@@ -1,5 +1,6 @@
 <?php
 include '../../connessione.php';
+include '../../Condiviso/Tabella.php';
     if (!isset($_SESSION)) {
         session_start();
     }
@@ -98,6 +99,12 @@ include '../../connessione.php';
     <div class="container">
         <h2>Creazione Quesito</h2>
         <?php
+
+        // Creazione di un'istanza della classe Tabella
+        $tabella = new Tabella();
+
+        // Ottenere tutte le tabelle di esercizio
+        $resultTabelle = $tabella->ottieniTutteTabelle();
         
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -112,7 +119,6 @@ include '../../connessione.php';
             $livDifficolta = $_POST['livDifficolta'];
             $descrizione = $_POST['descrizione'];
             $numeroRisposte = $_POST['numeroRisposte'];
-
 
             $sql_creaQuesitoQuery = '';
             if ($tipoQuesito == 'RC') {
@@ -165,7 +171,21 @@ include '../../connessione.php';
                 </div>
 
                 <div>
+                    <label class="label" for="LabelTab">A quale tabella vuoi collegare il quesito:</label>
+                    <select class="listBox" id="TabelleDaCollegare" name="TabDaCollegare">
+                        <?php while ($row = $resultTabelle->fetch_assoc()) {
+                            echo "<option value='" . $row['Nome'] . "'>" . $row['Nome'] . "</option>";
+                        } if (mysqli_num_rows($resultTabelle) == 0) {
+                            echo "<option value='Nessuna tabella disponibile'>Nessuna tabella disponibile</option>";
+                        } 
+                        ?>
+                    </select>
+                    <input type="button" class="salvaBtn" id="collegaTabella" value="Collega">
+                    <label class="label" for="TabellaCollegata">Tabelle Collegate al Quesito:</label>
+                    <input class="areaInserimento" type="text" id="TabellaCollegata" name="TabellaCollegata" readonly>
+                </div>
 
+                <div>
                     <input type="submit" class="salvaBtn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
                 </div>
 
