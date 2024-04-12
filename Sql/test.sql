@@ -46,7 +46,11 @@ CALL InserimentoMessaggioDocente("testDiProva3", "Eccoci qua","Questo è un mess
 
 CALL CreazioneTabellaEsercizio("NomeTabellaProva",NOW(),20,"docente2@gmail.com");
 CALL CreazioneTabellaEsercizio("SecondaTabellaProva",NOW(),10,"docente@gmail.com");
+CALL CreazioneCostituzione(4,"provaNr2","SecondaTabellaProva");
+CALL CreazioneCostituzione(1,"provaNr1","NomeTabellaProva");
 SELECT * FROM TABELLADIESERCIZIO;
+SELECT * FROM QUESITO;
+SELECT * FROM COSTITUZIONE;
 -- fine test
 
 /* test visualizzarisposte
@@ -101,14 +105,14 @@ CALL inserisciRispostaQuesitoCodice(5, "provaNr1", "rispostaNonCorretta", 1, fal
 
 
 -- TEST VIEW
-
+/*
 SELECT * FROM ClassificaQuesitiPerRisposte;
 SELECT * FROM classificaTestCompletati;
 
 SELECT * FROM classifica_test_completati;
 SELECT * FROM classifica_studenti;
 SELECT * FROM classifica_quesiti;
-
+*/
 
 
 /*

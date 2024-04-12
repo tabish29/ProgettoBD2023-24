@@ -224,6 +224,24 @@ BEGIN
 END 
 // DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE CreazioneCostituzione(
+    numero_temp_progressivoQuesito INT,
+    titoloTest_temp VARCHAR(100),
+    nome_temp_tabellaEsercizio VARCHAR(40)
+)
+BEGIN
+	DECLARE TabellaEsistente INT DEFAULT 0;
+    DECLARE QuesitoEsistente INT DEFAULT 0;
+    SET TabellaEsistente = (SELECT COUNT(*) FROM TABELLADIESERCIZIO WHERE (nome=nome_temp_tabellaEsercizio));
+    SET QuesitoEsistente = (SELECT COUNT(*) FROM QUESITO WHERE (numeroProgressivo=numero_temp_progressivoQuesito) 
+															AND (titoloTest=titoloTest_temp));
+	IF (TabellaEsistente = 1 AND QuesitoEsistente = 1) THEN
+		INSERT INTO COSTITUZIONE(TitoloTest, NumeroProgressivoQuesito, NomeTabella) 
+        VALUES (titoloTest_temp, numero_temp_progressivoQuesito, nome_temp_tabellaEsercizio);
+    END IF;
+END
+// DELIMITER ;
 
 # Faccio mettere in input il progressivo al docente, dovrà essere visibile nel programma
 -- OK
