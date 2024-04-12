@@ -62,11 +62,11 @@ CALL CreazioneTest("TestDiProva3", NOW(), null, true, "docente@gmail.com");
 */
 
 -- Test creazione quesiti
-CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40,@nQ1);
-CALL CreazioneQuesitoRispostaChiusa("provaNr2","Medio","Descrizione",5,@nQ2);
-CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",40,@nQ3);
-CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",10,@nQ4);
-CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",20,@nQ5);
+CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",@nQ1);
+CALL CreazioneQuesitoRispostaChiusa("provaNr2","Medio","Descrizione",@nQ2);
+CALL CreazioneQuesitoRispostaChiusa("TestDiProva3","Medio","Eccoci qua",@nQ3);
+CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua",@nQ4);
+CALL CreazioneQuesitoCodice("TestDiProva3","Alto","Eccoci qua di nuovo",@nQ5);
 
 CALL InserimentoSoluzione("provaNr1",1,"SELECT * FROM TEST");
 CALL InserimentoSoluzione("provaNr1",8,"Qui va tutto bene sbagliato");
