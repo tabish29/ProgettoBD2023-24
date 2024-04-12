@@ -119,6 +119,10 @@ include '../../Condiviso/Tabella.php';
             $numeroRisposte = $_POST['numeroRisposte'];
             $TabDaCollegare = $_POST['TabDaCollegare'];
 
+            $TabellaCollegata = $_GET["SELECT * FROM Costituzione WHERE TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = @numeroProgressivoQuesito"];
+
+
+
             $sql_creaQuesitoQuery = '';
             if ($tipoQuesito == 'RC') {
                 $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
@@ -200,6 +204,11 @@ include '../../Condiviso/Tabella.php';
                     <input type="submit" class="salvaBtn" id="collegaTabella" value="Collega" data-action="collegaTabella">
                     <label class="label" for="TabellaCollegata">Tabelle Attualmente Collegate al Quesito:</label>
                     <input class="areaInserimento" type="text" id="TabellaCollegata" name="TabellaCollegata" readonly>
+                </div>
+
+                <div>
+                    <h5>Dopo aver collegato il quesito ad almeno una tabella e salvato i suoi dati, clicca su continua</h5>
+                    <input type="submit" class="salvaBtn" id="Continua" value="Continua" data-action="Continua">
                 </div>
 
             </VerticalPanel>
