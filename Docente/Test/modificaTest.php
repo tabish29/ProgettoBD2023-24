@@ -1,6 +1,6 @@
 <?php
-    include '../connessione.php';
-    include '../Condiviso/Test.php';
+    include '../../connessione.php';
+    include '../../Condiviso/Test.php';
 
     if (!isset($_SESSION)) {
         session_start();
@@ -203,7 +203,7 @@
                         <br>
                         <button id='inserisciQuesito' class='btn' onclick=\"window.location.href='inserisciQuesito.php?id=" . $testId . "'\">Aggiungi Quesito</button>
                         <button class='btn' onclick='eliminaQuesito(\"". $testId . "\")'>Elimina Quesito</button>
-                        <button id='tornaTest' class='btn' onclick='window.location.href=\"testDocenti.php\"'>Torna ai Test</button>
+                        <button id='tornaTest' class='btn' onclick='window.location.href=\"../navBar/testDocenti.php\"'>Torna ai Test</button>
                         ";
             }
 

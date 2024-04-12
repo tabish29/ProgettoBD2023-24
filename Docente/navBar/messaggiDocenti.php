@@ -3,8 +3,8 @@ if (!isset($_SESSION)) {
     session_start();
 }
 include 'navbarDocente.php';
-include '../connessione.php';
-include '../Condiviso/Messaggio.php';
+include '../../connessione.php';
+include '../../Condiviso/Messaggio.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,7 +39,7 @@ include '../Condiviso/Messaggio.php';
             font-size: medium;
         }
 
-        .test-list {
+        .mess-list {
             list-style-type: none;
             padding: 0;
             width: 100%;
@@ -48,7 +48,7 @@ include '../Condiviso/Messaggio.php';
             word-wrap: break-word;
         }
 
-        .test-item {
+        .mess-item {
             width: auto;
             padding: 10px;
             margin-bottom: 5px;
@@ -111,7 +111,7 @@ include '../Condiviso/Messaggio.php';
 <body>
     <div class="container">
         <div class="btn-container">
-            <a href="nuovoMessaggioDocente.php" class="btnInvia">Invia Nuovo Messaggio</a>
+            <a href="../Messaggi/nuovoMessaggioDocente.php" class="btnInvia">Invia Nuovo Messaggio</a>
         </div>
         <?php
         
@@ -122,9 +122,9 @@ include '../Condiviso/Messaggio.php';
 
         if ($messaggiRicevuti->num_rows > 0) {
             // Stampa i valori di tutti i messaggi
-            echo "<ul class='test-list'>";
+            echo "<ul class='mess-list'>";
             while ($mess = $messaggiRicevuti->fetch_assoc()) {
-                echo "<li class='test-item'>";
+                echo "<li class='mess-item'>";
                 foreach ($mess as $key => $value) {
                     if ($key !== 'Id') {
                         echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";
@@ -142,9 +142,9 @@ include '../Condiviso/Messaggio.php';
 
         if ($messaggiInviati->num_rows > 0) {
             // Stampa i valori di tutti i messaggi
-            echo "<ul class='test-list'>";
+            echo "<ul class='mess-list'>";
             while ($mess = $messaggiInviati->fetch_assoc()) {
-                echo "<li class='test-item'>";
+                echo "<li class='mess-item'>";
                 foreach ($mess as $key => $value) {
                     if ($key !== 'Id') {
                         echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";

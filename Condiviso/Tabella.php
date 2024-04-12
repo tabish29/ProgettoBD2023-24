@@ -1,5 +1,5 @@
 <?php
-include '../connessione.php';
+include '../../connessione.php';
 
     class Tabella{
 

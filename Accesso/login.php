@@ -167,7 +167,7 @@ include '../Condiviso/Utente.php';
                 $_SESSION['ruolo'] = $ruolo_login; //NON SPOSTARE DA QUI
                 if ($ruolo_login === "docente") {
                     echo '<script>window.alert("Accesso effettuato!");
-                            window.location.href = "../Docente/testDocenti.php";
+                            window.location.href = "../Docente/navBar/testDocenti.php";
                         </script>';
                 } else if ($ruolo_login === "studente") {
                     echo '<script>window.alert("Accesso effettuato!");

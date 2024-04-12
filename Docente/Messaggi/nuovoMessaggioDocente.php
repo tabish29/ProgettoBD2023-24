@@ -2,9 +2,9 @@
     if (!isset($_SESSION)){
         session_start();
     }
-    include '../connessione.php';
-    include '../Condiviso/Messaggio.php';
-    include '../Condiviso/Test.php';
+    include '../../connessione.php';
+    include '../../Condiviso/Messaggio.php';
+    include '../../Condiviso/Test.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,7 +107,7 @@
                     $risultato = $messaggio->inserisciMessaggioDocente($titoloTest, $oggetto, $testo, $email_login);
                     if ($risultato) {
                         echo '<script>window.alert("Messaggio inviato con successo!");
-                                window.location.href = "messaggiDocenti.php";
+                                window.location.href = "../navBar/messaggiDocenti.php";
                             </script>';
 
                     } else {
@@ -146,8 +146,9 @@
                 <textarea id="testo" class="areaInserimento"name="testo" rows="5" required></textarea><br>
 
                 <button type="submit" id="inviaMessaggioBtn" class="btnInvia">Invia Messaggio</button>
-                <button class='btnInvia'onclick="window.location.href='messaggiDocenti.php'">Torna alla lista dei messaggi</button>
-        </form>
+                </form>
+
+                <button class='btnInvia'onclick="window.location.href='../navBar/messaggiDocenti.php'">Torna alla lista dei messaggi</button>
     </div>
 </body>
 </html>

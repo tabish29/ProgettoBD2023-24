@@ -1,6 +1,6 @@
 <?php
-    include '../connessione.php';
-    include '../Condiviso/Test.php';
+    include '../../connessione.php';
+    include '../../Condiviso/Test.php';
     if (!isset($_SESSION)){
         session_start();
     }
@@ -44,13 +44,13 @@
                 if ($risultato === TRUE) {
                     echo '<script>
                                 window.alert("Test cancellato correttamente!");
-                                window.location.href = "testDocenti.php"; 
+                                window.location.href = "../navBar/testDocenti.php"; 
                             </script>';
                     exit(); 
                 } else {
                     echo '<script>
                                 window.alert("Errore nella cancellazione del test!");
-                                window.location.href = "testDocenti.php"; 
+                                window.location.href = "../navBar/testDocenti.php"; 
                             </script>';
                     exit();
                 }

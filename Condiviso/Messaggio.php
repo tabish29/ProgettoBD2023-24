@@ -1,5 +1,5 @@
 <?php
-include '../connessione.php';
+include '../../connessione.php';
 
     class Messaggio{
 
@@ -23,6 +23,8 @@ include '../connessione.php';
                 return FALSE;
             }
         }
+
+        
     }
     
 ?>

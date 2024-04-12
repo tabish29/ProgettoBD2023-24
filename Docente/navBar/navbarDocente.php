@@ -84,8 +84,7 @@
           <li <?php echo basename($_SERVER['PHP_SELF']) == 'gestioneTabelle.php' ? 'class="active"' : ''; ?>>
             <a href="gestioneTabelle.php">Gestione Tabelle</a>
           </li>
-        </ul>
-        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../index.html'">Logout</button>
+        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../'">Logout</button>
 
       </div>
 

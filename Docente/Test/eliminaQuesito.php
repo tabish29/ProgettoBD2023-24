@@ -1,6 +1,6 @@
 <?php
-    include '../connessione.php';
-    include '../Condiviso/Test.php';
+    include '../../connessione.php';
+    include '../../Condiviso/Test.php';
     if (!isset($_SESSION)){
         session_start();
     }

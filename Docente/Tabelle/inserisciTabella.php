@@ -1,3 +1,10 @@
+<?php
+            include '../../connessione.php';
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -71,13 +78,7 @@
     <div class="container">
         <h2>Inserisci Tabella</h2>
         <ul>
-            <?php
-            include '../connessione.php';
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-
-            ?>
+            
             <form action="inserisciTabella.php?id=<?php echo htmlspecialchars($_GET['id']); ?>" method="post">
                 <div class="form-group">
                     <label class="label">Scrivi il codice SQL della Tabella:</label><br>

@@ -1,10 +1,11 @@
 <?php
+include '../../connessione.php';
+
 if (!isset($_SESSION)) {
     session_start();
 }
 include 'navbarDocente.php';
-include '../connessione.php';
-include '../Condiviso/Test.php';
+include '../../Condiviso/Test.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -122,7 +123,7 @@ include '../Condiviso/Test.php';
     <div class="container">
         <ul class="test-list">
             <div class="containerBtn">
-                <button class="button" onclick="window.location.href='creaTest.php'">Crea nuovo Test</button>
+                <button class="button" onclick="window.location.href='../Test/creaTest.php'">Crea nuovo Test</button>
                 
             <?php
             
@@ -180,14 +181,14 @@ include '../Condiviso/Test.php';
                 }
                 var testId = selectedTestId.value;
                 if (action === 'modifica') {
-                    window.location.href = 'modificaTest.php?id=' + testId;
+                    window.location.href = '../Test/modificaTest.php?id=' + testId;
                 } else if (action === 'cancella') {
                     var confirmDelete = confirm('Sei sicuro di voler cancellare questo test?');
                     if (confirmDelete) {
-                        window.location.href = 'cancellaTest.php?id=' + testId;
+                        window.location.href = '../Test/cancellaTest.php?id=' + testId;
                     }
                 } else if (action === 'visualizzaTabelle') {
-                    window.location.href = 'visualizzaTabelle.php?id=' + testId;
+                    window.location.href = '../Test/visualizzaTabelle.php?id=' + testId;
                 }
             }
         </script>

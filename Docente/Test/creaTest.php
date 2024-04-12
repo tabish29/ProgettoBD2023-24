@@ -2,8 +2,8 @@
 if (!isset($_SESSION)){
     session_start();
 }
-include '../connessione.php';
-include '../Condiviso/Test.php';
+include '../../connessione.php';
+include '../../Condiviso/Test.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +76,7 @@ include '../Condiviso/Test.php';
                         <input type='file' id='foto' name='foto'><br>
                         <input  type='hidden' name='action' value='crea'>
                         <button type='submit' class='creaBtn' id='creaTestButton'>Crea</button><br>
-                        <a href=\"testDocenti.php\" class=\"creaBtn\">Torna ai Test</a>
+                        <a href=\"../navBar/testDocenti.php\" class=\"creaBtn\">Torna ai Test</a>
                     </form>
                     ";
                 }
@@ -104,7 +104,7 @@ include '../Condiviso/Test.php';
                     if ($risultato === TRUE && mysqli_affected_rows($conn) > 0) {
                         echo '<script>
                                 window.alert("Test creato correttamente!");
-                                window.location.href = "testDocenti.php"; 
+                                window.location.href = "../navBar/testDocenti.php"; 
                             </script>';
                         exit();                   
                     } else {

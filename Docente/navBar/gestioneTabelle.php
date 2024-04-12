@@ -3,7 +3,7 @@ if (!isset($_SESSION)) {
     session_start();
 }
 include 'navbarDocente.php';
-include '../connessione.php';
+include '../../connessione.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

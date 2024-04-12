@@ -1,6 +1,6 @@
 <?php
-include '../connessione.php';
-include 'Quesito.php';
+    include '../../connessione.php';
+    include 'Quesito.php';
 
     class Test{
 

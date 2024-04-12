@@ -1,6 +1,6 @@
 <?php
-include '../connessione.php';
-include '../Condiviso/Tabella.php';
+include '../../connessione.php';
+include '../../Condiviso/Tabella.php';
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -99,7 +99,7 @@ if (!isset($_SESSION)) {
                     ?>
                 </ul>
                 <div>
-                    <button class='btn'onclick="window.location.href='testDocenti.php'">Torna alla lista dei test</button>
+                    <button class='btn'onclick="window.location.href='../navBar/testDocenti.php'">Torna alla lista dei test</button>
                 </div>
             </div>
         <?php
