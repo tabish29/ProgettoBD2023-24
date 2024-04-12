@@ -43,11 +43,11 @@ CALL InserimentoMessaggioDocente("testDiProva3", "Eccoci qua","Questo è un mess
 -- fine test
 
 
-/* Test tabelle di esercizio
+
 CALL CreazioneTabellaEsercizio("NomeTabellaProva",NOW(),20,"docente2@gmail.com");
-#SELECT * FROM TABELLADIESERCIZIO;
+CALL CreazioneTabellaEsercizio("SecondaTabellaProva",NOW(),10,"docente@gmail.com");
+SELECT * FROM TABELLADIESERCIZIO;
 -- fine test
-*/
 
 /* test visualizzarisposte
 CALL ModificaVisualizzazioneRisposte("nuovoTitolo3",true);
