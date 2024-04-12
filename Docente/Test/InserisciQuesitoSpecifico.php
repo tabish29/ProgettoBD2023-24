@@ -91,9 +91,6 @@
     <div class="container">
         <h2>Creazione Quesito</h2>
         <?php
-            
-            
-        
 
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 $datiTest = []; // NumProgressivo, Tipo, TitoloTest, NumeroRisposte, NumeroRisposteInserite 
@@ -150,12 +147,10 @@
                 } else if ($datiTest[3] - $datiTest[4] == 0){
                     if ($datiTest[1] == "RC"){
                         $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
-
-                        
                     } else if ($datiTest[1] == "COD"){
                         $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoSoluzione('$datiTest[2]',$datiTest[0], '$valoreInserito')";
-                        
                     }
+
                     $conn->query($sql_queryNuovaOpzioneOSoluzione);
                     $conn->next_result();
                     $datiTest[4]++;
@@ -174,14 +169,14 @@
         ?>
         
         <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
+            <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
             <div class="form-group">
-                <label class="label"for="soluzioneT">Testo soluzione:</label>
+                <h4 class="quesitoLabel">Ti mancano <?php echo ($datiTest[3]); ?> risposte da inserire nel quesito</h4>
+                <label class="label"for="soluzioneT">Testo Risposta:</label>
                 <input type="text" class="areaInserimento" id="soluzioneT" name="soluzioneT">
             </div>
-            <input type="submit" class="salvaBtn" id="settaRispostaCorretta" value="Salva Soluzione">
+            <input type="submit" class="salvaBtn" id="settaRispostaCorretta" value="Aggiungi Risposta">
         </form>
-
-            
 
         
     </div>

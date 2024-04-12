@@ -103,7 +103,7 @@ include '../../Condiviso/Tabella.php';
         // Ottenere tutte le tabelle di esercizio
         $tabella = new Tabella();
         $resultTabelle = $tabella->ottieniTutteTabelle();
-        
+
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $titoloTest = $_GET['id'];
@@ -119,10 +119,6 @@ include '../../Condiviso/Tabella.php';
             $numeroRisposte = $_POST['numeroRisposte'];
             $TabDaCollegare = $_POST['TabDaCollegare'];
 
-            $TabellaCollegata = $_GET["SELECT * FROM Costituzione WHERE TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = @numeroProgressivoQuesito"];
-
-
-
             $sql_creaQuesitoQuery = '';
             if ($tipoQuesito == 'RC') {
                 $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
@@ -130,7 +126,6 @@ include '../../Condiviso/Tabella.php';
                 $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
             }
             if ($conn->query($sql_creaQuesitoQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
-
                 echo "<p>Errore nella creazione del quesito: " . $conn->error . "</p>";
             }
 
@@ -141,10 +136,7 @@ include '../../Condiviso/Tabella.php';
             }
             if ($conn->query($sql_creaCostituzioneQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
                 echo "<p>Errore nel collegamento del quesito alla tabella: " . $conn->error . "</p>";
-            } else {
-                echo "<p>Quesito collegato alla tabella con successo!</p>";
             }
-            
 
             // Recupero del valore di output
             $result = $conn->query("SELECT @NumeroProgressivoQuesito AS NumeroProgressivo");
@@ -201,7 +193,7 @@ include '../../Condiviso/Tabella.php';
                         } 
                         ?>
                     </select>
-                    <input type="submit" class="salvaBtn" id="collegaTabella" value="Collega" data-action="collegaTabella">
+                    <input type="submit" class="salvaBtn" id="collegaTabella" value="Collega">
                     <label class="label" for="TabellaCollegata">Tabelle Attualmente Collegate al Quesito:</label>
                     <input class="areaInserimento" type="text" id="TabellaCollegata" name="TabellaCollegata" readonly>
                 </div>
