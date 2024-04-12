@@ -11,7 +11,7 @@
 
     // Connessione al database
     $conn = new mysqli($servername, $username, $password, $dbname);
-
+    $_SESSION['conn'] = $conn;
     // Verifica della connessione
     if ($conn->connect_error) {
         die("Connessione fallita: " . $conn->connect_error);
