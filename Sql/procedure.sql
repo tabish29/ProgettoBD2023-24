@@ -226,9 +226,9 @@ END
 
 DELIMITER //
 CREATE PROCEDURE CreazioneCostituzione(
-    numero_temp_progressivoQuesito INT,
-    titoloTest_temp VARCHAR(100),
-    nome_temp_tabellaEsercizio VARCHAR(40)
+    IN numero_temp_progressivoQuesito INT,
+    IN titoloTest_temp VARCHAR(100),
+    IN nome_temp_tabellaEsercizio VARCHAR(40)
 )
 BEGIN
 	DECLARE TabellaEsistente INT DEFAULT 0;
@@ -286,6 +286,24 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
+
+
+
+DELIMITER //
+CREATE PROCEDURE SetOpzioneRispostaCorretta (
+    IN TitoloTestTemp VARCHAR(20),
+    IN NumeroProgressivoQuesitoTemp INT,
+    IN NumeroProgressivoOpzioneRispostaTemp INT
+)
+BEGIN
+	UPDATE OPZIONERISPOSTA
+    SET rispostaCorretta = true
+    WHERE ((TitoloTestTemp=TitoloTest) AND (NumeroProgressivoQuesitoTemp=NumeroProgressivoQuesito)
+		AND (NumeroProgressivoOpzioneRispostaTemp=NumeroProgressivoOpzione));
+    
+END 
+// DELIMITER ;
+
 
 
 

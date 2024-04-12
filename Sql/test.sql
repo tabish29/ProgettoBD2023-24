@@ -44,6 +44,8 @@ CALL InserimentoMessaggioDocente("testDiProva3", "Eccoci qua","Questo è un mess
 
 
 
+
+/*
 CALL CreazioneTabellaEsercizio("NomeTabellaProva",NOW(),20,"docente2@gmail.com");
 CALL CreazioneTabellaEsercizio("SecondaTabellaProva",NOW(),10,"docente@gmail.com");
 CALL CreazioneCostituzione(4,"provaNr2","SecondaTabellaProva");
@@ -51,7 +53,7 @@ CALL CreazioneCostituzione(1,"provaNr1","NomeTabellaProva");
 SELECT * FROM TABELLADIESERCIZIO;
 SELECT * FROM QUESITO;
 SELECT * FROM COSTITUZIONE;
--- fine test
+*/
 
 /* test visualizzarisposte
 CALL ModificaVisualizzazioneRisposte("nuovoTitolo3",true);
@@ -84,7 +86,6 @@ CALL InserimentoOpzioneRisposta("provaNr2",8,"Completamento di Lollo",false);
 
 
 
-
 -- test inserimento risposte
 CALL inserisciRispostaQuesitoRispostaChiusa(3,"ProvaNr1","risposta chiusa",2);
 CALL inserisciRispostaQuesitoRispostaChiusa(1, "provaNr1", "opzione risposta sbagliata", 2);
@@ -103,6 +104,10 @@ CALL inserisciRispostaQuesitoCodice(5, "provaNr1", "rispostaNonCorretta", 1, fal
 #CALL visualizzaEsitoRisposta(1, "provaNr1", 2,  @esitoRispostaScelta);
 #SELECT @esitoRispostaScelta;
 
+/*
+SELECT * FROM OPZIONERISPOSTA;
+CALL SetOpzioneRispostaCorretta("provaNr1",2,2);
+*/
 
 -- TEST VIEW
 /*
