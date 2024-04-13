@@ -96,13 +96,16 @@ if (!isset($_SESSION)) {
             $domanda = $_POST['domanda'];
             $rispostaSelezionata = $_POST['rispostaSelezionata'];
             $titoloTest = $_POST['titoloTest'];
-            $inserisciRispostaCorretta = "UPDATE opzionerisposta SET RispostaCorretta = 1 WHERE CampoTesto = '$rispostaSelezionata' AND TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = '$domanda'";
-            if ($conn->query($inserisciRispostaCorretta) === TRUE) {
-                echo "Risposta corretta inserita correttamente";
+            $quesito = new Quesito();
+            //$inserisciRispostaCorretta = "UPDATE opzionerisposta SET RispostaCorretta = 1 WHERE CampoTesto = '$rispostaSelezionata' AND TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = '$domanda'";
+            $sql_inserisciRispostaCorretta = $quesito->setOpzioneRispostaCorretta($titoloTest, $domanda, $rispostaSelezionata); 
+            // se l'update avviene con successo questa variabile diventa = 1, quindi proseguo
+            if ($sql_inserisciRispostaCorretta = 1) {
+                echo "Risposta corretta inserita con successo.";
                 header("Location: modificaTest.php?id=$titoloTest");
                 exit;
             } else {
-                echo "Errore: " . $inserisciRispostaCorretta . "<br>" . $conn->error;
+                echo "Errore: " . $sql_inserisciRispostaCorretta . "<br>" . $conn->error;
             }
         }
     ?>
