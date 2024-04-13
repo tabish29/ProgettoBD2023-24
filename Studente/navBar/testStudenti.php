@@ -1,4 +1,7 @@
 <?php
+include 'navbarStudente.php';
+include '../../connessione.php';
+include '../../Condiviso/Test.php';
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -14,20 +17,21 @@ if (!isset($_SESSION)) {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
             background-color: #f9acac;
         }
 
         .container {
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
             margin: 0;
             padding: 0;
             background-color: #f9acac;
             border-radius: 5px;
 
         }
+
 
         .test-list {
             list-style-type: none;
@@ -40,9 +44,9 @@ if (!isset($_SESSION)) {
             margin-bottom: 20px;
             font: sans-serif;
             font-style: italic;
+            font-weight: bold;
             font-size: medium;
         }
-
 
         .test-item {
             padding: 10px;
@@ -60,9 +64,7 @@ if (!isset($_SESSION)) {
             /* Allinea il testo a sinistra */
             margin: auto;
             font-size: small;
-            font-style: arial;
-
-
+            font: Arial;
         }
 
         .test-item:hover {
@@ -75,13 +77,7 @@ if (!isset($_SESSION)) {
             /* Rimuove il margine inferiore dall'ultimo elemento */
         }
 
-        p,
-        label {
-            font:
-                1rem 'Fira Sans',
-                arial;
-            font-size: 16px;
-        }
+
 
         input {
             margin: 0.4rem;
@@ -92,62 +88,63 @@ if (!isset($_SESSION)) {
 
         }
 
-        .buttonEffettua {
-            margin-top: 20px;
-            background-color: greenyellow;
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+        .labelBold {
             font-weight: bold;
+        }
+
+        .test-item p,
+        .test-item label {
+            font-size: 15px;
+        }
+        .test-item {
+        display: inline-block; /* Aggiunta di display inline-block */
+        margin-left : 20px; /* Aggiunta di margine a sinistra per separare i test */
+        margin-right: 20px; /* Aggiunta di margine a destra per separare i test */
+        margin-bottom: 20px; /* Aggiunta di margine inferiore per separare i test */
+        padding: 10px;
+        width: auto; /* Modifica della larghezza del singolo test */
+        height: auto;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        button{
+        color: white;
+        background-color: #9c9c9c;
+        border: none;
+        padding: 10px 20px;
+        margin-right: 10px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <ul class="test-list">
+    <div class="containerBtn">
+        <button class="button" onclick="openAction('effettua')">Effettua il Test</button>
+    </div>
+    <ul class="test-list">
             <?php
 
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-
-            include 'navbarStudente.php';
-            include '../connessione.php';
-
-
-            if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
-                // Redirect a una pagina di login se l'utente non è autenticato
-                header("Location: index.html");
-                exit();
-            }
-
+            $test = new Test();
 
             $email_login = $_SESSION['email'];
-            $ruolo_login = $_SESSION['ruolo'];
-
-
 
             echo "<h2 class = 'testListH2'>Lista Test: </h2>";
 
             // Query per selezionare tutti i test
-            $sql_all_tests = "CALL visualizzaTestDisponibili()";
-
-            $result_all_tests = $conn->query($sql_all_tests);
-            $conn->next_result(); //Se no entra in conflitto con la query di funzioniPerTest
+            $sql_test = $test->ottieniTuttiITest();
+            
             // Verifica se ci sono test 
-            if ($result_all_tests->num_rows > 0) {
+            if ($sql_test->num_rows > 0) {
                 echo "<form id='testForm'>";
-                while ($row = $result_all_tests->fetch_assoc()) {
-                    $titoloTest = $row['Titolo'];
-                    $ottieniCompletamento = "SELECT Stato FROM COMPLETAMENTO WHERE TitoloTest = '$titoloTest' AND EmailStudente = '$email_login'";
-                    $result_completamento = $conn->query($ottieniCompletamento);
-                    $statoCompletamento = 'nessun completamento';
-                    if ($result_completamento->num_rows > 0) {
-                        $statoCompletamento = $result_completamento->fetch_assoc()['Stato'];
+                while ($datiTest = $sql_test->fetch_assoc()) {
+                    $titoloTest = $datiTest['Titolo'];
+                    $statoCompletamento = $test->getStatoCompletamento($titoloTest, $email_login);
+                    if ($statoCompletamento === false){
+                        $statoCompletamento = "nessun completamento";
                     }
+                    
                     echo "<li class='test-item'>";
 
                     if ($statoCompletamento !== 'Concluso') {
@@ -156,12 +153,13 @@ if (!isset($_SESSION)) {
 
 
                     echo "<p>Titolo del test: " . $titoloTest . "</p><br>";
-                    echo "<p>Email Docente: " . $row['EmailDocente'] . "</p><br>";
+                    echo "<p>Email Docente: " . $datiTest['EmailDocente'] . "</p><br>";
                     echo "<p> Stato completamento: " . $statoCompletamento . "</p><br>";
 
                     if ($statoCompletamento === 'Concluso') {
+                        //TODO: uniformare la sintassi di queste due righe di codice 
                         $urlVisualizza = "visualizzaRisposta.php?idTest=" . urlencode($titoloTest);
-                        echo "<a href='" . htmlspecialchars($urlVisualizza) . "' class='buttonEffettua'>Visualizza Risposta</a>";
+                        echo "<a href='" . htmlspecialchars($urlVisualizza) . "' class='button'>Visualizza Risposta</a>";
                     }
                     echo "</li>";
                 }
@@ -170,9 +168,7 @@ if (!isset($_SESSION)) {
             }
             ?>
         </ul>
-        <div class="containerBtn">
-            <button class="buttonEffettua" onclick="openAction('effettua')">Effettua il Test</button>
-        </div>
+        
 
         <script>
             function openAction(action) {
@@ -183,7 +179,7 @@ if (!isset($_SESSION)) {
                 }
                 var testId = selectedTestId.value;
                 if (action === 'effettua') {
-                    window.location.href = 'effettuaTest.php?id=' + testId;
+                    window.location.href = '../Test/effettuaTest.php?id=' + testId;
                 }
             }
         </script>

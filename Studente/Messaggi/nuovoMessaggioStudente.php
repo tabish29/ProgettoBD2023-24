@@ -1,7 +1,11 @@
 <?php
+    include '../../connessione.php';
+    include '../../Condiviso/Messaggio.php';
+    include '../../Condiviso/Test.php';
     if (!isset($_SESSION)){
         session_start();
     }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,12 +24,11 @@
             align-items: center;
         }
         .container {
-            width: auto;
+            width: 80%;
             margin: 10px auto;
             padding: auto;
             background-color: #f9acac;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center; 
         }
         h2 {
@@ -59,16 +62,17 @@
         textarea {
             resize: vertical;
         }
-        .btn-container {
-            text-align: center;
-        }
-        .btn-primary {
-            background-color: #7cfc00; 
+        .btnInvia {
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 0px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
             color: #222222;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
+            background-color: #7cfc00;
         }
         .listBox{
             width: auto;
@@ -86,17 +90,8 @@
 <body>
     <div class="container">
         <?php
-            include 'navbarStudente.php';
-            include '../connessione.php';
             
-        
-            // Verifica se l'utente è autenticato
-            if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
-                // Redirect a una pagina di login se l'utente non è autenticato
-                header("Location: index.html");
-                exit();
-            }
-
+            
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -109,9 +104,10 @@
                     $testo = $_POST['testo'];
 
                     $email_login = $_SESSION['email'];
-                    // Esempio: Salva nel database
-                    $sql = "CALL inserisciMessaggioStudente('$email_login','$email_docente','$titoloTest', '$oggetto', '$testo')";
-                    if ($conn->query($sql) === TRUE) {
+
+                    $messaggio = new Messaggio();
+                    $risultato = $messaggio->inserisciMessaggioStudente($email_login, $email_docente, $titoloTest, $oggetto, $testo);
+                    if ($risultato == true) {
                         echo '<script>window.alert("Messaggio inviato con successo!");</script>';
                     } else {
                         echo '<script>window.alert("Errore nell\'invio del messaggio.");</script>';
@@ -174,11 +170,12 @@
             </div>
 
             <div class="btn-container">
-                <button type="submit" id="inviaMessaggioBtn" class="btn btn-primary">Invia Messaggio</button>
+                <button type="submit" id="inviaMessaggioBtn" class="btnInvia">Invia Messaggio</button>
             </div>
 
-            
         </form>
+            <button class='btnInvia'onclick="window.location.href='../navBar/messaggiStudenti.php'">Torna alla lista dei messaggi</button>
+
     </div>
 </body>
 </html>

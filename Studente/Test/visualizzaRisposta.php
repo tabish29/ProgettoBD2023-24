@@ -1,4 +1,6 @@
 <?php
+include '../../connessione.php';
+
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -9,7 +11,6 @@ if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
     exit();
 }
 
-include '../connessione.php';
 
 $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificato.";
 ?>

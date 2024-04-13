@@ -1,4 +1,11 @@
+<?php
+include '../../connessione.php';
+include '../../Condiviso/Test.php';
 
+if (!isset($_SESSION)){
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -139,12 +146,7 @@
         <h2 class='testH2'>Effettua il Test</h2>
         <ul class="test-details">
             <?php
-                include '../connessione.php';
-                include '../Condiviso/Test.php';
                 
-                if (!isset($_SESSION)){
-                    session_start();
-                }
 
                 $test = new Test();
                 
