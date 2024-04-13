@@ -164,11 +164,12 @@ include '../../Condiviso/Quesito.php';
 
     </div>
 
+    
     <script>
+        // Cambia il testo in base al tipo di quesito selezionato
         document.getElementById('tipoQuesito').addEventListener('change', function() {
             var tipoQuesito = this.value;
             var tipoElemento = document.getElementById('tipoElemento');
-            // Modifica il testo in base al valore selezionato nella listbox
             if (tipoQuesito === 'RC') {
                 tipoElemento.textContent = 'opzioni risposta';
             } else if (tipoQuesito === 'COD') {
