@@ -16,6 +16,7 @@
             margin: 0;
             padding: 0;
             background-color: #f9acac;
+            line-height: 1.4;
         }
         .container {
             text-align: center;
@@ -116,11 +117,8 @@
 
                     if ($datiTest[1] == "RC"){
                         $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
-
-                        
                     } else if ($datiTest[1] == "COD"){
                         $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoSoluzione('$datiTest[2]',$datiTest[0], '$valoreInserito')";
-                        
                     }
 
                     if ($conn->query($sql_queryNuovaOpzioneOSoluzione) === FALSE || mysqli_affected_rows($conn) == 0){

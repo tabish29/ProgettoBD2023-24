@@ -1,14 +1,12 @@
 <?php
     include '../../connessione.php';
     include '../../Condiviso/Test.php';
-
     if (!isset($_SESSION)) {
         session_start();
     }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,8 +16,8 @@
             margin: 0;
             padding: 0;
             background-color: #f9acac;
+            line-height: 1.4;
         }
-
         .container {
             text-align: center;
             width: 70%;
@@ -28,14 +26,12 @@
             background-color: #f9acac;
             border-radius: 5px;
         }
-
         .divQuesiti {
             background-color: #fcfcf0;
             margin: auto;
             width: 30%;
             height: 30%;
         }
-
         .label {
             text-align: center;
             font-family: sans-serif;
@@ -44,8 +40,6 @@
             color: black;
             display: block;
         }
-
-
         .btn {
             width: auto;
             height: auto;
@@ -58,21 +52,18 @@
             color: #222222;
             background-color: #7cfc00;
         }
-
         .quesitoLabel {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
         }
-
         .labelVerde {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: green;
         }
-
         .labelRosso {
             font-size: 16px;
             font-weight: bold;
@@ -81,14 +72,12 @@
         }
     </style>
 </head>
-
 <body>
     
     <div class="container">
         <h2>Modifica Test</h2>
         <ul>
             <?php
-     
             
             function creaGraficaQuesiti($titoloTest)
             {
@@ -152,7 +141,6 @@
                 }
             }
 
-
             function mostraDatiTest()
                 {
                     //include '../connessione.php';
@@ -164,6 +152,7 @@
                     
                     // Verifica se il test è stato trovato
                     if ($sql_select_test!= null) {
+                        $visualizzaRisposte = $sql_select_test['VisualizzaRisposte'] ? "Si" : "No";
                         
                         echo
                         "<span style=\"display: inline;\">
@@ -172,11 +161,10 @@
                             <label class='label' for='titolo' style=\"display: inline;\">Data Creazione: </label>"
                             . $sql_select_test['DataCreazione'] . "<br><br>" . "
                             <label class='label' for='titolo' style=\"display: inline;\">Visualizza Risposte: </label>"
-                            . $sql_select_test['VisualizzaRisposte'] . "<br><br>" . "
+                            . $visualizzaRisposte . "<br><br>" . "
                             <label class='label' for='titolo' style=\"display: inline;\">Email Docente: </label>"
                             . $sql_select_test['EmailDocente'] . "<br><br>
                         </span>";
-
 
                         creaGraficaQuesiti($sql_select_test['Titolo']);
                     } else {
@@ -184,9 +172,6 @@
                     }
             }
 
-            
-            
-            
             function creaGraficaValoriComuni()
                 {
                     $testId = $_GET['id'];
@@ -207,16 +192,10 @@
                         ";
             }
 
-                
-        
-            
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            
                 mostraDatiTest();
-
                 creaGraficaValoriComuni();
             }
-
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -225,7 +204,6 @@
 
                 // Query SQL per aggiornare il test nel database
                 $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
-
 
                 // Esegue la query di aggiornamento
                 if ($conn->query($sql_update_test) === TRUE && mysqli_affected_rows($conn) > 0) {
@@ -239,7 +217,6 @@
                             window.alert("Errore durante l\'aggiornamento del test. Attenzione, forse non hai modificato nessun campo.");
                             window.location.href = "modificaTest.php?id=' . $titolo . '";
                         </script>';
-
                 }
             }
             ?>
@@ -260,6 +237,4 @@
 
     </script>
 </body>
-
-
 </html>

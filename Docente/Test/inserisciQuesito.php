@@ -19,6 +19,7 @@ include '../../Condiviso/Quesito.php';
             margin: 0;
             padding: 0;
             background-color: #f9acac;
+            line-height: 1.4;
         }
         .container {
             text-align: center;

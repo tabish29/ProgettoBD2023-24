@@ -18,8 +18,8 @@ if (!isset($_SESSION)) {
             margin: 0;
             padding: 0;
             background-color: #f9acac;
+            line-height: 1.2;
         }
-
         .container {
             text-align: center;
             width: 70%;
@@ -28,14 +28,12 @@ if (!isset($_SESSION)) {
             background-color: #f9acac;
             border-radius: 5px;
         }
-
         .divTabella {
             background-color: #fcfcf0;
             margin: auto;
             width: 30%;
             height: 30%;
         }
-
         .label {
             text-align: center;
             font-family: sans-serif;
@@ -44,19 +42,18 @@ if (!isset($_SESSION)) {
             color: black;
             display: block;
         }
-
         .btn{
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 15px 32px;
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
             text-align: center;
-            text-decoration: none;
-            display: inline-block;
+            padding: 3px;
+            margin: 0px;
             font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #7cfc00;
         }
     </style>
 </head>
