@@ -25,11 +25,24 @@ if (!isset($_SESSION)) {
             background-color: #f9acac;
             border-radius: 5px;
         }
+        .salvaBtn {
+            width: auto;
+            height: auto;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #acf9ba; 
+        }
         
     </style>
 </head>
 <body>
     <div class="container">
+
         <?php
         $titoloTest = "";
         $domanda = "";
@@ -39,7 +52,6 @@ if (!isset($_SESSION)) {
             $domanda = $campiSchermataPrecedente[1];
         }
         
-        
         $ottieniCampoTesto = "SELECT * FROM opzionerisposta WHERE TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = '$domanda'";
         $risultato = $conn->query($ottieniCampoTesto);
         if (!$risultato || $risultato->num_rows == 0) {
@@ -47,10 +59,11 @@ if (!isset($_SESSION)) {
         }
         $campiTesto = array();
         while ($riga = $risultato->fetch_assoc()) {
-            echo "Campo test:" . $riga['CampoTesto'];
+            echo "Risposta: " . $riga['CampoTesto'] . " ";
             $campiTesto[] = $riga['CampoTesto'];
         }
         ?>
+
         <h1>Seleziona la risposta corretta</h1>
         <form action="selezionaRispostaCorretta.php" method="POST">
             
@@ -66,7 +79,7 @@ if (!isset($_SESSION)) {
         <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
         <input type="hidden" name="domanda" value="<?php echo $domanda; ?>">
         <input type="hidden" name="rispostaSelezionata" id="rispostaSelezionata" value=""> <!-- Aggiunto un ID -->
-        <input type="submit" value="Salva" class="salvaBtn">
+        <input type="submit" class="salvaBtn" value="Salva">
         </form>
         
     </div>

@@ -20,7 +20,6 @@ include '../../Condiviso/Quesito.php';
             padding: 0;
             background-color: #f9acac;
         }
-
         .container {
             text-align: center;
             width: 70%;
@@ -29,14 +28,12 @@ include '../../Condiviso/Quesito.php';
             background-color: #f9acac;
             border-radius: 5px;
         }
-
         .divQuesiti {
             background-color: #fcfcf0;
             margin: auto;
             width: 30%;
             height: 30%;
         }
-
         .buttonQuesiti {
             width: auto;
             height: auto;
@@ -49,13 +46,11 @@ include '../../Condiviso/Quesito.php';
             color: #222222;
             background-color: #acf9ba;
         }
-
         .areaInserimento {
             width: 40%;
             display: block;
             margin: auto;
         }
-
         .label {
             text-align: center;
             font-family: sans-serif;
@@ -64,7 +59,6 @@ include '../../Condiviso/Quesito.php';
             color: black;
             display: block;
         }
-
         .test-item {
             padding: 10px;
             margin-bottom: 5px;
@@ -72,23 +66,18 @@ include '../../Condiviso/Quesito.php';
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-
         .form-group {
             margin-bottom: 10px;
         }
-
         .quesitoLabel {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
         }
-
-
         .listBox {
             width: auto;
         }
-
         .areaInserimento {
             width: 50%;
             height: 50px;
@@ -104,42 +93,33 @@ include '../../Condiviso/Quesito.php';
         // Ottenere tutte le tabelle di esercizio
         $quesito = new Quesito();
 
-
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $titoloTest = $_GET['id'];
             echo "<h3>Test: $titoloTest</h3>";
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            
             $titoloTest = $_POST['titoloTest'];
-            
             $tipoQuesito = $_POST['tipoQuesito'];
-                $livDifficolta = $_POST['livDifficolta'];
-                $descrizione = $_POST['descrizione'];
-                $numeroRisposte = $_POST['numeroRisposte'];
+            $livDifficolta = $_POST['livDifficolta'];
+            $descrizione = $_POST['descrizione'];
+            $numeroRisposte = $_POST['numeroRisposte'];
 
-                if ($tipoQuesito == 'RC') {
-                    $numeroProgressivoQuesito = $quesito->creaQuesitoRispostaChiusa($titoloTest, $livDifficolta, $descrizione);
-                } else if ($tipoQuesito == 'COD') {
-                    $numeroProgressivoQuesito = $quesito->creaQuesitoCodice($titoloTest, $livDifficolta, $descrizione);
-                }
+            if ($tipoQuesito == 'RC') {
+                $numeroProgressivoQuesito = $quesito->creaQuesitoRispostaChiusa($titoloTest, $livDifficolta, $descrizione);
+            } else if ($tipoQuesito == 'COD') {
+                $numeroProgressivoQuesito = $quesito->creaQuesitoCodice($titoloTest, $livDifficolta, $descrizione);
+            }
 
-                if (isset($numeroProgressivoQuesito)) {
-                    
-                    echo '<script>
-                        window.alert("Quesito salvato con successo. Procedi ora a collegare le tabelle.");
-                        window.location.href = "collegaTabelle.php?id=' . $titoloTest . ';' . $numeroProgressivoQuesito . ';' . $numeroRisposte . '";
-                    </script>';
-                    
-
-
-                
-                }
-
-            
-
- 
+            if (isset($numeroProgressivoQuesito)) {
+                echo '<script>
+                window.alert("Quesito salvato con successo. Procedi ora a collegare le tabelle.");
+                window.location.href = "collegaTabelle.php?id=' . $titoloTest . ';' . $numeroProgressivoQuesito . ';' . $numeroRisposte . '";
+                </script>';    
+            }
         }
+
         ?>
 
         <form id="quesitoForm" method="post" action="inserisciQuesito.php">
@@ -169,7 +149,7 @@ include '../../Condiviso/Quesito.php';
                     </div>
 
                     <div>
-                        <label class="label" for="numeroRisposte">Quante soluzioni vuoi inserire:</label>
+                        <label class="label" for="numeroRisposte">Quante soluzioni / opzioni risposta vuoi inserire:</label>
                         <input class="areaInserimento" type="number" name='numeroRisposte' id="numeroRisposte" name="numeroRisposte" min="1" max="5" step="1">
                     </div>
 

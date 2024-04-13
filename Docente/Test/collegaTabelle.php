@@ -20,7 +20,6 @@ include '../../Condiviso/Quesito.php';
             padding: 0;
             background-color: #f9acac;
         }
-
         .container {
             text-align: center;
             width: 70%;
@@ -29,14 +28,12 @@ include '../../Condiviso/Quesito.php';
             background-color: #f9acac;
             border-radius: 5px;
         }
-
         .divQuesiti {
             background-color: #fcfcf0;
             margin: auto;
             width: 30%;
             height: 30%;
         }
-
         .button {
             width: auto;
             height: auto;
@@ -49,13 +46,11 @@ include '../../Condiviso/Quesito.php';
             color: #222222;
             background-color: #acf9ba;
         }
-
         .areaInserimento {
             width: 40%;
             display: block;
             margin: auto;
         }
-
         .label {
             text-align: center;
             font-family: sans-serif;
@@ -64,7 +59,6 @@ include '../../Condiviso/Quesito.php';
             color: black;
             display: block;
         }
-
         .test-item {
             padding: 10px;
             margin-bottom: 5px;
@@ -72,23 +66,18 @@ include '../../Condiviso/Quesito.php';
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-
         .form-group {
             margin-bottom: 10px;
         }
-
         .quesitoLabel {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
         }
-
-
         .listBox {
             width: auto;
         }
-
         .areaInserimento {
             width: 50%;
             height: 50px;
@@ -124,10 +113,10 @@ include '../../Condiviso/Quesito.php';
                 $titoloTest = $_POST['titoloTest'];
                 $numeroProgressivoQuesito = $_POST['numeroProgressivoQuesito'];
                 $numeroRisposte = $_POST['numeroRisposte'];
-                
                 $TabDaCollegare = $_POST['TabDaCollegare'];
-                 // Collegamento del quesito alla tabella
-                try{
+
+                // Collegamento del quesito alla tabella
+                try {
                     $sql_collegaTabella = $quesito->collegaTabella($numeroProgressivoQuesito, $titoloTest, $TabDaCollegare); 
                     if ($sql_collegaTabella){
                         $booleanCollegamento = true;
@@ -137,7 +126,6 @@ include '../../Condiviso/Quesito.php';
                     echo "Errore: tabella già collegata al quesito";
                     $resultTabelle = $tabella->ottieniTutteTabelle();
                 }
-
                 
             } else if (isset($_POST['continua'])) {
                 //Controllo che sia stata collegata almeno una tabella
@@ -161,9 +149,8 @@ include '../../Condiviso/Quesito.php';
                     echo "Collega almeno una tabella";
                 }
             }
-
- 
         }
+
         ?>
 
         <form id="quesitoForm" method="post" action="collegaTabelle.php">
@@ -173,7 +160,6 @@ include '../../Condiviso/Quesito.php';
             <VerticalPanel id="pannello">
                 <div>
                     <h4>Collegamento Quesito a Tabella</h4>
-                    <h5>Dopo aver salvato il Quesito, seleziona una o più tabelle a cui vuoi collegare il quesito</h5>
                     <label class="label" for="LabelTab">A quale tabella vuoi collegare il quesito:</label>
                     <select class="listBox" id="TabelleDaCollegare" name="TabDaCollegare">
                         <?php while ($row = $resultTabelle->fetch_assoc()) {

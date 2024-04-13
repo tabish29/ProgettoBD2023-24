@@ -25,14 +25,13 @@
             background-color: #f9acac;
             border-radius: 5px;
         }
-        
-        .divQuesiti{
+        .divQuesiti {
             background-color: #fcfcf0;
             margin: auto;
             width: 30%;
             height: 30%;
         }
-        .salvaBtn{
+        .salvaBtn {
             width: auto;
             height: auto;
             border: 1px solid #222222;
@@ -44,8 +43,7 @@
             color: #222222;
             background-color: #acf9ba; 
         }
-        
-        .areaInserimento{
+        .areaInserimento {
             width: 40%;
             display: block;
             margin:auto;
@@ -58,7 +56,6 @@
             color: black;
             display: block;
         }
-
         .test-item {
             padding: 10px;
             margin-bottom: 5px;
@@ -69,19 +66,16 @@
         .form-group {
             margin-bottom: 10px;
         }
-       
-        .quesitoLabel{
+        .quesitoLabel {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
         }
-        
-        
-        .listBox{
+        .listBox {
             width: auto;
         }
-        .areaInserimento{
+        .areaInserimento {
             width: 50%;
             height: 50px;
         }
@@ -99,17 +93,16 @@
                 array_push($datiTest, $campiSchermataPrecedente[1]); 
                 array_push($datiTest, $campiSchermataPrecedente[2]); 
                 array_push($datiTest, $campiSchermataPrecedente[3]);         
-                array_push($datiTest, 0); 
+                array_push($datiTest, 0);
                 
                 $_SESSION['datiTestAttuale'] = $datiTest;
                 $conn->next_result();
                 //echo "titolo: " . $titoloTest . " tipo: " . $tipoQuesito . " num: " . $numQuesito;
             }
 
-
             if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['datiTestAttuale']) && !empty($_SESSION['datiTestAttuale'])) {
-                $datiTest = $_SESSION['datiTestAttuale'];
                 
+                $datiTest = $_SESSION['datiTestAttuale'];
                 $valoreInserito = $_POST['soluzioneT'];
                 $_SESSION['datiTestAttuale'][4] = $datiTest[4] + 1;
                 $datiTest = $_SESSION['datiTestAttuale'];
@@ -136,6 +129,7 @@
                         echo "<label><br>Inserimento avvenuto con successo</label>";
                         $datiTest[4]++;
                     }
+
                 } else if ($datiTest[3] - $datiTest[4] == 0){
                     if ($datiTest[1] == "RC"){
                         $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
@@ -161,10 +155,9 @@
                 /*
                     header("Location: modificaTest.php?id=$titolo");
                     exit;*/
-                } 
-                
-                
+                }
             }
+
         ?>
         
         <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
@@ -176,12 +169,10 @@
             </div>
             <input type="submit" class="salvaBtn" id="settaRispostaCorretta" value="Aggiungi Risposta">
         </form>
-
         
     </div>
 
     <script>
-        
 
         function aggiungiCampo() {
             var soluzioneInput = document.getElementById('soluzioneT');
@@ -189,11 +180,10 @@
             var campoTestoInput = document.getElementById('campoTestoT');
             campoTestoInput.value = ''; // Svuota il campo "campoTestoT"
         }
-
         
         function setSubmitAction(action) {
             document.getElementById('submitAction' + action).value = action;
         }
 
-
     </script>
+</body>
