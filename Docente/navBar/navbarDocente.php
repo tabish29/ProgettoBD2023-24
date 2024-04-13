@@ -44,8 +44,6 @@
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       height: auto;
       width: auto;
-      float: right; 
-
     }
     .containerNav p{
       text-align: center;
@@ -68,6 +66,9 @@
       margin: 0;
       width: auto;
     }
+    .altoDestra{
+      float: right;
+    }
   </style>
 </head>
 <body>
@@ -84,8 +85,9 @@
           <li <?php echo basename($_SERVER['PHP_SELF']) == 'gestioneTabelle.php' ? 'class="active"' : ''; ?>>
             <a href="gestioneTabelle.php">Gestione Tabelle</a>
           </li>
+      </div>
+      <div class='altoDestra'>
         <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../'">Logout</button>
-
       </div>
 
     </nav>

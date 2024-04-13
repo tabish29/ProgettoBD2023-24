@@ -151,9 +151,7 @@
                     $datiQuesiti[] = $row;
                     
                 }
-            } else {
-                echo "Nessun quesito presente";
-            }
+            } 
             return $datiQuesiti;
         }  
         

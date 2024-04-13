@@ -242,7 +242,6 @@ BEGIN
     END IF;
 END
 // DELIMITER ;
-
 # Faccio mettere in input il progressivo al docente, dovrà essere visibile nel programma
 -- OK
 DELIMITER //
@@ -596,5 +595,16 @@ CREATE PROCEDURE eliminaQuesito(
 )
 BEGIN
     DELETE FROM QUESITO WHERE TitoloTest = titoloTestTemp AND NumeroProgressivo = numeroProgressivoTemp;
+END
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE verificaPresenzaCollegamento(
+    IN titoloTestTemp VARCHAR(20),
+    IN numeroProgressivoTemp INT,
+    OUT presente BOOLEAN
+)
+BEGIN
+    SELECT COUNT(*) INTO presente FROM COSTITUZIONE WHERE TitoloTest = titoloTestTemp AND NumeroProgressivoQuesito = numeroProgressivoTemp;
 END
 // DELIMITER ;

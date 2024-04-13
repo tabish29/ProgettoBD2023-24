@@ -1,6 +1,7 @@
 <?php
 include '../../connessione.php';
 include '../../Condiviso/Tabella.php';
+include '../../Condiviso/Quesito.php';
     if (!isset($_SESSION)) {
         session_start();
     }
@@ -36,7 +37,7 @@ include '../../Condiviso/Tabella.php';
             height: 30%;
         }
 
-        .salvaBtn {
+        .buttonQuesiti {
             width: auto;
             height: auto;
             border: 1px solid #222222;
@@ -101,8 +102,7 @@ include '../../Condiviso/Tabella.php';
         <?php
 
         // Ottenere tutte le tabelle di esercizio
-        $tabella = new Tabella();
-        $resultTabelle = $tabella->ottieniTutteTabelle();
+        $quesito = new Quesito();
 
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -111,109 +111,77 @@ include '../../Condiviso/Tabella.php';
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
             $titoloTest = $_POST['titoloTest'];
+            
             $tipoQuesito = $_POST['tipoQuesito'];
-            $livDifficolta = $_POST['livDifficolta'];
-            $descrizione = $_POST['descrizione'];
-            $numeroRisposte = $_POST['numeroRisposte'];
-            $TabDaCollegare = $_POST['TabDaCollegare'];
+                $livDifficolta = $_POST['livDifficolta'];
+                $descrizione = $_POST['descrizione'];
+                $numeroRisposte = $_POST['numeroRisposte'];
 
-            $booleanCreazioneQuesito = false;
-            $booleanCreazioneCostituzione = false;
+                if ($tipoQuesito == 'RC') {
+                    $numeroProgressivoQuesito = $quesito->creaQuesitoRispostaChiusa($titoloTest, $livDifficolta, $descrizione);
+                } else if ($tipoQuesito == 'COD') {
+                    $numeroProgressivoQuesito = $quesito->creaQuesitoCodice($titoloTest, $livDifficolta, $descrizione);
+                }
 
-            $sql_creaQuesitoQuery = '';
-            if ($tipoQuesito == 'RC') {
-                $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
-                $booleanCreazioneQuesito = true;
-            } else if ($tipoQuesito == 'COD') {
-                $sql_creaQuesitoQuery = "CALL CreazioneQuesitoCodice('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
-                $booleanCreazioneQuesito = true;
-            }
-            if ($conn->query($sql_creaQuesitoQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
-                echo "<p>Errore nella creazione del quesito: " . $conn->error . "</p>";
-            }
+                if (isset($numeroProgressivoQuesito)) {
+                    
+                    echo '<script>
+                        window.alert("Quesito salvato con successo. Procedi ora a collegare le tabelle.");
+                        window.location.href = "collegaTabelle.php?id=' . $titoloTest . ';' . $numeroProgressivoQuesito . '";
+                    </script>';
+                    
 
-            // Collegamento del quesito alla tabella
-            $sql_creaCostituzioneQuery = '';
-            if($resultTabelle->num_rows > 0){
-                $sql_creaCostituzioneQuery = "CALL CreazioneCostituzione(@numeroProgressivoQuesito, '$titoloTest', '$TabDaCollegare')";
-                $booleanCreazioneCostituzione = true;
-            }
-            if ($conn->query($sql_creaCostituzioneQuery) === FALSE || mysqli_affected_rows($conn) == 0) {
-                echo "<p>Errore nel collegamento del quesito alla tabella: " . $conn->error . "</p>";
-            }
 
-            if($booleanCreazioneQuesito && $booleanCreazioneCostituzione){
-                // Recupero del valore di output
-                $result = $conn->query("SELECT @NumeroProgressivoQuesito AS NumeroProgressivo");
-                $row = $result->fetch_assoc();
-                $numeroProgressivoQuesito = $row['NumeroProgressivo'];
-                header('Location: inserisciQuesitoSpecifico.php?id=' . $numeroProgressivoQuesito . ';' . $tipoQuesito);
-                exit;
-            }
+                
+                }
+
+            
+
+ 
         }
         ?>
 
         <form id="quesitoForm" method="post" action="inserisciQuesito.php">
             <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
             <VerticalPanel id="pannello">
-                <div class="form-group">
-                    <label class="label" for="tipoQuesito">Tipo di quesito:</label>
-                    <select class="listBox" id="tipoQuesito" name="tipoQuesito">
-                        <option value="RC" selected>Quesito a Risposta Chiusa</option>
-                        <option value="COD">Quesito di Codice</option>
-                    </select>
-                </div>
+                <div name='creazioneQuesito'>
+                    <div class="form-group">
+                        <label class="label" for="tipoQuesito">Tipo di quesito:</label>
+                        <select class="listBox" id="tipoQuesito" name="tipoQuesito">
+                            <option value="RC" selected>Quesito a Risposta Chiusa</option>
+                            <option value="COD">Quesito di Codice</option>
+                        </select>
+                    </div>
 
-                <div>
-                    <label class="label" for="livelloDifficolta">Livello di difficoltà:</label>
-                    <select class="listBox" id="livelloDifficoltaSelect" name="livDifficolta">
-                        <option value="Basso" selected>Basso</option>
-                        <option value="Medio">Medio</option>
-                        <option value="Alto">Alto</option>
-                    </select>
-                </div>
+                    <div>
+                        <label class="label" for="livelloDifficolta">Livello di difficoltà:</label>
+                        <select class="listBox" id="livelloDifficoltaSelect" name="livDifficolta">
+                            <option value="Basso" selected>Basso</option>
+                            <option value="Medio">Medio</option>
+                            <option value="Alto">Alto</option>
+                        </select>
+                    </div>
 
-                <div>
-                    <label class="label" for="descrizione">Descrizione:</label>
-                    <input class="areaInserimento" type="text" id="descrizione" name="descrizione">
-                </div>
+                    <div>
+                        <label class="label" for="descrizione">Descrizione:</label>
+                        <input class="areaInserimento" type="text" id="descrizione" name="descrizione">
+                    </div>
 
-                <div>
-                    <label class="label" for="numeroRisposte">Quante soluzioni vuoi inserire:</label>
-                    <input class="areaInserimento" type="number" id="numeroRisposte" name="numeroRisposte" min="1" max="5" step="1">
-                </div>
+                    <div>
+                        <label class="label" for="numeroRisposte">Quante soluzioni vuoi inserire:</label>
+                        <input class="areaInserimento" type="number" id="numeroRisposte" name="numeroRisposte" min="1" max="5" step="1">
+                    </div>
 
-                <div>
-                    <input type="submit" class="salvaBtn" id="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
+                    <div>
+                        <input type="submit" class="buttonQuesiti" name="salvataggioQuesito" value="Salva" data-action="salvataggioQuesito">
+                    </div>
                 </div>
-
-                <div>
-                    <h4>Collegamento Quesito a Tabella</h4>
-                    <h5>Dopo aver salvato il Quesito, seleziona una o più tabelle a cui vuoi collegare il quesito</h5>
-                    <label class="label" for="LabelTab">A quale tabella vuoi collegare il quesito:</label>
-                    <select class="listBox" id="TabelleDaCollegare" name="TabDaCollegare">
-                        <?php while ($row = $resultTabelle->fetch_assoc()) {
-                            echo "<option value='" . $row['Nome'] . "'>" . $row['Nome'] . "</option>";
-                        } if (mysqli_num_rows($resultTabelle) == 0) {
-                            echo "<option value='Nessuna tabella disponibile'>Nessuna tabella disponibile</option>";
-                        } 
-                        ?>
-                    </select>
-                    <input type="submit" class="salvaBtn" id="collegaTabella" value="Collega">
-                    <label class="label" for="TabellaCollegata">Tabelle Attualmente Collegate al Quesito:</label>
-                    <input class="areaInserimento" type="text" id="TabellaCollegata" name="TabellaCollegata" readonly>
-                </div>
-
-                <div>
-                    <h5>Dopo aver collegato il quesito ad almeno una tabella e salvato i suoi dati, clicca su continua</h5>
-                    <input type="submit" class="salvaBtn" id="Continua" value="Continua" data-action="Continua">
-                </div>
-
             </VerticalPanel>
 
         </form>
-        <button id="modificaTest" class="salvaBtn" onclick="window.location.href='modificaTest.php?id=<?php echo $titoloTest; ?>'">Back</button>
+        <button id="modificaTest" class="buttonQuesiti" onclick="window.location.href='modificaTest.php?id=<?php echo $titoloTest; ?>'">Back</button>
 
     </div>
+    
+</body>
