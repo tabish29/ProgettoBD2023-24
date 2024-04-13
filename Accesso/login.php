@@ -171,7 +171,7 @@ include '../Condiviso/Utente.php';
                         </script>';
                 } else if ($ruolo_login === "studente") {
                     echo '<script>window.alert("Accesso effettuato!");
-                            window.location.href = "../Studente/testStudenti.php";
+                            window.location.href = "../Studente/navBar/testStudenti.php";
                         </script>';
                 }
             }

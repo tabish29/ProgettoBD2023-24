@@ -212,6 +212,20 @@
             }
             return $datiSoluzioni;
         }
+
+        function getStatoCompletamento($titoloTest, $emailStudente) {
+             
+            $sql_stato_completamento = "SELECT Stato FROM COMPLETAMENTO WHERE TitoloTest = '$titoloTest' AND EmailStudente = '$emailStudente'";
+            $result_stato_completamento = $_SESSION['conn']->query($sql_stato_completamento);
+            if ($result_stato_completamento->num_rows > 0) {
+                $stato = $result_stato_completamento->fetch_assoc()['Stato'];
+                return $stato;
+            } else {
+                return false;
+            }
+
+            
+        }
     }
     
 ?>
