@@ -110,12 +110,10 @@ include '../../Condiviso/Quesito.php';
 
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            echo "sono qui";
             $datiSchermataPrecedente = explode(';', $_GET['id']);
             $titoloTest = $datiSchermataPrecedente[0];
             $numeroProgressivoQuesito = $datiSchermataPrecedente[1];
             $numeroRisposte = $datiSchermataPrecedente[2];
-            echo "numeroRisposte:" . $numeroRisposte;
             echo "<h3>Test: $titoloTest</h3>";
 
         }

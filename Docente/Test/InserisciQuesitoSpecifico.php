@@ -119,7 +119,7 @@
                 $titolo = $datiTest[2];
                 $numProgressivoQuesito = $datiTest[0];
                 if ($datiTest[3] - $datiTest[4] > 0){
-                    echo "Devi inserire ancora " . ($datiTest[3] - $datiTest[4]) . " risposte";
+                    echo "<label>Devi inserire ancora " . ($datiTest[3] - $datiTest[4]) . " risposte</label>";
 
                     if ($datiTest[1] == "RC"){
                         $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
@@ -133,7 +133,7 @@
                     if ($conn->query($sql_queryNuovaOpzioneOSoluzione) === FALSE || mysqli_affected_rows($conn) == 0){
                         echo "<p>Errore nell'inserimento: " . $conn->error . "</p>";
                     } else {
-                        echo "<p>Inserimento avvenuto con successo</p>";
+                        echo "<label><br>Inserimento avvenuto con successo</label>";
                         $datiTest[4]++;
                     }
                 } else if ($datiTest[3] - $datiTest[4] == 0){
@@ -170,7 +170,7 @@
         <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
             <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
             <div class="form-group">
-                <h4 class="quesitoLabel">Ti mancano <?php echo ($datiTest[3]); ?> risposte da inserire nel quesito</h4>
+                <h4 class="quesitoLabel">Devi inserire <?php echo ($datiTest[3]); ?> risposte</h4>
                 <label class="label"for="soluzioneT">Testo Risposta:</label>
                 <input type="text" class="areaInserimento" id="soluzioneT" name="soluzioneT">
             </div>
