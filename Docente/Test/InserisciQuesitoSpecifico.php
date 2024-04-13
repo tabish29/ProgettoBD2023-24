@@ -149,8 +149,15 @@
                     echo "<p>Numero massimo di risposte raggiunto</p>";
                     $titolo = $datiTest[2];
                     unset($_SESSION['datiTestAttuale']);
-                    header('Location: selezionaRispostaCorretta.php?id=' . $titolo . ";" . $numProgressivoQuesito);
-                    exit;
+                    if ($datiTest[1] == "RC"){
+                        header('Location: selezionaRispostaCorretta.php?id=' . $titolo . ";" . $numProgressivoQuesito);
+                        exit;
+                    }
+                    else {
+                        header('Location: modificaTest.php?id=' . $titolo);
+                        exit;
+                    }
+                    
                 /*
                     header("Location: modificaTest.php?id=$titolo");
                     exit;*/
