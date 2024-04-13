@@ -117,5 +117,12 @@ class Quesito{
 
     }
 
+    function setOpzioneRispostaCorretta($titoloTest, $numeroProgressivoQuesito, $rispostaSelezionata){
+        $sql_inserisciRispostaCorretta = "CALL setOpzioneRispostaCorretta('$titoloTest', '$numeroProgressivoQuesito', '$rispostaSelezionata')";
+        $risultato = $_SESSION['conn']->query($sql_inserisciRispostaCorretta);
+        $_SESSION['conn']->next_result();
+        return $risultato;
+    }
+
 }
 ?>

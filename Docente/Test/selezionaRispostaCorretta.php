@@ -1,5 +1,6 @@
 <?php
 include "../../connessione.php";
+include '../../Condiviso/Quesito.php';
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -59,7 +60,7 @@ if (!isset($_SESSION)) {
         }
         $campiTesto = array();
         while ($riga = $risultato->fetch_assoc()) {
-            echo "Risposta: " . $riga['CampoTesto'] . " ";
+            echo "Risposta: " . $riga['CampoTesto'] . "; ";
             $campiTesto[] = $riga['CampoTesto'];
         }
         ?>

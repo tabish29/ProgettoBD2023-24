@@ -292,13 +292,13 @@ DELIMITER //
 CREATE PROCEDURE SetOpzioneRispostaCorretta (
     IN TitoloTestTemp VARCHAR(20),
     IN NumeroProgressivoQuesitoTemp INT,
-    IN NumeroProgressivoOpzioneRispostaTemp INT
+    IN CampoTestoTemp VARCHAR(40)
 )
 BEGIN
 	UPDATE OPZIONERISPOSTA
     SET rispostaCorretta = true
     WHERE ((TitoloTestTemp=TitoloTest) AND (NumeroProgressivoQuesitoTemp=NumeroProgressivoQuesito)
-		AND (NumeroProgressivoOpzioneRispostaTemp=NumeroProgressivoOpzione));
+		AND (CampoTestoTemp=CampoTesto));
     
 END 
 // DELIMITER ;

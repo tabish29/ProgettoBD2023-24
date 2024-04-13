@@ -163,10 +163,10 @@
         <form id="quesitoForm" method="post" action="inserisciQuesitoSpecifico.php">
             <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
             <div class="form-group">
-                <h4 class="quesitoLabel">Devi inserire <?php echo ($datiTest[3]); ?> risposte</h4>
                 <label class="label"for="soluzioneT">Testo Risposta:</label>
                 <input type="text" class="areaInserimento" id="soluzioneT" name="soluzioneT">
             </div>
+            <h4 class="quesitoLabel">Devi inserire <?php echo ($datiTest[3]); ?> risposte in totale</h4>
             <input type="submit" class="salvaBtn" id="settaRispostaCorretta" value="Aggiungi Risposta">
         </form>
         
