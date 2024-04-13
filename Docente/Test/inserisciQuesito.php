@@ -149,7 +149,7 @@ include '../../Condiviso/Quesito.php';
                     </div>
 
                     <div>
-                        <label class="label" for="numeroRisposte">Quante soluzioni / opzioni risposta vuoi inserire:</label>
+                        <label class="label" for="numeroRisposte">Quante <span id="tipoElemento">opzioni risposta</span> vuoi inserire:</label>
                         <input class="areaInserimento" type="number" name='numeroRisposte' id="numeroRisposte" name="numeroRisposte" min="1" max="5" step="1">
                     </div>
 
@@ -163,5 +163,19 @@ include '../../Condiviso/Quesito.php';
         <button id="modificaTest" class="buttonQuesiti" onclick="window.location.href='modificaTest.php?id=<?php echo $titoloTest; ?>'">Back</button>
 
     </div>
+
+    <script>
+        document.getElementById('tipoQuesito').addEventListener('change', function() {
+            var tipoQuesito = this.value;
+            var tipoElemento = document.getElementById('tipoElemento');
+            // Modifica il testo in base al valore selezionato nella listbox
+            if (tipoQuesito === 'RC') {
+                tipoElemento.textContent = 'opzioni risposta';
+            } else if (tipoQuesito === 'COD') {
+                tipoElemento.textContent = 'soluzioni';
+            }
+        });
+    </script>
+
     
 </body>
