@@ -22,7 +22,6 @@ include '../../Condiviso/Test.php';
             height: auto;
             background-color: #f9acac;
         }
-
         .container {
             width: auto;
             height: auto;
@@ -32,14 +31,11 @@ include '../../Condiviso/Test.php';
             border-radius: 5px;
 
         }
-
-
         .test-list {
             list-style-type: none;
             padding: 0;
 
         }
-
         .testListH2 {
             text-align: center;
             margin-bottom: 20px;
@@ -48,7 +44,6 @@ include '../../Condiviso/Test.php';
             font-weight: bold;
             font-size: medium;
         }
-
         .test-item {
             padding: 10px;
             width: 500px;
@@ -58,7 +53,6 @@ include '../../Condiviso/Test.php';
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-
         .test-item p,
         .test-item label {
             text-align: left;
@@ -67,32 +61,24 @@ include '../../Condiviso/Test.php';
             font-size: small;
             font: Arial;
         }
-
         .test-item:hover {
             background-color: #9c9c9c;
             /* Cambia colore al passaggio del mouse */
         }
-
         .test-item:last-child {
             margin-bottom: 0;
             /* Rimuove il margine inferiore dall'ultimo elemento */
         }
-
-
-
         input {
             margin: 0.4rem;
         }
-
         .containerBtn {
             text-align: center;
 
         }
-
         .labelBold {
             font-weight: bold;
         }
-
         .test-item p,
         .test-item label {
             font-size: 15px;
@@ -110,11 +96,18 @@ include '../../Condiviso/Test.php';
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
     button{
-        color: white;
-        background-color: #9c9c9c;
+        color: black;
+        background-color: #ffcc00;
         border: none;
         padding: 10px 20px;
         margin-right: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: hand;
+
     }
     </style>
 </head>

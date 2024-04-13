@@ -43,6 +43,7 @@
             font-style: normal;
             color: #222222;
             background-color: #acf9ba; 
+            cursor: pointer;
         }
         .areaInserimento {
             width: 40%;

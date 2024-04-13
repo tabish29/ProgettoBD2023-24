@@ -46,6 +46,7 @@ include '../../Condiviso/Quesito.php';
             font-style: normal;
             color: #222222;
             background-color: #acf9ba;
+            cursor: pointer;
         }
         .areaInserimento {
             width: 40%;
@@ -78,6 +79,7 @@ include '../../Condiviso/Quesito.php';
         }
         .listBox {
             width: auto;
+            cursor: pointer;
         }
         .areaInserimento {
             width: 50%;

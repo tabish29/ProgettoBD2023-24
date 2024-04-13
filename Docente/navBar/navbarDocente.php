@@ -44,7 +44,9 @@
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       height: auto;
       width: auto;
+      cursor: pointer;
     }
+
     .containerNav p{
       text-align: center;
       font: sans-serif;

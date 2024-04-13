@@ -51,6 +51,7 @@
             font-style: normal;
             color: #222222;
             background-color: #7cfc00;
+            cursor: pointer;
         }
         .quesitoLabel {
             font-size: 16px;
