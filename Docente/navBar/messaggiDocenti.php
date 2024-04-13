@@ -85,16 +85,11 @@ include '../../Condiviso/Messaggio.php';
         }
 
         .btnInvia {
-            width: auto;
-            height: auto;
-            border: 1px solid #222222;
-            padding: 3px;
-            margin: 0px;
-            font-size: 16px;
-            font-weight: bold;
-            font-style: normal;
-            color: #222222;
-            background-color: #7cfc00;
+            color: white;
+            background-color: #9c9c9c;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
         }
 
         .labelBold {
@@ -118,7 +113,7 @@ include '../../Condiviso/Messaggio.php';
         $messaggio = new Messaggio();
         echo "<h2 class='messH2'>Messaggi ricevuti: </h2>";
         $email_login = $_SESSION['email'];
-        $messaggiRicevuti = $messaggio->getMessaggiRicevuti($email_login);
+        $messaggiRicevuti = $messaggio->getMessaggiRicevutiDocente($email_login);
 
         if ($messaggiRicevuti->num_rows > 0) {
             // Stampa i valori di tutti i messaggi
@@ -138,7 +133,7 @@ include '../../Condiviso/Messaggio.php';
         }
 
         echo "<h2 class='messH2'>Messaggi inviati:</h2>";
-        $messaggiInviati = $messaggio->getMessaggiInviati($email_login);
+        $messaggiInviati = $messaggio->getMessaggiInviatiDocente($email_login);
 
         if ($messaggiInviati->num_rows > 0) {
             // Stampa i valori di tutti i messaggi

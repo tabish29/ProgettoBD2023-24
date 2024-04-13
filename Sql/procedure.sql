@@ -608,3 +608,14 @@ BEGIN
     SELECT COUNT(*) INTO presente FROM COSTITUZIONE WHERE TitoloTest = titoloTestTemp AND NumeroProgressivoQuesito = numeroProgressivoTemp;
 END
 // DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE ricezioneMessaggiStudente(
+    IN emailStudenteTemp VARCHAR(100)
+)
+BEGIN
+    SELECT * 
+    FROM messaggio as M, ricezionestudente as S
+    WHERE (M.Id = S.Id) AND (emailStudenteTemp = S.EmailStudenteDestinatario) AND (M.TitoloTest=S.TitoloTest);
+END
+// DELIMITER ;
