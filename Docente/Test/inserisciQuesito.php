@@ -128,7 +128,7 @@ include '../../Condiviso/Quesito.php';
                     
                     echo '<script>
                         window.alert("Quesito salvato con successo. Procedi ora a collegare le tabelle.");
-                        window.location.href = "collegaTabelle.php?id=' . $titoloTest . ';' . $numeroProgressivoQuesito . '";
+                        window.location.href = "collegaTabelle.php?id=' . $titoloTest . ';' . $numeroProgressivoQuesito . ';' . $numeroRisposte . '";
                     </script>';
                     
 
@@ -170,7 +170,7 @@ include '../../Condiviso/Quesito.php';
 
                     <div>
                         <label class="label" for="numeroRisposte">Quante soluzioni vuoi inserire:</label>
-                        <input class="areaInserimento" type="number" id="numeroRisposte" name="numeroRisposte" min="1" max="5" step="1">
+                        <input class="areaInserimento" type="number" name='numeroRisposte' id="numeroRisposte" name="numeroRisposte" min="1" max="5" step="1">
                     </div>
 
                     <div>

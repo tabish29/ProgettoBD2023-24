@@ -110,20 +110,23 @@ include '../../Condiviso/Quesito.php';
 
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            echo "sono qui";
             $datiSchermataPrecedente = explode(';', $_GET['id']);
             $titoloTest = $datiSchermataPrecedente[0];
             $numeroProgressivoQuesito = $datiSchermataPrecedente[1];
+            $numeroRisposte = $datiSchermataPrecedente[2];
+            echo "numeroRisposte:" . $numeroRisposte;
             echo "<h3>Test: $titoloTest</h3>";
 
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            echo "qui";
             if (isset($_POST['salvataggioCollegamento'])) {
-                echo "qui2";
 
                 $titoloTest = $_POST['titoloTest'];
                 $numeroProgressivoQuesito = $_POST['numeroProgressivoQuesito'];
+                $numeroRisposte = $_POST['numeroRisposte'];
+                
                 $TabDaCollegare = $_POST['TabDaCollegare'];
                  // Collegamento del quesito alla tabella
                 try{
@@ -139,14 +142,22 @@ include '../../Condiviso/Quesito.php';
 
                 
             } else if (isset($_POST['continua'])) {
-                echo "qui3 " . $booleanCollegamento;
                 //Controllo che sia stata collegata almeno una tabella
                 $titoloTest = $_POST['titoloTest'];
                 $numeroProgressivoQuesito = $_POST['numeroProgressivoQuesito'];
+                $numeroRisposte = $_POST['numeroRisposte'];
                 $sql = $quesito->verificaPresenzaCollegamento($titoloTest, $numeroProgressivoQuesito);
-                echo "sql:" . $sql;
+                
                 if($sql){
-                    header('Location: inserisciQuesitoSpecifico.php?id=' . $numeroProgressivoQuesito . ';' . $tipoQuesito);
+                    $tipoQuesito = $quesito->ottieniTipologiaQuesito($titoloTest, $numeroProgressivoQuesito);
+
+                    if ($tipoQuesito == "Risposta Chiusa"){
+                        $tipoQuesito = "RC";
+                    } else {
+                        $tipoQuesito = "COD";
+                    }
+                    echo "numeroProgressivoQuesito: " . $numeroProgressivoQuesito . " tipoQuesito: " . $tipoQuesito . " titoloTest: " . $titoloTest . " numeroRisposte: " . $numeroRisposte;
+                    header('Location: inserisciQuesitoSpecifico.php?id=' . $numeroProgressivoQuesito . ';' . $tipoQuesito . ';' . $titoloTest . ';' . $numeroRisposte);
                     exit;
                 } else {
                     echo "Collega almeno una tabella";
@@ -160,6 +171,7 @@ include '../../Condiviso/Quesito.php';
         <form id="quesitoForm" method="post" action="collegaTabelle.php">
             <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
             <input type="hidden" name="numeroProgressivoQuesito" value="<?php echo $numeroProgressivoQuesito; ?>">
+            <input type="hidden" name="numeroRisposte" value="<?php echo $numeroRisposte; ?>">
             <VerticalPanel id="pannello">
                 <div>
                     <h4>Collegamento Quesito a Tabella</h4>

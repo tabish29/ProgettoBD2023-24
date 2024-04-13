@@ -96,17 +96,9 @@
                 $datiTest = []; // NumProgressivo, Tipo, TitoloTest, NumeroRisposte, NumeroRisposteInserite 
                 $campiSchermataPrecedente = explode(";",$_GET['id']);
                 array_push($datiTest, $campiSchermataPrecedente[0]);   
-                array_push($datiTest, $campiSchermataPrecedente[1]);             
-
-                $sql_ottieniDatiQuesito = "SELECT TitoloTest, NumeroRisposte FROM Quesito WHERE NumeroProgressivo = $datiTest[0]";
-                $result = $conn->query($sql_ottieniDatiQuesito);
-                if ($result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    $titoloTest = $row['TitoloTest'];
-                    $numRisposte = $row['NumeroRisposte'];
-                    array_push($datiTest, $titoloTest);
-                    array_push($datiTest, $numRisposte);
-                }
+                array_push($datiTest, $campiSchermataPrecedente[1]); 
+                array_push($datiTest, $campiSchermataPrecedente[2]); 
+                array_push($datiTest, $campiSchermataPrecedente[3]);         
                 array_push($datiTest, 0); 
                 
                 $_SESSION['datiTestAttuale'] = $datiTest;
