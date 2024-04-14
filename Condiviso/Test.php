@@ -225,6 +225,13 @@
             }
  
         }
+
+        function aggiornaTest($titolo, $visualizza_risposte){
+            $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
+            $risultato = $_SESSION['conn']->query($sql_update_test);
+            $_SESSION['conn']->next_result();
+            return $risultato;
+        }
     }
     
 ?>

@@ -46,6 +46,7 @@ if (!isset($_SESSION)) {
     <div class="container">
 
         <?php
+        $quesito = new Quesito();
         $titoloTest = "";
         $domanda = "";
         if (isset($_GET['id'])){
@@ -54,15 +55,15 @@ if (!isset($_SESSION)) {
             $domanda = $campiSchermataPrecedente[1];
         }
         
-        $ottieniCampoTesto = "SELECT * FROM opzionerisposta WHERE TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = '$domanda'";
-        $risultato = $conn->query($ottieniCampoTesto);
-        if (!$risultato || $risultato->num_rows == 0) {
+        $ottieniCampoTesto = $quesito->ottieniCampoTesto($titoloTest, $domanda);
+        
+        if ($ottieniCampoTesto == false) {
             echo "Errore nella query";
-        }
-        $campiTesto = array();
-        while ($riga = $risultato->fetch_assoc()) {
-            echo "Risposta: " . $riga['CampoTesto'] . "; ";
-            $campiTesto[] = $riga['CampoTesto'];
+        } else {
+            $campiTesto = array();
+            while ($riga = $ottieniCampoTesto->fetch_assoc()) {
+                $campiTesto[] = $riga['CampoTesto'];
+            }
         }
         ?>
 

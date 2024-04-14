@@ -39,7 +39,6 @@ class Quesito{
         $rispostaCorretta = $conn -> query($rispostaCorretta);
         $rispostaCorretta = $rispostaCorretta -> fetch_assoc();
         $rispostaCorretta = $rispostaCorretta['TestoSoluzione'];
-        echo "risposta corretta: " . $rispostaCorretta;
         return $rispostaCorretta;
 
     }
@@ -107,7 +106,6 @@ class Quesito{
         $result = $_SESSION['conn']->query($sql);
         $row = $result->fetch_assoc();
         $risultato = $row['Risultato'];
-        echo "Risultato: " . $risultato;
         $_SESSION['conn']->next_result();
         if ($risultato >= 1){
             return true;
@@ -122,6 +120,40 @@ class Quesito{
         $risultato = $_SESSION['conn']->query($sql_inserisciRispostaCorretta);
         $_SESSION['conn']->next_result();
         return $risultato;
+    }
+    
+    function inserimentoOpzioneRisposta($titoloTest, $numeroProgressivoQuesito, $campoTesto){
+        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$titoloTest',$numeroProgressivoQuesito, '$campoTesto',false)";
+        $risultato = $_SESSION['conn']->query($sql_queryNuovaOpzioneOSoluzione);
+        $_SESSION['conn']->next_result();
+        if ($risultato === FALSE || mysqli_affected_rows($_SESSION['conn']) == 0) {
+            return false;
+        } else {
+            return $risultato;
+        }
+    }
+
+    function inserimentoSoluzione($titoloTest, $numeroProgressivoQuesito, $testoSoluzione){
+        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoSoluzione('$titoloTest',$numeroProgressivoQuesito, '$testoSoluzione')";
+        $risultato = $_SESSION['conn']->query($sql_queryNuovaOpzioneOSoluzione);
+        $_SESSION['conn']->next_result();
+        if ($risultato === FALSE || mysqli_affected_rows($_SESSION['conn']) == 0) {
+            return false;
+        } else {
+            return $risultato;
+        }
+
+    }
+
+    function ottieniCampoTesto($titoloTest, $domanda){
+        $ottieniCampoTesto = "SELECT * FROM opzionerisposta WHERE TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = '$domanda'";
+        $risultato = $_SESSION['conn']->query($ottieniCampoTesto);
+        $_SESSION['conn']->next_result();
+        if (!$risultato || $risultato->num_rows == 0) {
+            return false;
+        } else {
+            return $risultato;
+        }
     }
 
 }

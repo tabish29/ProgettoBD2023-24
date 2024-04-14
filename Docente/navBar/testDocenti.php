@@ -131,7 +131,6 @@ include '../../Condiviso/Test.php';
             // Query per selezionare tutti i test
             $test = new Test();
             $result_all_tests = $test->ottieniTuttiITest();
-            $conn->next_result(); //Se no entra in conflitto con la query di funzioniPerTest
             // Verifica se ci sono test 
             if ($result_all_tests->num_rows > 0) {
                 graficaConTestPresenti();

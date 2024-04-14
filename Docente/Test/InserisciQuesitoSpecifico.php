@@ -1,5 +1,6 @@
 <?php
     include '../../connessione.php';
+    include '../../Condiviso/Quesito.php';
     if (!isset($_SESSION)){
         session_start();
     }
@@ -98,12 +99,12 @@
                 array_push($datiTest, 0);
                 
                 $_SESSION['datiTestAttuale'] = $datiTest;
-                $conn->next_result();
-                //echo "titolo: " . $titoloTest . " tipo: " . $tipoQuesito . " num: " . $numQuesito;
+                //$conn->next_result();
             }
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['datiTestAttuale']) && !empty($_SESSION['datiTestAttuale'])) {
                 
+                $quesito = new Quesito();
                 $datiTest = $_SESSION['datiTestAttuale'];
                 $valoreInserito = $_POST['soluzioneT'];
                 $_SESSION['datiTestAttuale'][4] = $datiTest[4] + 1;
@@ -117,12 +118,12 @@
                     echo "<label>Devi inserire ancora " . ($datiTest[3] - $datiTest[4]) . " risposte</label>";
 
                     if ($datiTest[1] == "RC"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
+                        $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoOpzioneRisposta($datiTest[2],$datiTest[0], $valoreInserito);
                     } else if ($datiTest[1] == "COD"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoSoluzione('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+                        $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoSoluzione($datiTest[2],$datiTest[0], $valoreInserito);
                     }
 
-                    if ($conn->query($sql_queryNuovaOpzioneOSoluzione) === FALSE || mysqli_affected_rows($conn) == 0){
+                    if ($sql_queryNuovaOpzioneOSoluzione == false){
                         echo "<p>Errore nell'inserimento: " . $conn->error . "</p>";
                     } else {
                         echo "<label><br>Inserimento avvenuto con successo</label>";
@@ -131,13 +132,11 @@
 
                 } else if ($datiTest[3] - $datiTest[4] == 0){
                     if ($datiTest[1] == "RC"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoOpzioneRisposta('$datiTest[2]',$datiTest[0], '$valoreInserito',false)";
+                        $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoOpzioneRisposta($datiTest[2],$datiTest[0], $valoreInserito);
                     } else if ($datiTest[1] == "COD"){
-                        $sql_queryNuovaOpzioneOSoluzione = "CALL InserimentoSoluzione('$datiTest[2]',$datiTest[0], '$valoreInserito')";
+                        $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoSoluzione($datiTest[2],$datiTest[0], $valoreInserito);
                     }
 
-                    $conn->query($sql_queryNuovaOpzioneOSoluzione);
-                    $conn->next_result();
                     $datiTest[4]++;
                     echo "<p>Numero massimo di risposte raggiunto</p>";
                     $titolo = $datiTest[2];
@@ -150,10 +149,7 @@
                         header('Location: modificaTest.php?id=' . $titolo);
                         exit;
                     }
-                    
-                /*
-                    header("Location: modificaTest.php?id=$titolo");
-                    exit;*/
+                   
                 }
             }
 
@@ -163,7 +159,7 @@
             <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
             <div class="form-group">
                 <label class="label"for="soluzioneT">Testo Risposta:</label>
-                <input type="text" class="areaInserimento" id="soluzioneT" name="soluzioneT">
+                <input type="text" class="areaInserimento" id="soluzioneT" name="soluzioneT" required>
             </div>
             <h4 class="quesitoLabel">Devi inserire <?php echo ($datiTest[3]); ?> risposte in totale</h4>
             <input type="submit" class="salvaBtn" id="settaRispostaCorretta" value="Aggiungi Risposta">

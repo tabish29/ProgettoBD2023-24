@@ -173,6 +173,10 @@
                     }
             }
 
+            /*
+            * ATTENZIONE: Se il Titolo ha uno spazio nel nome, la richiesta nel post non viene inviata correttamente
+            * e il test non viene aggiornato.
+            */
             function creaGraficaValoriComuni()
                 {
                     $testId = $_GET['id'];
@@ -203,14 +207,15 @@
                 $titolo = $_POST['titoloTest'];
                 $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
 
+                $test = new Test();
                 // Query SQL per aggiornare il test nel database
-                $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
+                $sql_Aggiornamento = $test->aggiornaTest($titolo, $visualizza_risposte);
 
                 // Esegue la query di aggiornamento
-                if ($conn->query($sql_update_test) === TRUE && mysqli_affected_rows($conn) > 0) {
+                if ($sql_Aggiornamento) {
                     echo '<script>
                                 window.alert("Test aggiornato con successo.");
-                                window.location.href = "testDocenti.php"; 
+                                window.location.href = "../navBar/testDocenti.php"; 
                             </script>';
                         exit(); 
                 } else {
