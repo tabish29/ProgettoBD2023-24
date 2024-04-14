@@ -93,7 +93,6 @@
                     foreach ($quesiti as $quesito) {
                         //Vedo la tipologia del Quesito
                         $tipologia = $QuesitoOggetto->ottieniTipologiaQuesito($titoloTest, $quesito['NumeroProgressivo']);
-                        echo "TIPOLOGIA: " . $tipologia . "<br>"; //TODO: sono bloccata qui perchè non crea più i quesiti
                         echo "<div class='divQuesiti'>";
                         echo "<span style=\"display: inline;\">";
                         // Aggiungi un campo di input di tipo checkbox con il nome del quesito come valore
