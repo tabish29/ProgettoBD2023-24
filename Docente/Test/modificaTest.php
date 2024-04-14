@@ -104,7 +104,7 @@
                             }
                             echo "<label class='label'>" . $chiave . ": </label>" . $valore . "<br>";
                         }
-                        echo "TIPOLOGIA: " . $tipologia . "<br>";
+                        echo "<label class='label'>Tipologia: </label> " . $tipologia . "<br>";
                         // Verifica della tipologia del quesito
                         if ($tipologia == "Risposta Chiusa") {
                             // Se è una risposta chiusa, ottieni e visualizza le soluzioni
