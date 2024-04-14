@@ -28,16 +28,18 @@ if (!isset($_SESSION)) {
             border-radius: 5px;
         }
         .salvaBtn {
-            width: auto;
-            height: auto;
-            border: 1px solid #222222;
-            padding: 3px;
-            margin: 10px;
-            font-size: 16px;
+            color: black;
+            background-color: #ffcc00;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            text-align: center;
+            text-decoration: none;
             font-weight: bold;
-            font-style: normal;
-            color: #222222;
-            background-color: #acf9ba; 
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer; 
         }
         
     </style>

@@ -43,17 +43,18 @@ if (!isset($_SESSION)) {
             display: block;
         }
         .btn{
-            width: auto;
-            height: auto;
-            border: 1px solid #222222;
+            color: black;
+            background-color: #ffcc00;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
             text-align: center;
-            padding: 3px;
-            margin: 0px;
-            font-size: 16px;
+            text-decoration: none;
             font-weight: bold;
-            font-style: normal;
-            color: #222222;
-            background-color: #7cfc00;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>

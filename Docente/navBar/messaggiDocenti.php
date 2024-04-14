@@ -36,6 +36,7 @@ include '../../Condiviso/Messaggio.php';
             margin-bottom: 20px;
             font: sans-serif;
             font-style: italic;
+            font-weight: bold;
             font-size: medium;
         }
 
@@ -66,11 +67,17 @@ include '../../Condiviso/Messaggio.php';
             margin-top: 20px;
         }
 
-        .btn-primary {
-            background-color: #007bff;
-            color: #fff;
+        .button {
+            color: black;
+            background-color: #ffcc00;
             border: none;
             padding: 10px 20px;
+            margin-right: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
         }
@@ -84,13 +91,6 @@ include '../../Condiviso/Messaggio.php';
             display: inline-block;
         }
 
-        .btnInvia {
-            color: white;
-            background-color: #9c9c9c;
-            border: none;
-            padding: 10px 20px;
-            margin-right: 10px;
-        }
 
         .labelBold {
             font-weight: bold;
@@ -106,7 +106,7 @@ include '../../Condiviso/Messaggio.php';
 <body>
     <div class="container">
         <div class="btn-container">
-            <a href="../Messaggi/nuovoMessaggioDocente.php" class="btnInvia">Invia Nuovo Messaggio</a>
+            <a href="../Messaggi/nuovoMessaggioDocente.php" class="button">Invia Nuovo Messaggio</a>
         </div>
         <?php
         

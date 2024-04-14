@@ -40,19 +40,22 @@
             color: black;
             display: block;
         }
-        .btn {
-            width: auto;
-            height: auto;
-            border: 1px solid #222222;
-            padding: 3px;
-            margin: 0px;
-            font-size: 16px;
-            font-weight: bold;
-            font-style: normal;
-            color: #222222;
-            background-color: #7cfc00;
-            cursor: pointer;
+        button{
+        color: black;
+        background-color: #ffcc00;
+        border: none;
+        padding: 10px 20px;
+        margin-right: 10px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        
         }
+       
         .quesitoLabel {
             font-size: 16px;
             font-weight: bold;
@@ -183,16 +186,16 @@
                         <form id='modificaTestForm' action='modificaTest.php' method='post'>
                             <input type='hidden' id ='titoloTest' name='titoloTest' value=" . $testId . ">
                             <br>
-                            <label for='visualizzaRisposte'>Visualizza Risposte:</label>
+                            <label class='label' for='visualizzaRisposte' style='display: inline-block;'>Visualizza Risposte:</label>
                             <input type='checkbox' id='visualizzaRisposteCB' name='visualizzaRisposte'>
                             <br>
                             <input type='hidden' name='action' value='crea'><br>
-                            <button type='submit' class='btn'  id='modificaTestButton' value='modifica'>Salva</button>
+                            <button type='submit' class='button'  id='modificaTestButton' value='modifica'>Salva</button>
                         </form>
                         <br>
-                        <button id='inserisciQuesito' class='btn' onclick=\"window.location.href='inserisciQuesito.php?id=" . $testId . "'\">Aggiungi Quesito</button>
-                        <button class='btn' onclick='eliminaQuesito(\"". $testId . "\")'>Elimina Quesito</button>
-                        <button id='tornaTest' class='btn' onclick='window.location.href=\"../navBar/testDocenti.php\"'>Torna ai Test</button>
+                        <button id='inserisciQuesito' class='button' onclick=\"window.location.href='inserisciQuesito.php?id=" . $testId . "'\">Aggiungi Quesito</button>
+                        <button class='button' onclick='eliminaQuesito(\"". $testId . "\")'>Elimina Quesito</button>
+                        <button id='tornaTest' class='button' onclick='window.location.href=\"../navBar/testDocenti.php\"'>Torna ai Test</button>
                         ";
             }
 

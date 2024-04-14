@@ -103,10 +103,11 @@ include '../../Condiviso/Test.php';
         margin-right: 10px;
         text-align: center;
         text-decoration: none;
+        font-weight: bold;
         display: inline-block;
         font-size: 16px;
         border-radius: 5px;
-        cursor: hand;
+        cursor: pointer;
 
     }
     </style>
