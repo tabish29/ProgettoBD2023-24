@@ -6,6 +6,7 @@ if (!isset($_SESSION)) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,7 @@ if (!isset($_SESSION)) {
             padding: 0;
             background-color: #f9acac;
         }
+
         .container {
             text-align: center;
             width: 70%;
@@ -24,6 +26,7 @@ if (!isset($_SESSION)) {
             background-color: #f9acac;
             border-radius: 5px;
         }
+
         .inseriscibtn {
             width: auto;
             height: auto;
@@ -36,11 +39,13 @@ if (!isset($_SESSION)) {
             color: #222222;
             background-color: #acf9ba;
         }
+
         .areaInserimento {
             width: 40%;
             display: block;
             margin: auto;
         }
+
         .label {
             text-align: center;
             font: sans-serif;
@@ -52,17 +57,21 @@ if (!isset($_SESSION)) {
             width: auto;
             display: block;
         }
-        .messaggioConferma, .messaggioErrato {
+
+        .messaggioConferma,
+        .messaggioErrato {
             color: green;
             font-weight: bold;
             font-size: 20px;
             text-align: center;
         }
+
         .messaggioErrato {
             color: red;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Inserisci la nuova riga della tabella</h2>
@@ -106,4 +115,5 @@ if (!isset($_SESSION)) {
         ?>
     </div>
 </body>
+
 </html>

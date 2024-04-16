@@ -137,7 +137,7 @@ if (!isset($_SESSION)) {
                     if ($stmtInserimentoTabella->execute()) {
                         echo "<br><label class='messaggioConferma'>Inserimento in TABELLADIESERCIZIO avvenuto con successo.</label>";
                     } else {
-                        echo "<br><label class='messaggioErrato'>Errore nell'inserimento in TABELLADIESERCIZIO: " . $conn->error . "</label>";
+                        echo "<br><label class='messaggioErrato'>Errore nell'inserimento in TABELLADIESERCIZIO</label>";
                     }
                     // Chiudi lo statement
                     $stmtInserimentoTabella->close();
@@ -149,7 +149,7 @@ if (!isset($_SESSION)) {
                         while ($row = $result->fetch_assoc()) {
                             $nomeAttributo = $row['Field'];
                             $tipo = $row['Type'];
-                            
+
 
                             // Prepara la query per inserire nella tabella ATTRIBUTO
                             $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
@@ -157,7 +157,7 @@ if (!isset($_SESSION)) {
 
                             // Controlla se lo statement è stato preparato correttamente
                             if ($stmt === false) {
-                                echo "Errore nella preparazione della query: " . $conn->error;
+                                echo "Errore nella preparazione della query";
                                 continue; // Salta all'iterazione successiva del ciclo
                             }
 
@@ -173,7 +173,7 @@ if (!isset($_SESSION)) {
                             $stmt->close();
                         }
                     } else {
-                        echo "Errore nell'esecuzione della query DESCRIBE: " . $conn->error;
+                        echo "Errore nell'esecuzione della query DESCRIBE";
                     }
                     echo "sono prima del controllo ";
 
@@ -192,7 +192,7 @@ if (!isset($_SESSION)) {
                         $stmtFk->execute();
                         $resultFk = $stmtFk->get_result();
 
-                        
+
                         if ($resultFk->num_rows > 0) {
                             while ($rowFk = $resultFk->fetch_assoc()) {
                                 // Qui inserisci i dettagli della foreign key in Vincolo di integrità
@@ -218,7 +218,7 @@ if (!isset($_SESSION)) {
                         echo "La query inserita non contiene foreign key.";
                     }
                 } else {
-                    echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query: " . $conn->error . "</label>";
+                    echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query </label>";
                 }
             }
             ?>
