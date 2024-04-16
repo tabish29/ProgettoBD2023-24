@@ -142,14 +142,6 @@ if (!isset($_SESSION)) {
                     // Chiudi lo statement
                     $stmtInserimentoTabella->close();
 
-                    if (isset($_GET['id'])) {
-                        $titoloTest = $_GET['id'];
-                    } else {
-                        // Gestisci il caso in cui 'id' non sia presente nell'URL
-                        echo "ID del test non specificato.";
-                        exit;
-                    }
-
                     $query = "DESCRIBE " . $nomeTabella;
                     $result = $conn->query($query);
 

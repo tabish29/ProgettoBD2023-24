@@ -32,9 +32,7 @@
         <h2>Cancella Test</h2>
         <ul>
         <?php
-            
-
-           
+              
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 $titoloTest = $_GET['id'];
                 $test = new Test();
@@ -54,12 +52,8 @@
                             </script>';
                     exit();
                 }
-        
                         
             }
-
-         
-
             
         ?>
         </ul>
