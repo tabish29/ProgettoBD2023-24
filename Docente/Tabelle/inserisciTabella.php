@@ -83,7 +83,6 @@ if (!isset($_SESSION)) {
                 <div class="form-group">
                     <label class="label">Scrivi il codice SQL della Tabella:</label><br>
                     <textarea id='codiceTabella' name='codiceTabella' rows='20' cols='100'></textarea>
-                    <input type="hidden" name="testId" value="<?php echo $testId; ?>"><br><br>
                     <input type="submit" value="Inserisci Tabella" class="inseriscibtn">
                 </div>
 
@@ -91,11 +90,6 @@ if (!isset($_SESSION)) {
             <button id="modificaTest" class="inseriscibtn" onclick="window.location.href='../navBar/gestioneTabelle.php'">Back</button>
 
             <?php
-            $testId = " ";
-
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                $testId = $_GET['id'];
-            }
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $codiceTabella = $_POST['codiceTabella']; // Questo è il codice SQL inserito dall'utente
