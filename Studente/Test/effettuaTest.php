@@ -97,7 +97,7 @@ if (!isset($_SESSION)){
             color: #222222;
             background-color: #acf9ba; 
         }
-        .btnTermina{
+        .btnSalva{
             width: auto;
             height: auto;
             border: 1px solid #222222;
@@ -146,8 +146,6 @@ if (!isset($_SESSION)){
         <h2 class='testH2'>Effettua il Test</h2>
         <ul class="test-details">
             <?php
-                
-
                 $test = new Test();
                 
                 $primaRisposta = true;
@@ -155,6 +153,7 @@ if (!isset($_SESSION)){
                 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     if (isset($_GET['id'])) {
                         $testId = $_GET['id'];
+                        $_SESSION['datiQuesito'] = array(); // contatore - numero progressivo (si aggiunge con array_push($datiQuesito, array("numero progressivo 2", "numero domanda 2"));                        )
                         echo "<form method='post' action='effettuaTest.php'>";
                         // Verifica se il completamento esiste e aprilo se necessario
                         $test->creaOApriCompletamento($testId, $_SESSION['email']);
@@ -165,43 +164,48 @@ if (!isset($_SESSION)){
 
                 
                 /*TO DO:
-                - Salvare i dati quando viene premuto "Termina Test"
+                - Salvare i dati quando viene premuto "Salva Test"
                 - Capire perchè non funziona la verifica della risposta di codice
                 */
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                if (isset($_POST['terminaTest'])) {
+                if (isset($_POST['salvaTest'])) {
                     $testId = $_POST['titoloTest'];
                     $contatore = $_POST['numeroDomanda'];
                     salvaDatiTest($testId, $contatore);
                     // Chiudi il test
-                    echo "<p>Test terminato con successo.</p>";
+                    echo "<p>Test salvato con successo.</p>";
                     header("Location: testStudenti.php");
                     exit();
                 } else if (isset($_POST['verificaRisposta'])) {
-                    // Verifica la risposta
+                    // Ottengo i dati
                     $testId = $_POST['titoloTest'];
-                    //NON SO COME GESTIRE IL CONTATORE QUINDI ORA TESTO INSERENDO IL VALORE MANUALMENTE
-
-                    $domanda = 1;
+                    $domanda = $_POST['verificaRisposta'];
+                    echo "richiesta su domanda: $domanda<br>";
                     $numQuesito = $_POST['numeroQuesito' . ";" . $domanda];
                     $tipologiaQuesito = $_POST['tipologiaQuesito' . ";" . $domanda];
-
                     $rispostaData = $_POST['codice'];
-                    echo "risposta data: $rispostaData<br>";
-                    echo "numero quesito: $numQuesito<br>";
-                    echo "test id: $testId<br>";
+
                     $idCompletamento = $test->trovaIdCompletamento($testId, $_SESSION['email']);
 
+                    //verifico l'esito della risposta Data
                     $quesitoOgg = new Quesito();
-                    $rispostaCorretta = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
-                    $risultatoVerifica = $quesitoOgg->verificaRispostaCodice($testId, $numQuesito, $rispostaData, $rispostaCorretta);
+                    // TODO: chiamare metodo da realizzare (input: $rispostaData, output: $risultatoVerifica)
+                    //$risultatoVerifica = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
+                    $risultatoVerifica = true;
                     if ($risultatoVerifica) {
-                        $esito = "Risposta corretta";
+                        $esito = "Risposta corretta b";
                     } else {
-                        $esito = "Risposta errata";
+                        $esito = "Risposta sbagliata b";
                     }
+                    // Aggiorno la label con l'esito (non capisco perchè non funziona)
+                    echo "<script>
+                            var label = document.getElementById('messaggioDiVerifica" . $domanda . "');
+                            label.textContent = 'Nuovo testo per la label';
+                            
+                        </script>";
 
-                    $numDomanda = $_POST['numeroDomanda'];
+
+                    $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
                     mostraDatiTest($testId, $esito, $numDomanda);
                     creaGrafica($testId);
                 }
@@ -230,13 +234,18 @@ if (!isset($_SESSION)){
                 $contatore = 0; // Contatore per il numero di domande
                 foreach ($quesiti as $quesito) {
                     $contatore++;
+
                     echo "<br><p class='classQuesito'>Quesito nr." . $contatore . "</p>";
                     $numeroProgressivo = $quesito['NumeroProgressivo'];
                     $livelloDifficolta = $quesito['LivelloDifficolta'];
                     $descrizione = $quesito['Descrizione'];
                     $numeroRisposte = $quesito['NumeroRisposte'];
+                    //array_push($_SESSION['datiQuesito'], array($contatore, $numeroProgressivo));
+
+
                     $quesitoOgg = new Quesito();
                     $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($titoloTest, $numeroProgressivo);
+
 
                     echo "<p>Domanda:\n" . $descrizione . "</p>";
                     echo "<input type='hidden' name='numeroQuesito" . ";" . $contatore . "' value='$numeroProgressivo'>";
@@ -258,18 +267,20 @@ if (!isset($_SESSION)){
                     } elseif ($tipologiaQuesito == "Codice") {
                         echo "<p class='classInserimento'>Inserisci il codice:</p>";
                         echo "<textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>";
-                        echo "<button type='submit' class='btnVerifica' name='verificaRisposta'>Verifica Risposta</button>";
+                        echo "<button type='submit' class='btnVerifica' name='verificaRisposta' value='$contatore' >Verifica Risposta</button>";
+                        echo "<label id='messaggioDiVerifica" . $contatore . "' class='labelVerifica'>.</label>";
                     }
 
                     // Visualizza l'esito se disponibile
                     if ($contatore == $numDomanda && !empty($esito)) {
                         echo "<br><label class='labelVerifica'>$esito</label>";
+
                     }
 
-                    // Visualizza il pulsante per terminare il test se si è all'ultimo quesito
+                    // Visualizza il pulsante per salvare il test se si è all'ultimo quesito
                     if ($contatore == count($quesiti)) {
                         echo "<br><br>";
-                        echo "<input class='btnTermina' type='submit' name='terminaTest' value='Termina Test'>";
+                        echo "<input class='btnSalva' type='submit' name='salvaTest' value='Salva Test'>";
                         echo "<input type='hidden' name='titoloTest' value='$titoloTest'>";
                         echo "</form>";
                     }
@@ -299,7 +310,7 @@ if (!isset($_SESSION)){
                     $test->inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numeroQuesito);
                 }
             }
-            echo "<script>alert('Test terminato con successo.');</script>";
+            echo "<script>alert('Test salvato con successo.');</script>";
             header("Location: testStudenti.php");
             exit();
         }

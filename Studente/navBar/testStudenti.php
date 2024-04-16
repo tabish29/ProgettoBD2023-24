@@ -109,11 +109,19 @@ if (!isset($_SESSION)) {
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
         button{
-        color: white;
-        background-color: #9c9c9c;
-        border: none;
-        padding: 10px 20px;
-        margin-right: 10px;
+            color: black;
+            background-color: #ffcc00;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+
         }
     </style>
 </head>

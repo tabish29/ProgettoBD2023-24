@@ -84,13 +84,20 @@ if (!isset($_SESSION)) {
             display: inline-block;
         }
 
-        .btnInvia {
-            color: white;
-            background-color: #9c9c9c;
+        .btnInvia{
+            color: black;
+            background-color: #ffcc00;
             border: none;
             padding: 10px 20px;
             margin-right: 10px;
-        
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+
         }
 
         .labelBold {
