@@ -93,11 +93,11 @@ if (!isset($_SESSION)) {
                     if ($stmt->execute()) {
                         echo "<p class='messaggioConferma'>Dati riga salvati con successo.</p>";
                     } else {
-                        echo "<p class='messaggioErrato'>Errore nel salvataggio dati riga: " . $conn->error . "</p>";
+                        echo "<p class='messaggioErrato'>Errore nel salvataggio dati riga.</p>";
                     }
                     $stmt->close();
                 } else {
-                    echo "<p class='messaggioErrato'>Errore nell'esecuzione della query: " . $conn->error . "</p>";
+                    echo "<p class='messaggioErrato'>Errore nell'esecuzione della query</p>";
                 }
             } else {
                 echo "<p class='messaggioErrato'>Formato SQL non valido.</p>";
