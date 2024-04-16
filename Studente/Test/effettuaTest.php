@@ -172,10 +172,6 @@ if (!isset($_SESSION)){
                     $testId = $_POST['titoloTest'];
                     $contatore = $_POST['numeroDomanda'];
                     salvaDatiTest($testId, $contatore);
-                    // Chiudi il test
-                    echo "<p>Test salvato con successo.</p>";
-                    header("Location: testStudenti.php");
-                    exit();
                 } else if (isset($_POST['verificaRisposta'])) {
                     // Ottengo i dati
                     $testId = $_POST['titoloTest'];
@@ -269,6 +265,8 @@ if (!isset($_SESSION)){
                         echo "<textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>";
                         echo "<button type='submit' class='btnVerifica' name='verificaRisposta' value='$contatore' >Verifica Risposta</button>";
                         echo "<label id='messaggioDiVerifica" . $contatore . "' class='labelVerifica'>.</label>";
+                        echo "</form>";
+
                     }
 
                     // Visualizza l'esito se disponibile
@@ -280,9 +278,11 @@ if (!isset($_SESSION)){
                     // Visualizza il pulsante per salvare il test se si è all'ultimo quesito
                     if ($contatore == count($quesiti)) {
                         echo "<br><br>";
+                        echo "<form method='post' action='effettuaTest.php'>";
                         echo "<input class='btnSalva' type='submit' name='salvaTest' value='Salva Test'>";
                         echo "<input type='hidden' name='titoloTest' value='$titoloTest'>";
                         echo "</form>";
+
                     }
                 }
             }
@@ -311,7 +311,7 @@ if (!isset($_SESSION)){
                 }
             }
             echo "<script>alert('Test salvato con successo.');</script>";
-            header("Location: testStudenti.php");
+            header("Location: ../navBar/testStudenti.php");
             exit();
         }
          ?>
