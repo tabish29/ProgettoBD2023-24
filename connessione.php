@@ -5,7 +5,7 @@
 
     $servername = "localhost"; // Il tuo server
     $username = "root"; // Il tuo username
-    $password = "root"; // La tua password (di solito è vuota di default)
+    $password = ""; // La tua password (di solito è vuota di default)
     $dbname = "ESQL"; // Il nome del tuo database
 
     // Connessione al database
