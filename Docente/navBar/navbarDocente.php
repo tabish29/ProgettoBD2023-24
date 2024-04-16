@@ -81,15 +81,16 @@
           <li <?php echo basename($_SERVER['PHP_SELF']) == 'testDocenti.php' ? 'class="active"' : ''; ?>>
             <a href="testDocenti.php">Gestione Test</a>
           </li>
-          <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiDocenti.php' ? 'class="active"' : ''; ?>>
-            <a href="messaggiDocenti.php">Messaggi</a>
-          </li>
           <li <?php echo basename($_SERVER['PHP_SELF']) == 'gestioneTabelle.php' ? 'class="active"' : ''; ?>>
             <a href="gestioneTabelle.php">Gestione Tabelle</a>
           </li>
+          <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiDocenti.php' ? 'class="active"' : ''; ?>>
+            <a href="messaggiDocenti.php">Messaggi</a>
+          </li>
+         
       </div>
       <div class='altoDestra'>
-        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../'">Logout</button>
+        <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../../'">Logout</button>
       </div>
 
     </nav>

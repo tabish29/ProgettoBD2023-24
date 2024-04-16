@@ -1,8 +1,8 @@
 <?php
-            include '../../connessione.php';
-            if (!isset($_SESSION)) {
-                session_start();
-            }
+include '../../connessione.php';
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 ?>
 <!DOCTYPE html>
@@ -78,7 +78,7 @@
     <div class="container">
         <h2>Inserisci Tabella</h2>
         <ul>
-            
+
             <form action="inserisciTabella.php?id=<?php echo htmlspecialchars($_GET['id']); ?>" method="post">
                 <div class="form-group">
                     <label class="label">Scrivi il codice SQL della Tabella:</label><br>
@@ -88,7 +88,7 @@
                 </div>
 
             </form>
-            <button id="modificaTest" class="inseriscibtn" onclick="window.location.href='modificaTest.php?id=<?php echo $_GET['id']; ?>'">Back</button>
+            <button id="modificaTest" class="inseriscibtn" onclick="window.location.href='../navBar/gestioneTabelle.php'">Back</button>
 
             <?php
             $testId = " ";
@@ -99,6 +99,7 @@
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $codiceTabella = $_POST['codiceTabella']; // Questo è il codice SQL inserito dall'utente
+
                 // Divide la stringa in parti basandosi su "CREATE TABLE"
                 $parti = explode("CREATE TABLE", $codiceTabella);
 
@@ -113,17 +114,12 @@
                     // Rimuove eventuali parentesi o caratteri speciali dal nome della tabella
                     $nomeTabella = preg_replace('/[^A-Za-z0-9_]/', '', $nomeTabella);
 
-                    echo "<br>Il nome della tabella è: $nomeTabella\n";
+                    echo "<br>Il nome della tabella è: $nomeTabella\n"; //(da eliminare)
                 } else {
-                    echo "Nome della tabella non trovato nel codice SQL fornito.\n";
+                    echo "<br>Nome della tabella non trovato nel codice SQL fornito.\n";
                 }
 
-
-
-
-
                 // Logica per eseguire il codice SQL
-
                 if ($conn->multi_query($codiceTabella)) {
                     $messaggio = "Query eseguita con successo.";
                     echo "<br><label class = 'messaggioConferma'>Query eseguita con successo.</label>";
@@ -137,7 +133,7 @@
                         }
                     } while ($conn->next_result());
                     // Esegui la query per inserire nella tabella TABELLADIESERCIZIO
-                    $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, 'docente2@gmail.com')";
+                    $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, 'docente2@gmail.com')"; //(da cambiare devo creare una varibaile che si prende l'email del docente)
 
                     // Prepara la query
                     $stmtInserimentoTabella = $conn->prepare($queryInserimentoTabella);
@@ -160,28 +156,6 @@
                         exit;
                     }
 
-
-                    // Query per inserire una riga in COSTITUZIONE
-                    $queryInserimento = "INSERT INTO COSTITUZIONE (TitoloTest, NumeroProgressivoQuesito, NomeTabella) VALUES (?, ?, ?)";
-
-                    // Prepara la query
-                    $stmtInserimento = $conn->prepare($queryInserimento);
-
-                    // Assumiamo che $numeroProgressivoQuesito sia già definito e valido.(secondo me da eliminrae dalla tabella costituzione)
-                    // Sostituisci 1 con il numero progressivo quesito appropriato
-                    $numeroProgressivoQuesito = 1;
-
-                    // Esegue il binding dei parametri e esegue la query
-                    $stmtInserimento->bind_param("sis", $titoloTest, $numeroProgressivoQuesito, $nomeTabella);
-                    if ($stmtInserimento->execute()) {
-                        echo "<br><label class='messaggioConferma'>Inserimento in COSTITUZIONE avvenuto con successo.</label>";
-                    } else {
-                        echo "<p>Il valore di testId è: " . $testId . "</p>";
-                        echo "<br><label class='messaggioErrato'>Errore nell'inserimento in COSTITUZIONE: " . $conn->error . "</label>";
-                    }
-
-                    // Chiudi lo statement
-                    $stmtInserimento->close();
                     $query = "DESCRIBE " . $nomeTabella;
                     $result = $conn->query($query);
 
@@ -189,6 +163,7 @@
                         while ($row = $result->fetch_assoc()) {
                             $nomeAttributo = $row['Field'];
                             $tipo = $row['Type'];
+                            
 
                             // Prepara la query per inserire nella tabella ATTRIBUTO
                             $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
@@ -214,10 +189,11 @@
                     } else {
                         echo "Errore nell'esecuzione della query DESCRIBE: " . $conn->error;
                     }
-
+                    echo "sono prima del controllo ";
 
                     // Assumendo che $conn sia la tua connessione al database e $codiceTabella sia la query SQL inserita dall'utente
                     if (strpos(strtoupper($codiceTabella), 'FOREIGN KEY') !== false) {
+                        echo "<br>sono dentro il controllo ";
                         // La query contiene "FOREIGN KEY", quindi procedi con la verifica delle foreign key
 
                         // Query per trovare le foreign key della tabella appena creata
@@ -229,27 +205,19 @@
                         $stmtFk->bind_param("s", $nomeTabella);
                         $stmtFk->execute();
                         $resultFk = $stmtFk->get_result();
-                        $emailDocente = "docente2@gmail.com"; //(da eliminare e fare in modo che riesca a prenderlo in maniera dinamica)
+
+                        
                         if ($resultFk->num_rows > 0) {
                             while ($rowFk = $resultFk->fetch_assoc()) {
-                                // Qui inserisci i dettagli della foreign key in APPARTENENZA
-                                $queryInserimentoAppartenenza = "INSERT INTO APPARTENENZA (NomeTabellaUno, NomeAttributoUno, NomeTabellaDue, NomeAttributoDue, EmailDocente) VALUES (?, ?, ?, ?, ?)";
-                                $stmtAppartenenza = $conn->prepare($queryInserimentoAppartenenza);
-                                $stmtAppartenenza->bind_param("sssss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $rowFk['REFERENCED_TABLE_NAME'], $rowFk['REFERENCED_COLUMN_NAME'], $emailDocente);
-                                $stmtAppartenenza->execute();
-
-                                /*controllo errato perchè la query la esegue correttamente(da capire)
-                                if (!$stmtAppartenenza->execute()) {
-                                    echo "Errore nell'inserimento in APPARTENENZA: " . $stmtAppartenenza->error;
-                                }*/
-
-                                // Ora inserisci i dettagli della foreign key in VINCOLODIINTEGRITA
-                                $queryInserimentoVincolo = "INSERT INTO VINCOLODIINTEGRITA (NomeTabella, NomeAttributo, EmailDocente) VALUES (?, ?, ?)";
+                                // Qui inserisci i dettagli della foreign key in Vincolo di integrità
+                                $queryInserimentoVincolo = "INSERT INTO VINCOLODIINTEGRITA (NomeTabellaUno, NomeAttributoUno, NomeTabellaDue, NomeAttributoDue) VALUES (?, ?, ?, ?)";
                                 $stmtVincolo = $conn->prepare($queryInserimentoVincolo);
-                                // Il NomeTabella e NomeAttributo in VINCOLODIINTEGRITA corrispondono a TABLE_NAME e COLUMN_NAME di KEY_COLUMN_USAGE
-                                $stmtVincolo->bind_param("sss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $emailDocente);
+                                $stmtVincolo->bind_param("ssss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $rowFk['REFERENCED_TABLE_NAME'], $rowFk['REFERENCED_COLUMN_NAME']);
                                 $stmtVincolo->execute();
-                                if (!$stmtVincolo->execute()) {
+
+                                if ($stmtVincolo->execute()) {
+                                    echo "Avvenuto l'inserimento in VINCOLODIINTEGRITA: ";
+                                } else {
                                     echo "Errore nell'inserimento in VINCOLODIINTEGRITA: " . $stmtVincolo->error;
                                 }
 

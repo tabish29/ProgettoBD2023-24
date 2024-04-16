@@ -29,12 +29,12 @@ include '../../connessione.php';
             word-wrap: break-word;
 
         }
-
-        
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Ciao Nano</h2>
+        <button onclick="window.location.href='../Tabelle/inserisciTabella.php'">Crea Tabella</button>
     </div>
 </body>
