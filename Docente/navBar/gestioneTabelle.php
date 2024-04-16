@@ -83,6 +83,9 @@ include '../../connessione.php';
                 ?>
             </select>
             <button type="submit" name="delete" <?php echo empty($selectedTabella) ? 'disabled title="Selezionare una tabella da eliminare"' : ''; ?>>Elimina Tabella</button>
+            <button type="button" onclick="location.href='../tabelle/aggiungiRiga.php?tabella=<?php echo urlencode($selectedTabella); ?>'" <?php echo empty($selectedTabella) ? 'disabled title="Selezionare una tabella per aggiungere una riga"' : ''; ?>>Aggiungi Riga</button>
+
+
             <?php
             if (isset($_POST['delete']) && !empty($_POST['nomeTabella'])) {
                 $nomeTabella = $_POST['nomeTabella'];
