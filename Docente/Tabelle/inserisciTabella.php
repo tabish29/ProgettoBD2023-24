@@ -82,7 +82,7 @@ if (!isset($_SESSION)) {
             <form action="inserisciTabella.php" method="post">
                 <div class="form-group">
                     <label class="label">Scrivi il codice SQL della Tabella:</label><br>
-                    <textarea id='codiceTabella' name='codiceTabella' rows='20' cols='100'></textarea>
+                    <textarea id='codiceTabella' name='codiceTabella' rows='20' cols='100'></textarea><br>
                     <input type="submit" value="Inserisci Tabella" class="inseriscibtn">
                 </div>
 
