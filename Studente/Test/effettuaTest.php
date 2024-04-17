@@ -147,6 +147,7 @@ if (!isset($_SESSION)){
         <ul class="test-details">
             <?php
 
+                    global $test;
                     $test = new Test();    
                     $primaRisposta = true;
                     if (!isset($_SESSION['domandaAttuale'])) {
@@ -175,9 +176,9 @@ if (!isset($_SESSION)){
                     if (isset($_POST['quesitoSuccessivo'])) {
                         $testId = $_SESSION['titoloTest'];
                         $_SESSION['titoloTest'] = $testId;
-                        $_SESSION['domandaAttuale'] += $_SESSION['domandaAttuale'];
+                        $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] + 1;
                         //TODO: salvare i dati del quesito appena salvato
-                        mostraQuesito($testId, $_SESSION['domandaAttuale']);
+                        mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
                     } else if (isset($_POST['verificaRisposta'])) {
                         // Ottengo i dati
                         $testId = $_POST['titoloTest'];
@@ -279,6 +280,7 @@ if (!isset($_SESSION)){
             }
 
             function mostraQuesito($arrayQuesiti, $numeroDellaDomanda){
+                global $test;
                     echo "NUMERO DELLA DOMANDA: ". $numeroDellaDomanda . "<br>";
                     $questoQuesito = $_SESSION['arrayQuesiti'][$numeroDellaDomanda];
 
@@ -306,7 +308,7 @@ if (!isset($_SESSION)){
                             ?>
                             <br><p class='classInserimento'>Seleziona la risposta corretta:</p>
                             <?php
-                            $soluzioni = $test->ottieniRisposte($numeroProgressivo, $titoloTest);
+                            $soluzioni = $test->ottieniRisposte($numeroProgressivo, $_SESSION['titoloTest']);
                             if (!empty($soluzioni)) {
                                 foreach ($soluzioni as $soluzione) {
                                     $risposta = $soluzione['CampoTesto'];
