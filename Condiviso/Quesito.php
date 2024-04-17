@@ -156,5 +156,12 @@ class Quesito{
         }
     }
 
+    function ottieniEsitoCodice($idCompletamento){
+        $sql = "SELECT Esito FROM RISPOSTAQUESITOCODICE WHERE NumeroProgressivoCompletamento = $idCompletamento";
+        $risultato = $_SESSION['conn']->query($sql);
+        $_SESSION['conn']->next_result();
+        return $risultato;
+    }
+
 }
 ?>

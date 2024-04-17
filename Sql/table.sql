@@ -209,7 +209,7 @@ CREATE TABLE RISPOSTAQUESITORISPOSTACHIUSA  (
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
-    PRIMARY KEY (NumeroProgressivoCompletamento),
+    PRIMARY KEY (NumeroProgressivoCompletamento, TitoloTest, NumeroProgressivoQuesito),
     
     FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE,
     FOREIGN KEY(TitoloTest, NumeroProgressivoQuesito) REFERENCES QUESITORISPOSTACHIUSA(TitoloTest, NumeroProgressivo) ON DELETE CASCADE
@@ -223,7 +223,7 @@ CREATE TABLE RISPOSTAQUESITOCODICE  (
     NumeroProgressivoQuesito INT,
     Esito BOOLEAN,
     
-    PRIMARY KEY (NumeroProgressivoCompletamento),
+    PRIMARY KEY (NumeroProgressivoCompletamento, TitoloTest, NumeroProgressivoQuesito),
     
     FOREIGN KEY(NumeroProgressivoCompletamento) REFERENCES COMPLETAMENTO(NumeroProgressivo) ON DELETE CASCADE,
     FOREIGN KEY(TitoloTest, NumeroProgressivoQuesito) REFERENCES QUESITOCODICE(TitoloTest,NumeroProgressivo) ON DELETE CASCADE

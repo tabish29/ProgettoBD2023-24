@@ -166,7 +166,7 @@ if (!isset($_SESSION)) {
 
                     if ($statoCompletamento === 'Concluso') {
                         //TODO: uniformare la sintassi di queste due righe di codice 
-                        $urlVisualizza = "visualizzaRisposta.php?idTest=" . urlencode($titoloTest);
+                        $urlVisualizza = "../Test/visualizzaRisposta.php?idTest=" . urlencode($titoloTest);
                         echo "<a href='" . htmlspecialchars($urlVisualizza) . "' class='button'>Visualizza Risposta</a>";
                     }
                     echo "</li>";

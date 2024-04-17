@@ -108,19 +108,7 @@
             $stmt->execute();
             $stmt->close();
         }
-         
-        /*
-        function inserisciRispostaQuesitoCodice($idCompletamento, $testId, $rispostaData, $numQuesito) {
-             
-            $quesitoOgg = new Quesito();
-            $rispostaCorretta = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
-            $esito = $quesitoOgg->verificaRispostaCodice($testId, $numQuesito, $rispostaData, $rispostaCorretta);
-            $sql = "CALL inserisciRispostaQuesitoCodice(?, ?, ?, ?, ?)";
-            $stmt = $_SESSION['conn']->prepare($sql);
-            $stmt->bind_param("issib", $idCompletamento, $testId, $rispostaData, $numQuesito, $esito);
-            $stmt->execute();
-            $stmt->close();
-        }*/
+        
        
         function visualizzaEsitoRisposta($idCompletamento, $testId, $numQuesito) {
              
