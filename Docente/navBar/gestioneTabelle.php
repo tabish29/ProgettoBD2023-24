@@ -56,6 +56,9 @@ include '../../connessione.php';
 </head>
 
 <body>
+    <?php
+        $email = $_SESSION['email'];
+    ?>
     <div class="container">
         <button onclick="window.location.href='../Tabelle/inserisciTabella.php'">Aggiungi Tabella</button>
     </div>
@@ -67,7 +70,7 @@ include '../../connessione.php';
                 $selectedTabella = isset($_POST['nomeTabella']) ? $_POST['nomeTabella'] : "";
                 $query = "SELECT Nome FROM TABELLADIESERCIZIO WHERE EmailDocente = ?";
                 $stmt = $conn->prepare($query);
-                $stmt->bind_param("s", $_SESSION['email']);
+                $stmt->bind_param("s", $email);
                 $stmt->execute();
                 $result = $stmt->get_result();
 

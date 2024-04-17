@@ -127,7 +127,8 @@ if (!isset($_SESSION)) {
                         }
                     } while ($conn->next_result());
                     // Esegui la query per inserire nella tabella TABELLADIESERCIZIO
-                    $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, 'docente2@gmail.com')"; //(da cambiare devo creare una varibaile che si prende l'email del docente)
+                    $email = $_SESSION['email'];
+                    $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, '$email')"; //(da cambiare devo creare una varibaile che si prende l'email del docente)
 
                     // Prepara la query
                     $stmtInserimentoTabella = $conn->prepare($queryInserimentoTabella);
