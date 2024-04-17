@@ -364,6 +364,8 @@ DELIMITER ;
 DELIMITER //
 DELIMITER //
 
+
+# aggiungere parte di controllo
 CREATE PROCEDURE inserisciRispostaQuesitoCodice(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(20),

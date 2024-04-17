@@ -24,6 +24,12 @@ include '../../connessione.php';
             return $resultTabellaEsercizio;
         }
 
+        function ottieniTabelleDocente($emailDocente){
+            $queryTabellaEsercizio = "SELECT Nome FROM TABELLADIESERCIZIO WHERE EmailDocente = '$emailDocente'";
+            $resultTabellaEsercizio = $_SESSION['conn']->query($queryTabellaEsercizio);
+            return $resultTabellaEsercizio;
+        }
+
         function ottieniDatiTabella($nomiTabella){
             // Seconda query per ottenere informazioni dalle tabelle di esercizio
             $placeholders = implode(',', array_fill(0, count($nomiTabella), '?')); // Crea una stringa di placeholders

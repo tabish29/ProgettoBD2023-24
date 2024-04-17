@@ -99,7 +99,7 @@ include '../../Condiviso/Quesito.php';
         $quesito = new Quesito();
         $numeroProgressivoQuesito;
         $booleanCollegamento = false;
-        $resultTabelle = $tabella->ottieniTutteTabelle();
+        $resultTabelle = $tabella->ottieniTabelleDocente($_SESSION['email']);
 
 
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
