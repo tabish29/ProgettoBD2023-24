@@ -189,20 +189,29 @@ if (!isset($_SESSION)){
                         // TODO: chiamare metodo da realizzare (input: $rispostaData, output: $risultatoVerifica)
                         //$risultatoVerifica = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
                         $risultatoVerifica = true;
-                        if ($risultatoVerifica) {
-                            $esito = "Risposta corretta b";
-                        } else {
-                            $esito = "Risposta sbagliata b";
+                        $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $testId, $rispostaData, $numQuesito, $risultatoVerifica);
+                        if ($aggiuntaRisposta == 1) {
+                            if ($risultatoVerifica) {
+                                $esito = "Risposta corretta b";
+                            } else {
+                                $esito = "Risposta sbagliata b";
+                            }
+                            // Aggiorno la label con l'esito (non capisco perchè non funziona)
+                            echo "<script>
+                                    window.alert('Esito: " . $esito . "');
+                                </script>";
+    
+    
+                            $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
+                            mostraDatiTest($testId, $esito, $numDomanda);
+                            creaGrafica($testId);
                         }
-                        // Aggiorno la label con l'esito (non capisco perchè non funziona)
-                        echo "<script>
-                                window.alert('Esito: " . $esito . "');
-                            </script>";
-
-
-                        $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
-                        mostraDatiTest($testId, $esito, $numDomanda);
-                        creaGrafica($testId);
+                        else {
+                            echo "<script>
+                                    window.alert('Errore nell'inserimento della risposta');
+                                </script>";
+                        }
+                        
                     }
                 }
 

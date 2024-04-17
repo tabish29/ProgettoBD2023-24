@@ -109,6 +109,7 @@
             $stmt->close();
         }
          
+        /*
         function inserisciRispostaQuesitoCodice($idCompletamento, $testId, $rispostaData, $numQuesito) {
              
             $quesitoOgg = new Quesito();
@@ -119,7 +120,7 @@
             $stmt->bind_param("issib", $idCompletamento, $testId, $rispostaData, $numQuesito, $esito);
             $stmt->execute();
             $stmt->close();
-        }
+        }*/
        
         function visualizzaEsitoRisposta($idCompletamento, $testId, $numQuesito) {
              
@@ -231,6 +232,14 @@
             $risultato = $_SESSION['conn']->query($sql_update_test);
             $_SESSION['conn']->next_result();
             return $risultato;
+        }
+
+        function inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numQuesito, $esito){
+            $sql = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '$rispostaData', '$numQuesito', '$esito')";
+            $risultato = $_SESSION['conn']->query($sql);
+            $_SESSION['conn']->next_result();
+            return $risultato;
+            
         }
     }
     
