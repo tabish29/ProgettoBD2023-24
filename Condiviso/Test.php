@@ -78,6 +78,9 @@
                     $_SESSION['conn']->query($eliminaRisposteCodice);
                     $_SESSION['conn']->next_result();
 
+                    $settaDateNull = "UPDATE COMPLETAMENTO SET DataPrimaRisposta = NULL, DataUltimaRisposta = NULL WHERE NumeroProgressivo = $numeroProgressivoCompletamento";
+                    $_SESSION['conn']->query($settaDateNull);
+                    $_SESSION['conn']->next_result();
                     
 
                 }
@@ -118,9 +121,28 @@
             $stmt->bind_param("issi", $idCompletamento, $testId, $rispostaData, $numQuesito);
             $stmt->execute();
             $stmt->close();
+
+            $this->settaDataInserimento($idCompletamento);
         }
         
-       
+       function settaDataInserimento($idCompletamento){
+            $primaRispostaSettata = "SELECT DataPrimaRisposta FROM COMPLETAMENTO WHERE NumeroProgressivo = $idCompletamento";
+            $result = $_SESSION['conn']->query($primaRispostaSettata);
+            $_SESSION['conn']->next_result();
+            $verifica = $result->fetch_assoc()['DataPrimaRisposta'];
+            if ($verifica == NULL){
+                $sql = "UPDATE COMPLETAMENTO SET DataPrimaRisposta = NOW() WHERE NumeroProgressivo = $idCompletamento";
+                $_SESSION['conn']->query($sql);
+                $_SESSION['conn']->next_result();
+            }
+            
+
+            
+            $sql = "UPDATE COMPLETAMENTO SET DataUltimaRisposta = NOW() WHERE NumeroProgressivo = $idCompletamento";
+            $_SESSION['conn']->query($sql);
+            $_SESSION['conn']->next_result();      
+       }
+
         function visualizzaEsitoRisposta($idCompletamento, $testId, $numQuesito) {
              
             $esito = false;
@@ -237,6 +259,8 @@
             $sql = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '$rispostaData', '$numQuesito', '$esito')";
             $risultato = $_SESSION['conn']->query($sql);
             $_SESSION['conn']->next_result();
+
+            $this->settaDataInserimento($idCompletamento);
             return $risultato;
             
         }
