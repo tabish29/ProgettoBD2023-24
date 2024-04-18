@@ -52,7 +52,6 @@
 
         function creaOApriCompletamento($testId, $emailStudente) {
              
-    
             // Controlla se esiste già un completamento per questo test e questo studente
             $sql_cercaCompletamento = "SELECT * FROM COMPLETAMENTO WHERE TitoloTest = '$testId' AND EmailStudente = '$emailStudente'";
             $result_cercaCompletamento = $_SESSION['conn']->query($sql_cercaCompletamento);
