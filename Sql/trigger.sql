@@ -265,18 +265,28 @@ END
 
 DELIMITER //
 CREATE TRIGGER incrementaNumRighe
-BEFORE INSERT ON RIGA
+AFTER INSERT ON RIGA
 FOR EACH ROW
 BEGIN
     UPDATE TABELLADIESERCIZIO
     SET num_righe = num_righe + 1
     WHERE Nome = NEW.NomeTabella;
-END 
+END
 //
 DELIMITER ;
 
-
-
+DELIMITER //
+CREATE TRIGGER decrementaNumRighe 
+AFTER DELETE ON RIGA
+FOR EACH ROW
+BEGIN
+    -- Aggiorna il conteggio delle righe nella tabella TABELLADIESERCIZIO
+    UPDATE TABELLADIESERCIZIO
+    SET num_righe = num_righe - 1
+    WHERE Nome = OLD.NomeTabella;
+END
+//
+DELIMITER ;
 
 
 DELIMITER //
