@@ -89,10 +89,10 @@ include '../../Condiviso/Test.php';
 
                 if (isset($_POST['action']) && $_POST['action'] == 'crea') {
                     $titolo = $_POST['titolo'];
-                    $foto = "Immagini/default.png";
+                    $foto = "../Immagini/default.png";
                     if (isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
                         $nomeFileFoto = $_FILES['foto']['name'];
-                        $foto = "Immagini/" . $nomeFileFoto;
+                        $foto = "../Immagini/" . $nomeFileFoto;
                     }                 
                     $data = date('Y-m-d H:i:s');// Data e ora correnti
 
