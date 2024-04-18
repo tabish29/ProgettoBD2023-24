@@ -1,5 +1,32 @@
 USE ESQL;
 
+DROP PROCEDURE IF EXISTS VisualizzaDocenti;
+DROP PROCEDURE IF EXISTS VisualizzaTestDisponibili;
+DROP PROCEDURE IF EXISTS VisualizzaQuesitiPerTest;
+DROP PROCEDURE IF EXISTS AutenticazioneDocente;
+DROP PROCEDURE IF EXISTS AutenticazioneStudente;
+DROP PROCEDURE IF EXISTS RegistrazioneDocente;
+DROP PROCEDURE IF EXISTS RegistrazioneStudente;
+DROP PROCEDURE IF EXISTS CreazioneTabellaEsercizio;
+DROP PROCEDURE IF EXISTS ModificaVisualizzazioneRisposte;
+DROP PROCEDURE IF EXISTS CreazioneTest;
+DROP PROCEDURE IF EXISTS CreazioneQuesitoRispostaChiusa;
+DROP PROCEDURE IF EXISTS CreazioneQuesitoCodice;
+DROP PROCEDURE IF EXISTS CreazioneCostituzione;
+DROP PROCEDURE IF EXISTS InserimentoSoluzione;
+DROP PROCEDURE IF EXISTS InserimentoOpzioneRisposta;
+DROP PROCEDURE IF EXISTS SetOpzioneRispostaCorretta;
+DROP PROCEDURE IF EXISTS InserimentoMessaggioDocente;
+DROP PROCEDURE IF EXISTS inserisciRispostaQuesitoCodice;
+DROP PROCEDURE IF EXISTS inserisciRispostaQuesitoRispostaChiusa;
+DROP PROCEDURE IF EXISTS visualizzaEsitoRisposta;
+DROP PROCEDURE IF EXISTS inserisciMessaggioStudente;
+DROP PROCEDURE IF EXISTS eliminaTest;
+DROP PROCEDURE IF EXISTS eliminaQuesito;
+DROP PROCEDURE IF EXISTS verificaPresenzaCollegamento;
+DROP PROCEDURE IF EXISTS ricezioneMessaggiStudente;
+
+
 
 -- PROCEDURE PER TUTTI GLI UTENTI
 DELIMITER //

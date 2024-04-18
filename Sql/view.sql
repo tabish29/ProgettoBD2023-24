@@ -1,5 +1,10 @@
 USE ESQL;
 
+DROP VIEW IF EXISTS ClassificaQuesitiPerRisposte;
+DROP VIEW IF EXISTS classificaTestCompletati;
+DROP VIEW IF EXISTS classifica_test_completati;
+DROP VIEW IF EXISTS classifica_studenti;
+DROP VIEW IF EXISTS classifica_quesiti;
 
 -- VIEW
 
