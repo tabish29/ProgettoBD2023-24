@@ -107,17 +107,20 @@ if (!isset($_SESSION)){
             background-color: #acf9ba; 
         }
         .btnSalva{
-            width: auto;
-            height: auto;
+            width: 100px;
+            height: 40px;
             border: 1px solid #222222;
             padding: 3px;
             margin: 5px;
+            margin-right: 100px;
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
             background-color: #7cfc00; 
+            float: right;
         }
+        
         .btnScorrimentoAvanti{
             width: 100px;
             height: 40px;
@@ -322,7 +325,13 @@ if (!isset($_SESSION)){
                         }
                         
                     } else if (isset($_POST['salvaTest'])) {
-                        salvaDatiTest();
+                        
+                        echo '<script>
+                                window.alert("Test salvato correttamente!");
+                                window.location.href = "../navBar/testStudenti.php"; 
+                            </script>';
+                        exit();
+                        
                     } else if (isset($_POST['quesitoPrecedente'])) {
                         $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] - 1;
                         mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
@@ -357,38 +366,31 @@ if (!isset($_SESSION)){
             function salvaDatiTest(){
                 global $test;
                 
-                $titoloTest = $_SESSION['titoloTest'];
                 $tipologiaQuesito = $_POST['tipologiaQuesito'];
                 $numeroProgressivo = $_POST['numeroQuesito'];
-                $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
+                $idCompletamento = $test->trovaIdCompletamento($_SESSION['titoloTest'], $_SESSION['email']);
 
                 if ($tipologiaQuesito == "Risposta Chiusa") {
                     $rispostaData = "";
                     if (isset($_POST['risposta'])){
                         $rispostaData = $_POST['risposta'];
                     } 
-                    $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo);
+                    $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$_SESSION['titoloTest'], $rispostaData, $numeroProgressivo);
                 } else if ($tipologiaQuesito == "Codice") {
                     $rispostaData = $_POST['codice'];
                     //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
                     $risultatoVerifica = true;
-                    $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo, $risultatoVerifica);
+                    $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$_SESSION['titoloTest'], $rispostaData, $numeroProgressivo, $risultatoVerifica);
                             
                 }
 
-                if ($inserimento == false) {
-                    echo "<script>
-                        window.alert('Errore nell'inserimento della risposta');
-                        </script>";
-                }
+                
 
                 $_SESSION['titoloTest'] = "";
                 $_SESSION['numeroDomande'] = "";
                 $_SESSION['datiQuesito'] = array();
                 
-                echo "<script>alert('Test terminato con successo.');</script>";
-                header("Location: ../navBar/testStudenti.php");
-                exit();
+                
                 
             }
 
@@ -408,7 +410,7 @@ if (!isset($_SESSION)){
             
                     <form id="testForm" class='test-form'method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
                         <li class='test-item'>
-                        <br><p class='classQuesito'>Quesito nr. <?php echo $numeroDellaDomanda ?></p>
+                        <br><p class='classQuesito'>Quesito nr. <?php echo ($numeroDellaDomanda+1) ?></p>
                         <p>Domanda: <?php echo $descrizione ?></p>
                         <input type='hidden' name='numeroQuesito' value='<?php echo $numeroProgressivo?>'>
                         <input type='hidden' name='tipologiaQuesito' value='<?php echo $tipologiaQuesito?>'>
@@ -436,14 +438,14 @@ if (!isset($_SESSION)){
                             <textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>
                             <button type='submit' name='verificaRisposta' id='verificaRisposta' class='btnVerifica'>Verifica Risposta</button>
                             <label id='messaggioDiVerifica' class='labelVerifica'></label>
-                            </li>
+                            
                             <?php   
                         }
-            
+                        ?></li><?php
                         if ($numeroDellaDomanda != count($arrayQuesiti)-1 && $numeroDellaDomanda != 0) {
                             ?>
-                            <button type='submit' class='btnScorrimentoIndietro' name='quesitoPrecedente'>Indietro</button>    
-                            <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>     
+                                <button type='submit' class='btnScorrimentoIndietro' name='quesitoPrecedente'>Indietro</button>    
+                                <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>     
                             <?php
                         }
                         else if ($numeroDellaDomanda == 0){
@@ -456,6 +458,7 @@ if (!isset($_SESSION)){
                             ?>
                             <button type='submit' class='btnScorrimentoIndietro' name='quesitoPrecedente'>Indietro</button>     
                             <button type='submit' class='btnSalva' name='salvaTest'>Salva Test</button>
+                            
                             <?php
                         }
 
