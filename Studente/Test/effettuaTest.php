@@ -208,6 +208,15 @@ if (!isset($_SESSION)){
                         $numQuesito = $_POST['numeroQuesito'];
                         $tipologiaQuesito = $_POST['tipologiaQuesito'];
                         $rispostaData = $_POST['codice'];
+                        echo "Risposta data: ".$rispostaData."<br>";
+                        ?>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function() {                                
+                                var textarea = document.getElementById("codice");
+                                textarea.value = "<?php echo $rispostaData; ?>";
+                            });
+                        </script>
+                        <?php
 
                         $idCompletamento = $test->trovaIdCompletamento($_SESSION['titoloTest'], $_SESSION['email']);
 
@@ -332,7 +341,7 @@ if (!isset($_SESSION)){
 
                             <p class='classInserimento'>Inserisci il codice:</p>
                             <textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>
-                            <button type='submit' class='btnVerifica'>Verifica Risposta</button>
+                            <button type='submit' name='verificaRisposta' id='verificaRisposta' class='btnVerifica'>Verifica Risposta</button>
                             <label id='messaggioDiVerifica' class='labelVerifica'>.</label>
                             
                             <?php   
@@ -359,7 +368,24 @@ if (!isset($_SESSION)){
         ?>
         </ul>
     </div>
-        
+    
+    <script>
+        function verificaRisposta(){
+            const http = new XMLHttpRequest();
+            const url = 'effettuaTest.php?id=<?php echo $_SESSION['titoloTest'] ?>';
+            http.open('POST', url, true);
+            http.send();
+
+            http.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById('messaggioDiVerifica').innerHTML = this.responseText;
+                }
+            }
+
+        }
+            
+
+
 </body>
 </html>
 
