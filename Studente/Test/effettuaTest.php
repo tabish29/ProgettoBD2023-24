@@ -325,7 +325,7 @@ if (!isset($_SESSION)){
                         }
                         
                     } else if (isset($_POST['salvaTest'])) {
-                        
+                        salvaDatiTest();
                         echo '<script>
                                 window.alert("Test salvato correttamente!");
                                 window.location.href = "../navBar/testStudenti.php"; 
