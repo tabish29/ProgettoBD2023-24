@@ -208,11 +208,9 @@ if (!isset($_SESSION)){
                     
                     } else if (isset($_POST['verificaRisposta'])) {
                         // Ottengo i dati
-                        echo "richiesta su domanda: ".$_SESSION['domandaAttuale']."<br>";
                         $numQuesito = $_POST['numeroQuesito'];
                         $tipologiaQuesito = $_POST['tipologiaQuesito'];
                         $rispostaData = $_POST['codice'];
-                        echo "Risposta data: ".$rispostaData."<br>";
                         ?>
                         <script>
                             document.addEventListener("DOMContentLoaded", function() {                                
@@ -253,6 +251,9 @@ if (!isset($_SESSION)){
                         
                     } else if (isset($_POST['salvaTest'])) {
                         salvaDatiTest();
+                    } else if (isset($_POST['quesitoPrecedente'])) {
+                        $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] - 1;
+                        mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
                     }
                 }
 
@@ -322,7 +323,6 @@ if (!isset($_SESSION)){
             function mostraQuesito($arrayQuesiti, $numeroDellaDomanda){
                 global $test;
                 if ($numeroDellaDomanda < count($arrayQuesiti)) {
-                    echo "NUMERO DELLA DOMANDA: ". $numeroDellaDomanda . "<br>";
                     $questoQuesito = $_SESSION['arrayQuesiti'][$numeroDellaDomanda];
             
                     $numeroProgressivo = $questoQuesito['NumeroProgressivo'];
@@ -366,14 +366,21 @@ if (!isset($_SESSION)){
                             <?php   
                         }
             
-                        if ($numeroDellaDomanda != count($arrayQuesiti)-1) {
+                        if ($numeroDellaDomanda != count($arrayQuesiti)-1 && $numeroDellaDomanda != 0) {
+                            ?>
+                            <button type='submit' class='btnSalva' name='quesitoPrecedente'>Indietro</button>    
+                            <button type='submit' class='btnSalva' name='quesitoSuccessivo'>Avanti</button>     
+                            <?php
+                        }
+                        else if ($numeroDellaDomanda == 0){
                             ?>
                             <button type='submit' class='btnSalva' name='quesitoSuccessivo'>Avanti</button>     
                             <?php
                         }
-            
+
                         if ($numeroDellaDomanda == count($arrayQuesiti)-1) {
                             ?>
+                            <button type='submit' class='btnSalva' name='quesitoPrecedente'>Indietro</button>     
                             <button type='submit' class='btnSalva' name='salvaTest'>Salva Test</button>
                             <?php
                         }
