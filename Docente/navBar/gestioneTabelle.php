@@ -52,6 +52,22 @@ include '../../connessione.php';
         button[disabled] {
             cursor: not-allowed;
         }
+
+        button{
+        color: black;
+        background-color: #ffcc00;
+        border: none;
+        padding: 10px 20px;
+        margin-right: 10px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+
+    }
     </style>
 </head>
 
@@ -87,6 +103,7 @@ include '../../connessione.php';
             </select>
             <button type="submit" name="delete" <?php echo empty($selectedTabella) ? 'disabled title="Selezionare una tabella da eliminare"' : ''; ?>>Elimina Tabella</button>
             <button type="button" onclick="location.href='../tabelle/aggiungiRiga.php?tabella=<?php echo urlencode($selectedTabella); ?>'" <?php echo empty($selectedTabella) ? 'disabled title="Selezionare una tabella per aggiungere una riga"' : ''; ?>>Aggiungi Riga</button>
+            <button type="button" onclick="location.href='../tabelle/eliminaRiga.php?tabella=<?php echo urlencode($selectedTabella); ?>'" <?php echo empty($selectedTabella) ? 'disabled title="Selezionare una tabella per eliminare una riga"' : ''; ?>>Elimina Riga</button>
 
 
             <?php

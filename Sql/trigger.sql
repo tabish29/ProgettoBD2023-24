@@ -1,5 +1,18 @@
 USE ESQL;
 
+DROP TRIGGER IF EXISTS cambio_stato_incompletamento_rispostaquesitorispostachiusa;
+DROP TRIGGER IF EXISTS cambio_stato_incompletamento_rispostaquesitocodice;
+DROP TRIGGER IF EXISTS cambio_stato_concluso_rispostaquesitoRC_Agg;
+DROP TRIGGER IF EXISTS cambio_stato_concluso_rispostaQuesitoC_Agg;
+DROP TRIGGER IF EXISTS cambio_stato_concluso_rispostaquesitorispostachiusa;
+DROP TRIGGER IF EXISTS cambio_stato_concluso_rispostaquesitocodice;
+DROP TRIGGER IF EXISTS testConclusoVisualizzaRisposte;
+DROP TRIGGER IF EXISTS incrementaNumRighe;
+DROP TRIGGER IF EXISTS decrementaNumRighe;
+DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoAfterInsert;
+DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoAfterDelete;
+DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoCodiceAfterInsert;
+DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoCodiceAfterDelete;
 
 -- TRIGGER
 DELIMITER //
@@ -279,12 +292,10 @@ DELIMITER //
 CREATE TRIGGER decrementaNumRighe 
 AFTER DELETE ON RIGA
 FOR EACH ROW
-BEGIN
     -- Aggiorna il conteggio delle righe nella tabella TABELLADIESERCIZIO
     UPDATE TABELLADIESERCIZIO
     SET num_righe = num_righe - 1
     WHERE Nome = OLD.NomeTabella;
-END
 //
 DELIMITER ;
 
