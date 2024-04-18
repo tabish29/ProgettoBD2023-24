@@ -184,7 +184,10 @@ if (!isset($_SESSION)){
 
                         // Salvataggio dei dati del quesito appena inserito
                         if ($tipologiaQuesito == "Risposta Chiusa") {
-                            $rispostaData = $_POST['risposta'];
+                            $rispostaData = "";
+                            if (isset($_POST['risposta'])){
+                                $rispostaData = $_POST['risposta'];
+                            } 
                             $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo);
                         } else if ($tipologiaQuesito == "Codice") {
                             $rispostaData = $_POST['codice'];
@@ -280,21 +283,40 @@ if (!isset($_SESSION)){
             
             function salvaDatiTest(){
                 global $test;
-                $quesito = new Quesito();
-                $numeroDomandePresenti = $_SESSION['numeroDomande'];
-                echo "numero domande: " . $numeroDomandePresenti . "<br>";
+                
+                $titoloTest = $_SESSION['titoloTest'];
+                $tipologiaQuesito = $_POST['tipologiaQuesito'];
+                $numeroProgressivo = $_POST['numeroQuesito'];
+                $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
 
-                for ($i = 0; $i < $numeroDomandePresenti; $i++) {
-                    
+                if ($tipologiaQuesito == "Risposta Chiusa") {
+                    $rispostaData = "";
+                    if (isset($_POST['risposta'])){
+                        $rispostaData = $_POST['risposta'];
+                    } 
+                    $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo);
+                } else if ($tipologiaQuesito == "Codice") {
+                    $rispostaData = $_POST['codice'];
+                    //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
+                    $risultatoVerifica = true;
+                    $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo, $risultatoVerifica);
+                            
                 }
+
+                if ($inserimento == false) {
+                    echo "<script>
+                        window.alert('Errore nell'inserimento della risposta');
+                        </script>";
+                }
+
                 $_SESSION['titoloTest'] = "";
                 $_SESSION['numeroDomande'] = "";
                 $_SESSION['datiQuesito'] = array();
-                /*
-                echo "<script>alert('Test salvato con successo.');</script>";
+                
+                echo "<script>alert('Test terminato con successo.');</script>";
                 header("Location: ../navBar/testStudenti.php");
                 exit();
-                */
+                
             }
 
             function mostraQuesito($arrayQuesiti, $numeroDellaDomanda){
@@ -302,25 +324,24 @@ if (!isset($_SESSION)){
                 if ($numeroDellaDomanda < count($arrayQuesiti)) {
                     echo "NUMERO DELLA DOMANDA: ". $numeroDellaDomanda . "<br>";
                     $questoQuesito = $_SESSION['arrayQuesiti'][$numeroDellaDomanda];
-
-                        $numeroProgressivo = $questoQuesito['NumeroProgressivo'];
-                        $livelloDifficolta = $questoQuesito['LivelloDifficolta'];
-                        $descrizione = $questoQuesito['Descrizione'];
-                        $numeroRisposte = $questoQuesito['NumeroRisposte'];
-
-
-                        $quesitoOgg = new Quesito();
-                        $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($_SESSION['titoloTest'], $numeroProgressivo);
-
-                        ?>
-                        <form id="testForm" method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
+            
+                    $numeroProgressivo = $questoQuesito['NumeroProgressivo'];
+                    $livelloDifficolta = $questoQuesito['LivelloDifficolta'];
+                    $descrizione = $questoQuesito['Descrizione'];
+                    $numeroRisposte = $questoQuesito['NumeroRisposte'];
+            
+                    $quesitoOgg = new Quesito();
+                    $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($_SESSION['titoloTest'], $numeroProgressivo);
+                    ?>
+            
+                    <form id="testForm" method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
                         <br><p class='classQuesito'>Quesito nr. <?php echo $numeroDellaDomanda ?></p>
                         <p>Domanda: <?php echo $descrizione ?></p>
                         <input type='hidden' name='numeroQuesito' value='<?php echo $numeroProgressivo?>'>
                         <input type='hidden' name='tipologiaQuesito' value='<?php echo $tipologiaQuesito?>'>
                         <input type='hidden' name='numeroDomanda' value='<?php echo $numeroDellaDomanda?>'>
                         <input type='hidden' name='titoloTest' value='<?php echo $_SESSION['titoloTest'] ?>'>
-
+            
                         <?php
                         // Gestione grafica delle risposte
                         if ($tipologiaQuesito == "Risposta Chiusa") {
@@ -332,63 +353,40 @@ if (!isset($_SESSION)){
                                 foreach ($soluzioni as $soluzione) {
                                     $risposta = $soluzione['CampoTesto'];
                                     ?>
-                                    <input type='radio' name='risposta' value=' <?php echo $risposta ?>' data-quesito='<?php echo $numeroProgressivo ?>'><?php echo $risposta ?><br>
+                                    <input type='radio' name='risposta' value='<?php echo $risposta ?>' data-quesito='<?php echo $numeroProgressivo ?>'><?php echo $risposta ?><br>
                                     <?php
                                 }
                             }
                         } elseif ($tipologiaQuesito == "Codice") {
                             ?>
-
                             <p class='classInserimento'>Inserisci il codice:</p>
                             <textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>
                             <button type='submit' name='verificaRisposta' id='verificaRisposta' class='btnVerifica'>Verifica Risposta</button>
                             <label id='messaggioDiVerifica' class='labelVerifica'>.</label>
-                            
                             <?php   
                         }
+            
+                        if ($numeroDellaDomanda != count($arrayQuesiti)-1) {
+                            ?>
+                            <button type='submit' class='btnSalva' name='quesitoSuccessivo'>Avanti</button>     
+                            <?php
+                        }
+            
+                        if ($numeroDellaDomanda == count($arrayQuesiti)-1) {
+                            ?>
+                            <button type='submit' class='btnSalva' name='salvaTest'>Salva Test</button>
+                            <?php
+                        }
                         ?>
-                            <button type='submit' class='btnSalva' name='quesitoSuccessivo'>Avanti</button>
-                            </form>
-
-                        <?php
-                    } 
-                    if ($numeroDellaDomanda == count($arrayQuesiti)-1) {
-                        
-                        ?>
-                        <form method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
-                        <button type='submit' class='btnSalva' name='salvaTest'>Salva Test</button>
-                        </form>
-                        <?php
-                    }
-
-                            
-
+                    </form>
+                    <?php
                 }
-                
+            }
+            
+        
         ?>
         </ul>
     </div>
-    
-    <script>
-        function verificaRisposta(){
-            const http = new XMLHttpRequest();
-            const url = 'effettuaTest.php?id=<?php echo $_SESSION['titoloTest'] ?>';
-            http.open('POST', url, true);
-            http.send();
-
-            http.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById('messaggioDiVerifica').innerHTML = this.responseText;
-                }
-            }
-
-        }
-            
-
-
+  
 </body>
 </html>
-
-
-
-
