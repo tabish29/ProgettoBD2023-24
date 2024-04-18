@@ -41,6 +41,26 @@ include '../../connessione.php';
             $stmt->close();
             return $resultTabellaEsercizio;
         }
+
+        function tabelleDelQuesito($titoloTest, $numeroQuesito){
+            $queryCostituzione = "SELECT NomeTabella FROM COSTITUZIONE WHERE TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = $numeroQuesito";
+            $risultato = $_SESSION['conn']->query($queryCostituzione);
+
+            $nomiTabella = [];
+            while ($row = $risultato->fetch_assoc()) {
+                $nomiTabella[] = $row['NomeTabella'];
+            }
+            $_SESSION['conn']->next_result();
+
+            return $nomiTabella;
+        }
+
+        //TO DO: si potrebbe mettere in GestioneTabelle.php
+        function ottieniContenutoTabella($nomeTabella){
+            $query = "SELECT * FROM " . $nomeTabella;
+            $risultato = $_SESSION['conn']->query($query);
+            return $risultato;
+        }
             
     }
     

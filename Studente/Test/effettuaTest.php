@@ -1,6 +1,7 @@
 <?php
 include '../../connessione.php';
 include '../../Condiviso/Test.php';
+include '../../Condiviso/Tabella.php';
 
 if (!isset($_SESSION)){
     session_start();
@@ -139,6 +140,32 @@ if (!isset($_SESSION)){
             display: block;
             
         }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        .labelNomeTabella{
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+        }
+
     </style>
 </head>
 <body>
@@ -384,12 +411,43 @@ if (!isset($_SESSION)){
                             <button type='submit' class='btnSalva' name='salvaTest'>Salva Test</button>
                             <?php
                         }
+
+                        stampaTabella($_SESSION['titoloTest'], $numeroProgressivo);
                         ?>
                     </form>
                     <?php
                 }
             }
             
+
+            function stampaTabella($titoloTest, $numeroQuesito){
+                global $tabella;
+                $tabella = new Tabella();
+                $nomiTabella = $tabella->tabelleDelQuesito($titoloTest, $numeroQuesito);
+                if (!empty($nomiTabella)) {
+                    foreach ($nomiTabella as $nomeTabella) {
+                        $datiTabella = $tabella->ottieniContenutoTabella($nomeTabella);
+                        if ($datiTabella) {
+                            echo "<br><label class='labelNomeTabella'> Tabella: " . $nomeTabella . "</label>";
+                            echo "<table>";
+                            echo "<tr>";
+                            while ($campo = $datiTabella->fetch_field()) {
+                                echo "<th>" . htmlspecialchars($campo->name) . "</th>";
+                            }
+                            echo "</tr>";
+                
+                            while ($row = $datiTabella->fetch_assoc()) {
+                                echo "<tr>";
+                                foreach ($row as $value) {
+                                    echo "<td>" . htmlspecialchars($value) . "</td>";
+                                }
+                                echo "</tr>";
+                            }
+                            echo "</table>";
+                        }
+                    }
+                } 
+            }
         
         ?>
         </ul>
