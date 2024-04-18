@@ -179,18 +179,18 @@ if (!isset($_SESSION)){
                     if (isset($_POST['quesitoSuccessivo'])) {
                         $titoloTest = $_SESSION['titoloTest'];
                         $tipologiaQuesito = $_POST['tipologiaQuesito'];
-                        
+                        $numeroProgressivo = $_POST['numeroQuesito'];
                         $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
 
                         // Salvataggio dei dati del quesito appena inserito
                         if ($tipologiaQuesito == "Risposta Chiusa") {
                             $rispostaData = $_POST['risposta'];
-                            $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$titoloTest, $rispostaData, $_SESSION['domandaAttuale']);
+                            $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo);
                         } else if ($tipologiaQuesito == "Codice") {
                             $rispostaData = $_POST['codice'];
                             //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
                             $risultatoVerifica = true;
-                            $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$titoloTest, $rispostaData, $_SESSION['domandaAttuale'], $risultatoVerifica);
+                            $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo, $risultatoVerifica);
                             
                         }
 
@@ -202,6 +202,7 @@ if (!isset($_SESSION)){
 
                         $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] + 1;
                         mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
+                    
                     } else if (isset($_POST['verificaRisposta'])) {
                         // Ottengo i dati
                         echo "richiesta su domanda: ".$_SESSION['domandaAttuale']."<br>";
@@ -226,13 +227,12 @@ if (!isset($_SESSION)){
                         //$risultatoVerifica = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
                         $risultatoVerifica = true;
                         if ($risultatoVerifica == true){
-                        ?>
-                            <label class='labelVerifica'>Risposta corretta</label>
-                        <?php   
+                        
+                            echo "<label class='labelVerifica'>Risposta corretta</label>";
+                        
                         } else {
-                        ?>
-                            <label class='labelVerifica'>Risposta sbagliata</label>
-                        <?php
+                        
+                            echo "<label class='labelVerifica'>Risposta sbagliata</label>";
                         }
 
                         $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $_SESSION['titoloTest'], $rispostaData, $numQuesito, $risultatoVerifica);
