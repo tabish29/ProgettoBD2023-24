@@ -68,6 +68,18 @@
                     $sql_apriCompletamento = "UPDATE COMPLETAMENTO SET Stato = 'Aperto' WHERE TitoloTest = '$testId' AND EmailStudente = '$emailStudente'";
                     $_SESSION['conn']->query($sql_apriCompletamento);
                     $_SESSION['conn']->next_result();
+
+                    $numeroProgressivoCompletamento = $this->trovaIdCompletamento($testId, $emailStudente);
+                    $eliminaRisposte = "DELETE FROM RISPOSTAQUESITORISPOSTACHIUSA WHERE NumeroProgressivoCompletamento = $numeroProgressivoCompletamento";
+                    $_SESSION['conn']->query($eliminaRisposte);
+                    $_SESSION['conn']->next_result();
+
+                    $eliminaRisposteCodice = "DELETE FROM RISPOSTAQUESITOCODICE WHERE NumeroProgressivoCompletamento = $numeroProgressivoCompletamento";
+                    $_SESSION['conn']->query($eliminaRisposteCodice);
+                    $_SESSION['conn']->next_result();
+
+                    
+
                 }
             }
         }

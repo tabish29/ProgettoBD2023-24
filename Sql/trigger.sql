@@ -27,7 +27,7 @@ BEGIN
 		WHERE (TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento));
 
     -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
-    IF (num_risposte_inserite = 1) THEN
+    IF (num_risposte_inserite >= 1) THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'InCompletamento'
         WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivo = NEW.NumeroProgressivoCompletamento;
@@ -49,7 +49,7 @@ BEGIN
 		WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivoCompletamento = NEW.NumeroProgressivoCompletamento);
 
     -- Se il numero di risposte inserite è uguale a 1, cambia lo stato del test in 'InCompletamento'
-    IF (num_risposte_inserite = 1) THEN
+    IF (num_risposte_inserite >= 1) THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'InCompletamento'
         WHERE TitoloTest = NEW.TitoloTest AND NumeroProgressivo = NEW.NumeroProgressivoCompletamento;
@@ -59,16 +59,13 @@ END;
 
 DELIMITER //
 CREATE TRIGGER cambio_stato_concluso_rispostaquesitoRC_Agg
-AFTER UPDATE ON RISPOSTAQUESITORISPOSTACHIUSA 
+AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA 
 FOR EACH ROW
 BEGIN
     DECLARE num_quesiti_totali INT;
     DECLARE num_risposte_inserite_RC INT;
     DECLARE num_risposte_inserite_codice INT;
     DECLARE num_risposte_inserite INT;
-    DECLARE num_risposte_corrette_RC INT;
-    DECLARE num_risposte_corrette_codice INT;
-    DECLARE num_risposte_corrette INT;
     DECLARE num_progressivo_completamento INT;
     
     -- Ottieni il numero progressivo di completamento
@@ -88,19 +85,6 @@ BEGIN
     
     SET num_risposte_inserite = num_risposte_inserite_codice + num_risposte_inserite_RC;
 
-/*
-    -- Conta il numero di risposte corrette per il test
-     SET num_risposte_corrette_RC = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    -- Conta il numero di risposte corrette per il test
-    SET num_risposte_corrette_codice = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    SET num_risposte_corrette = num_risposte_corrette_codice + num_risposte_corrette_RC;
-*/
-    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
- --   IF (num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali) THEN
   IF (num_risposte_inserite = num_quesiti_totali) THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
@@ -113,107 +97,6 @@ END;
 
 DELIMITER //
 CREATE TRIGGER cambio_stato_concluso_rispostaQuesitoC_Agg
-AFTER UPDATE ON RISPOSTAQUESITOCODICE
-FOR EACH ROW
-BEGIN
-    DECLARE num_quesiti_totali INT;
-    DECLARE num_risposte_inserite_RC INT;
-    DECLARE num_risposte_inserite_codice INT;
-    DECLARE num_risposte_inserite INT;
-    DECLARE num_risposte_corrette_RC INT;
-    DECLARE num_risposte_corrette_codice INT;
-    DECLARE num_risposte_corrette INT;
-    DECLARE num_progressivo_completamento INT;
-    
-    -- Ottieni il numero progressivo di completamento
-    SET num_progressivo_completamento = NEW.NumeroProgressivoCompletamento;
-
-    -- Conta il numero totale di quesiti per il test
-    SET num_quesiti_totali = (SELECT COUNT(*) FROM QUESITO
-		WHERE TitoloTest = NEW.TitoloTest);
-
-    -- Conta il numero di risposte inserite per il test
-    SET num_risposte_inserite_RC = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento);
-
-    SET num_risposte_inserite_codice = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
-        WHERE NumeroProgressivoCompletamento = num_progressivo_completamento);
-    
-    SET num_risposte_inserite = num_risposte_inserite_codice + num_risposte_inserite_RC;
-
-    -- Conta il numero di risposte corrette per il test
-    SET num_risposte_corrette_RC = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    -- Conta il numero di risposte corrette per il test
-    SET num_risposte_corrette_codice = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    SET num_risposte_corrette = num_risposte_corrette_codice + num_risposte_corrette_RC;
-
-    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
-    IF (num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali) THEN
-        UPDATE COMPLETAMENTO
-        SET Stato = 'Concluso'
-        WHERE NumeroProgressivo = num_progressivo_completamento;
-    END IF;
-END;
-// DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER cambio_stato_concluso_rispostaquesitorispostachiusa
-AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA 
-FOR EACH ROW
-BEGIN
-    DECLARE num_quesiti_totali INT;
-    DECLARE num_risposte_inserite_RC INT;
-    DECLARE num_risposte_inserite_codice INT;
-    DECLARE num_risposte_inserite INT;
-    DECLARE num_risposte_corrette_RC INT;
-    DECLARE num_risposte_corrette_codice INT;
-    DECLARE num_risposte_corrette INT;
-    DECLARE num_progressivo_completamento INT;
-    
-    -- Ottieni il numero progressivo di completamento
-    SET num_progressivo_completamento = NEW.NumeroProgressivoCompletamento;
-
-    
-    -- Conta il numero totale di quesiti per il test
-    SET num_quesiti_totali = (SELECT COUNT(*) FROM QUESITO
-		WHERE TitoloTest = NEW.TitoloTest);
-
-    -- Conta il numero di risposte inserite per il test
-    SET num_risposte_inserite_RC = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento);
-
-    SET num_risposte_inserite_codice = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
-        WHERE NumeroProgressivoCompletamento = num_progressivo_completamento);
-    
-    SET num_risposte_inserite = num_risposte_inserite_codice + num_risposte_inserite_RC;
-
-    -- Conta il numero di risposte corrette per il test
-    SET num_risposte_corrette_RC = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    -- Conta il numero di risposte corrette per il test
-    SET num_risposte_corrette_codice = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    SET num_risposte_corrette = num_risposte_corrette_codice + num_risposte_corrette_RC;
-
-    -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
-    IF (num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali) THEN
-        UPDATE COMPLETAMENTO
-        SET Stato = 'Concluso'
-        WHERE NumeroProgressivo = num_progressivo_completamento;
-    END IF;
-END;
-// DELIMITER ;
-
-
-
-DELIMITER //
-CREATE TRIGGER cambio_stato_concluso_rispostaquesitocodice
 AFTER INSERT ON RISPOSTAQUESITOCODICE
 FOR EACH ROW
 BEGIN
@@ -221,9 +104,6 @@ BEGIN
     DECLARE num_risposte_inserite_RC INT;
     DECLARE num_risposte_inserite_codice INT;
     DECLARE num_risposte_inserite INT;
-    DECLARE num_risposte_corrette_RC INT;
-    DECLARE num_risposte_corrette_codice INT;
-    DECLARE num_risposte_corrette INT;
     DECLARE num_progressivo_completamento INT;
     
     -- Ottieni il numero progressivo di completamento
@@ -242,24 +122,16 @@ BEGIN
     
     SET num_risposte_inserite = num_risposte_inserite_codice + num_risposte_inserite_RC;
 
-    -- Conta il numero di risposte corrette per il test
-    SET num_risposte_corrette_RC = (SELECT COUNT(*) FROM RISPOSTAQUESITORISPOSTACHIUSA
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    -- Conta il numero di risposte corrette per il test
-    SET num_risposte_corrette_codice = (SELECT COUNT(*) FROM RISPOSTAQUESITOCODICE
-		WHERE NumeroProgressivoCompletamento = num_progressivo_completamento AND Esito = TRUE);
-
-    SET num_risposte_corrette = num_risposte_corrette_codice + num_risposte_corrette_RC;
-
+    
     -- Se tutte le risposte sono state inserite e hanno esito True, il test diventa Concluso
-    IF (num_risposte_inserite = num_quesiti_totali AND num_risposte_corrette = num_quesiti_totali) THEN
+    IF (num_risposte_inserite = num_quesiti_totali) THEN
         UPDATE COMPLETAMENTO
         SET Stato = 'Concluso'
         WHERE NumeroProgressivo = num_progressivo_completamento;
     END IF;
 END;
 // DELIMITER ;
+
 
 
 
