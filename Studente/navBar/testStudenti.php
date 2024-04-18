@@ -155,7 +155,9 @@ if (!isset($_SESSION)) {
                     
                     echo "<li class='test-item'>";
 
-                    if ($statoCompletamento !== 'Concluso') {
+                    $visualizzaRisposte = $test->visualizzaRisposte($titoloTest);
+
+                    if ($visualizzaRisposte == 0) {
                         echo "<input type='radio' name='test' value='" . $titoloTest . "'>";
                     }
 
@@ -164,7 +166,7 @@ if (!isset($_SESSION)) {
                     echo "<p>Email Docente: " . $datiTest['EmailDocente'] . "</p><br>";
                     echo "<p> Stato completamento: " . $statoCompletamento . "</p><br>";
 
-                    if ($statoCompletamento === 'Concluso') {
+                    if ($visualizzaRisposte == 1) {
                         //TODO: uniformare la sintassi di queste due righe di codice 
                         $urlVisualizza = "../Test/visualizzaRisposta.php?idTest=" . urlencode($titoloTest);
                         echo "<a href='" . htmlspecialchars($urlVisualizza) . "' class='button'>Visualizza Risposta</a>";

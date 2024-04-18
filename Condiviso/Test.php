@@ -228,6 +228,14 @@
             return $risultato;
             
         }
+
+        function visualizzaRisposte($titoloTest){
+            $sql = "SELECT VisualizzaRisposte FROM TEST WHERE (Titolo = '$titoloTest')";
+            $risultato = $_SESSION['conn']->query($sql);
+            $_SESSION['conn']->next_result();
+            $visualizzaRisposte = $risultato->fetch_assoc()['VisualizzaRisposte'];
+            return $visualizzaRisposte;
+        }
     }
     
 ?>
