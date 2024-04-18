@@ -17,29 +17,23 @@ if (!isset($_SESSION)){
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
             background-color: #f9acac;
         }
-        
+
         .container {
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
             margin: 0;
             padding: 0;
             background-color: #f9acac;
             border-radius: 5px;
-            word-wrap: break-word; /* Imposta il wrapping del testo */
-
+            text-align: center;
+            word-wrap: break-word;
         }
 
-        .containerDomande{
-            width: 50%;
-            background-color: #edeeee;
-            margin: 20px auto;
-            align-content: center;
-            padding: 30px;
-        }
+        
         h2 {
             text-align: center;
             margin-bottom: 20px;
@@ -47,14 +41,42 @@ if (!isset($_SESSION)){
         .test-details {
             list-style-type: none;
             padding: 0;
+            width: auto;
+            height: auto;
+        }
+        .test-form {
+            width: auto;
+            height: auto;
+            padding: 2px;
+            margin-bottom: 5px;
+            background-color: #f9acac;
+            border-radius: 5px;
+            text-align: center;
+            word-wrap: break-word;        
         }
         .test-item {
-            padding: 10px;
+            width: auto;
+            height: auto;
+            padding: 2px;
             margin-bottom: 5px;
+            margin-left: 300px;
+            margin-right: 300px;
             background-color: #f9f9f9;
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            word-wrap: break-word;        
         }
+
+        .test-item p,
+        .test-item label {
+            text-align: center;
+            /* Allinea il testo a sinistra */
+            margin: auto;
+            font-size: medium;
+            font: Arial;
+        }
+        
         .form-container {
             margin-top: 20px;
         }
@@ -65,21 +87,7 @@ if (!isset($_SESSION)){
             display: block;
             margin-bottom: 5px;
         }
-        .form-group input[type="text"],
-        .form-group input[type="email"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
-        .form-group input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
+        
         .classQuesito{
             font-size: 16px;
             font-weight: bold;
@@ -110,6 +118,35 @@ if (!isset($_SESSION)){
             color: #222222;
             background-color: #7cfc00; 
         }
+        .btnScorrimentoAvanti{
+            width: 100px;
+            height: 40px;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 5px;
+            margin-right: 100px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #7cfc00; 
+            float: right;
+        }
+        .btnScorrimentoIndietro{
+            width: 100px;
+            height: 40px;
+            border: 1px solid #222222;
+            padding: 3px;
+            margin: 5px;
+            margin-left: 100px;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: #222222;
+            background-color: #7cfc00; 
+            float: left;
+        }
+        
         .testH2{
             text-align: center;
             margin-bottom: 20px;
@@ -124,7 +161,7 @@ if (!isset($_SESSION)){
             text-decoration: underline;
         }
         .areaCodice{
-            width: 80%;
+            width: 50%;
             display: block;
             margin:auto;
         }
@@ -141,7 +178,8 @@ if (!isset($_SESSION)){
             
         }
         table {
-            width: 80%;
+            width: auto;
+            min-width: 40%;
             margin: 20px auto;
             border-collapse: collapse;
             table-layout: fixed;
@@ -160,6 +198,7 @@ if (!isset($_SESSION)){
             text-align: center;
         }
         .labelNomeTabella{
+            text-align: center;
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
@@ -254,14 +293,20 @@ if (!isset($_SESSION)){
                         // TODO: chiamare metodo da realizzare (input: $rispostaData, output: $risultatoVerifica)
                         //$risultatoVerifica = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
                         $risultatoVerifica = true;
+                        $messaggio = "";
                         if ($risultatoVerifica == true){
-                        
-                            echo "<label class='labelVerifica'>Risposta corretta</label>";
-                        
+                            $messaggio = "Risposta corretta";
                         } else {
-                        
-                            echo "<label class='labelVerifica'>Risposta sbagliata</label>";
+                            $messaggio = "Risposta errata";
                         }
+                        ?>
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    var messaggioDiVerifica = document.getElementById("messaggioDiVerifica");
+                                    messaggioDiVerifica.innerHTML = "<?php echo $messaggio; ?>";
+                                });
+                            </script>
+                        <?php
 
                         $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $_SESSION['titoloTest'], $rispostaData, $numQuesito, $risultatoVerifica);
                         if ($aggiuntaRisposta == 1) {
@@ -361,7 +406,8 @@ if (!isset($_SESSION)){
                     $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($_SESSION['titoloTest'], $numeroProgressivo);
                     ?>
             
-                    <form id="testForm" method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
+                    <form id="testForm" class='test-form'method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
+                        <li class='test-item'>
                         <br><p class='classQuesito'>Quesito nr. <?php echo $numeroDellaDomanda ?></p>
                         <p>Domanda: <?php echo $descrizione ?></p>
                         <input type='hidden' name='numeroQuesito' value='<?php echo $numeroProgressivo?>'>
@@ -389,25 +435,26 @@ if (!isset($_SESSION)){
                             <p class='classInserimento'>Inserisci il codice:</p>
                             <textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>
                             <button type='submit' name='verificaRisposta' id='verificaRisposta' class='btnVerifica'>Verifica Risposta</button>
-                            <label id='messaggioDiVerifica' class='labelVerifica'>.</label>
+                            <label id='messaggioDiVerifica' class='labelVerifica'></label>
+                            </li>
                             <?php   
                         }
             
                         if ($numeroDellaDomanda != count($arrayQuesiti)-1 && $numeroDellaDomanda != 0) {
                             ?>
-                            <button type='submit' class='btnSalva' name='quesitoPrecedente'>Indietro</button>    
-                            <button type='submit' class='btnSalva' name='quesitoSuccessivo'>Avanti</button>     
+                            <button type='submit' class='btnScorrimentoIndietro' name='quesitoPrecedente'>Indietro</button>    
+                            <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>     
                             <?php
                         }
                         else if ($numeroDellaDomanda == 0){
                             ?>
-                            <button type='submit' class='btnSalva' name='quesitoSuccessivo'>Avanti</button>     
+                            <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>     
                             <?php
                         }
 
                         if ($numeroDellaDomanda == count($arrayQuesiti)-1) {
                             ?>
-                            <button type='submit' class='btnSalva' name='quesitoPrecedente'>Indietro</button>     
+                            <button type='submit' class='btnScorrimentoIndietro' name='quesitoPrecedente'>Indietro</button>     
                             <button type='submit' class='btnSalva' name='salvaTest'>Salva Test</button>
                             <?php
                         }
@@ -428,7 +475,7 @@ if (!isset($_SESSION)){
                     foreach ($nomiTabella as $nomeTabella) {
                         $datiTabella = $tabella->ottieniContenutoTabella($nomeTabella);
                         if ($datiTabella) {
-                            echo "<br><label class='labelNomeTabella'> Tabella: " . $nomeTabella . "</label>";
+                            echo "<br><br><br><label class='labelNomeTabella'> Tabella: " . $nomeTabella . "</label>";
                             echo "<table>";
                             echo "<tr>";
                             while ($campo = $datiTabella->fetch_field()) {
