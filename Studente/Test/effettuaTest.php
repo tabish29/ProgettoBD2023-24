@@ -173,44 +173,65 @@ if (!isset($_SESSION)){
                     - Capire perchè non funziona la verifica della risposta di codice
                     */
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                    global $test;
+                    global $quesito;
+
                     if (isset($_POST['quesitoSuccessivo'])) {
-                        $testId = $_SESSION['titoloTest'];
-                        $_SESSION['titoloTest'] = $testId;
+                        $titoloTest = $_SESSION['titoloTest'];
+                        $tipologiaQuesito = $_POST['tipologiaQuesito'];
+                        
+                        $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
+
+                        // Salvataggio dei dati del quesito appena inserito
+                        if ($tipologiaQuesito == "Risposta Chiusa") {
+                            $rispostaData = $_POST['risposta'];
+                            $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$titoloTest, $rispostaData, $_SESSION['domandaAttuale']);
+                        } else if ($tipologiaQuesito == "Codice") {
+                            $rispostaData = $_POST['codice'];
+                            //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
+                            $risultatoVerifica = true;
+                            $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$titoloTest, $rispostaData, $_SESSION['domandaAttuale'], $risultatoVerifica);
+                            
+                        }
+
+                        if ($inserimento == false) {
+                            echo "<script>
+                                    window.alert('Errore nell'inserimento della risposta');
+                                </script>";
+                        }
+
                         $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] + 1;
-                        //TODO: salvare i dati del quesito appena salvato
                         mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
                     } else if (isset($_POST['verificaRisposta'])) {
                         // Ottengo i dati
-                        $testId = $_POST['titoloTest'];
-                        $domanda = $_POST['verificaRisposta'];
-                        echo "richiesta su domanda: $domanda<br>";
-                        $numQuesito = $_POST['numeroQuesito' . ";" . $domanda];
-                        $tipologiaQuesito = $_POST['tipologiaQuesito' . ";" . $domanda];
-                        $rispostaData = $_POST['codice' . ";" . $domanda];
+                        echo "richiesta su domanda: ".$_SESSION['domandaAttuale']."<br>";
+                        $numQuesito = $_POST['numeroQuesito'];
+                        $tipologiaQuesito = $_POST['tipologiaQuesito'];
+                        $rispostaData = $_POST['codice'];
 
-                        $idCompletamento = $test->trovaIdCompletamento($testId, $_SESSION['email']);
+                        $idCompletamento = $test->trovaIdCompletamento($_SESSION['titoloTest'], $_SESSION['email']);
 
                         //verifico l'esito della risposta Data
                         $quesitoOgg = new Quesito();
                         // TODO: chiamare metodo da realizzare (input: $rispostaData, output: $risultatoVerifica)
                         //$risultatoVerifica = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
                         $risultatoVerifica = true;
-                        $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $testId, $rispostaData, $numQuesito, $risultatoVerifica);
+                        if ($risultatoVerifica == true){
+                        ?>
+                            <label class='labelVerifica'>Risposta corretta</label>
+                        <?php   
+                        } else {
+                        ?>
+                            <label class='labelVerifica'>Risposta sbagliata</label>
+                        <?php
+                        }
+
+                        $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $_SESSION['titoloTest'], $rispostaData, $numQuesito, $risultatoVerifica);
                         if ($aggiuntaRisposta == 1) {
-                            if ($risultatoVerifica) {
-                                $esito = "Risposta corretta b";
-                            } else {
-                                $esito = "Risposta sbagliata b";
-                            }
-                            // Aggiorno la label con l'esito (non capisco perchè non funziona)
-                            echo "<script>
-                                    window.alert('Esito: " . $esito . "');
-                                </script>";
-    
-    
+                            
                             $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
-                            mostraDatiTest($testId, $esito, $numDomanda);
-                            creaGrafica($testId);
+                            mostraDatiTest($_SESSION['titoloTest'], $numDomanda);
+                            creaGrafica($_SESSION['titoloTest']);
                         }
                         else {
                             echo "<script>
@@ -218,10 +239,12 @@ if (!isset($_SESSION)){
                                 </script>";
                         }
                         
+                    } else if (isset($_POST['salvaTest'])) {
+                        salvaDatiTest();
                     }
                 }
 
-            function mostraDatiTest($testId, $esito, $numDomanda)
+            function mostraDatiTest($testId)
             {
                 global $test;
                 $testDetails = $test->ottieniTest($testId);
@@ -253,21 +276,7 @@ if (!isset($_SESSION)){
                 echo "numero domande: " . $numeroDomandePresenti . "<br>";
 
                 for ($i = 0; $i < $numeroDomandePresenti; $i++) {
-                    $numeroQuesito = $_SESSION['datiQuesito'][$i][1];
-                    echo "numero quesito: " . $numeroQuesito . "<br>";
-                    echo "titolo test: " . $_SESSION['titoloTest'] . "<br>";
-                    $tipologiaQuesito = $quesito->ottieniTipologiaQuesito($_SESSION['titoloTest'], $numeroQuesito);
-                    echo "tipologia quesito: " . $tipologiaQuesito . "<br>";
-                    $idCompletamento = $test->trovaIdCompletamento($_SESSION['titoloTest'], $_SESSION['email']);
-                    /*
-                    if ($tipologiaQuesito == "Risposta Chiusa") {
-                        $rispostaData = $_POST['risposta' . ";" . $i];
-                        $test->inserisciRispostaQuesitoRispostaChiusa($idCompletamento, $titoloTest, $rispostaData, $numeroQuesito);
-                    } else if ($tipologiaQuesito == "Codice") {
-                        $rispostaData = $_POST['codice' . ";" . $i]; // Sbagliato, ma non so come fare
-                        $esito = $quesito->ottieniEsitoCodice($idCompletamento); //TODO: mettere metodo di Tab
-                        $test->inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numeroQuesito, $esito);
-                    }*/
+                    
                 }
                 $_SESSION['titoloTest'] = "";
                 $_SESSION['numeroDomande'] = "";
@@ -281,6 +290,7 @@ if (!isset($_SESSION)){
 
             function mostraQuesito($arrayQuesiti, $numeroDellaDomanda){
                 global $test;
+                if ($numeroDellaDomanda < count($arrayQuesiti)) {
                     echo "NUMERO DELLA DOMANDA: ". $numeroDellaDomanda . "<br>";
                     $questoQuesito = $_SESSION['arrayQuesiti'][$numeroDellaDomanda];
 
@@ -294,13 +304,13 @@ if (!isset($_SESSION)){
                         $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($_SESSION['titoloTest'], $numeroProgressivo);
 
                         ?>
-                        <form method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
+                        <form id="testForm" method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
                         <br><p class='classQuesito'>Quesito nr. <?php echo $numeroDellaDomanda ?></p>
                         <p>Domanda: <?php echo $descrizione ?></p>
-                        <input type='hidden' name='numeroQuesito; <?php echo $numeroDellaDomanda ?>' value='<?php echo $numeroProgressivo?>'>
-                        <input type='hidden' name='tipologiaQuesito; <?php echo $numeroDellaDomanda ?>' value='<?php echo $tipologiaQuesito?>'>
-                        <input type='hidden' name='numeroDomanda;' value='<?php echo $numeroDellaDomanda?>'>
-                        <input type='hidden' name='titoloTest;' value='<?php echo $titoloTest ?>'>
+                        <input type='hidden' name='numeroQuesito' value='<?php echo $numeroProgressivo?>'>
+                        <input type='hidden' name='tipologiaQuesito' value='<?php echo $tipologiaQuesito?>'>
+                        <input type='hidden' name='numeroDomanda' value='<?php echo $numeroDellaDomanda?>'>
+                        <input type='hidden' name='titoloTest' value='<?php echo $_SESSION['titoloTest'] ?>'>
 
                         <?php
                         // Gestione grafica delle risposte
@@ -313,7 +323,7 @@ if (!isset($_SESSION)){
                                 foreach ($soluzioni as $soluzione) {
                                     $risposta = $soluzione['CampoTesto'];
                                     ?>
-                                    <input type='radio' name='risposta; <?php echo $numeroDellaDomanda ?>' value=' <?php echo $risposta ?>' data-quesito='<?php echo $numeroProgressivo ?>'><?php echo $risposta ?><br>
+                                    <input type='radio' name='risposta' value=' <?php echo $risposta ?>' data-quesito='<?php echo $numeroProgressivo ?>'><?php echo $risposta ?><br>
                                     <?php
                                 }
                             }
@@ -321,43 +331,35 @@ if (!isset($_SESSION)){
                             ?>
 
                             <p class='classInserimento'>Inserisci il codice:</p>
-                            <textarea class='areaCodice' id='codice; <?php echo $numeroDellaDomanda ?>' name='codice; <?php echo $numeroDellaDomanda ?>' rows='10' cols='50'></textarea>
-                            <button type='submit' class='btnVerifica' name='verificaRisposta' value=' <?php echo $numeroDellaDomanda ?>' >Verifica Risposta</button>
-                            <label id='messaggioDiVerifica; <?php echo $numeroDellaDomanda ?> ' class='labelVerifica'>.</label>
+                            <textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>
+                            <button type='submit' class='btnVerifica'>Verifica Risposta</button>
+                            <label id='messaggioDiVerifica' class='labelVerifica'>.</label>
                             
                             <?php   
                         }
                         ?>
-                         
                             <button type='submit' class='btnSalva' name='quesitoSuccessivo'>Avanti</button>
-                         </form>
-                        <?php
-                        // Visualizza il pulsante per salvare il test se si è all'ultimo quesito
-                        if ($numeroDellaDomanda == count($_SESSION['arrayQuesiti'])) {
-                            $_SESSION['numeroDomande'] = $numeroDellaDomanda;
-                            echo "<br> HAI FINITO YUUU";
-
-                            /*
-                            ?>
-                            <br><br>";
-                            <form method='post' action='effettuaTest.php?id=".$_SESSION['titoloTest']." '>
-                            <input class='btnSalva' type='submit' name='salvaTest' value='Salva Test'>
-                            <input type='hidden' name='titoloTest' value='$titoloTest'>";
                             </form>
 
-                            <?php
-                            */
+                        <?php
+                    } 
+                    if ($numeroDellaDomanda == count($arrayQuesiti)-1) {
+                        
+                        ?>
+                        <form method='post' action='effettuaTest.php?id=<?php $_SESSION['titoloTest']?>'>
+                        <button type='submit' class='btnSalva' name='salvaTest'>Salva Test</button>
+                        </form>
+                        <?php
+                    }
 
-                            /*
-                            for ($i = 0; $i < count($_SESSION['datiQuesito']); $i++) {
-                                echo $_SESSION['datiQuesito'][$i][0] . " " . $_SESSION['datiQuesito'][$i][1] . "<br>";
-                            }*/
+                            
 
-                        }
                 }
+                
         ?>
         </ul>
     </div>
+        
 </body>
 </html>
 
