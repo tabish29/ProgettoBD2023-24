@@ -49,31 +49,34 @@ include '../../connessione.php';
             text-align: center;
         }
 
+        button {
+            color: black;
+            background-color: #ffcc00;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
         button[disabled] {
             cursor: not-allowed;
         }
 
-        button{
-        color: black;
-        background-color: #ffcc00;
-        border: none;
-        padding: 10px 20px;
-        margin-right: 10px;
-        text-align: center;
-        text-decoration: none;
-        font-weight: bold;
-        display: inline-block;
-        font-size: 16px;
-        border-radius: 5px;
-        cursor: pointer;
-
-    }
+        button[disabled]:hover {
+            background-color: #b8860b;
+        }
     </style>
 </head>
 
 <body>
     <?php
-        $email = $_SESSION['email'];
+    $email = $_SESSION['email'];
     ?>
     <div class="container">
         <button onclick="window.location.href='../Tabelle/inserisciTabella.php'">Aggiungi Tabella</button>
@@ -124,7 +127,6 @@ include '../../connessione.php';
                     // Reset della selezione dopo l'eliminazione
                     $selectedTabella = "";
                     echo "<p>Tabella eliminata con successo. Selezionare un'altra tabella.</p>";
-                   
                 } else {
                     echo "<p>Errore nell'eliminazione della tabella: " . $conn->error . "</p>";
                 }
