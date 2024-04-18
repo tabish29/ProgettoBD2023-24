@@ -1,7 +1,7 @@
 <?php
 if (!isset($_SESSION)) {
     session_start();
-} 
+}
 include '../connessione.php';
 include '../Condiviso/Utente.php';
 ?>

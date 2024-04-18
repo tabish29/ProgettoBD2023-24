@@ -10,7 +10,6 @@ if (!isset($_SESSION)) {
 
 <head>
     <style>
-        
         body {
             margin: 0;
             padding: 0;
@@ -104,7 +103,7 @@ if (!isset($_SESSION)) {
         #mostra_password_label {
             font-size: 0.8em;
         }
-       
+
         #mostra_password {
             transform: scale(0.9);
             margin-right: 5px;
