@@ -87,7 +87,7 @@
           </li>
         </ul>
         <div class='altoDestra'>
-        <button type="button" class="btnLogout btn btn-secondary" onclick="window.location.href='../../'">Logout</button>
+        <button type="button" class="btnLogout btn btn-secondary" onclick="window.location.href='../../Accesso/Logout.php'">Logout</button>
   </div>
       </div>
     </nav>

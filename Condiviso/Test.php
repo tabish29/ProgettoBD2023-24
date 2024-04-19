@@ -248,6 +248,17 @@
  
         }
 
+        function ottieniStatoCompletamento($id){
+            $sql_stato_completamento = "SELECT Stato FROM COMPLETAMENTO WHERE NumeroProgressivo = $id";
+            $result_stato_completamento = $_SESSION['conn']->query($sql_stato_completamento);
+            if ($result_stato_completamento->num_rows > 0) {
+                $stato = $result_stato_completamento->fetch_assoc()['Stato'];
+                return $stato;
+            } else {
+                return false;
+            }
+        }
+
         function aggiornaTest($titolo, $visualizza_risposte){
             $sql_update_test = "UPDATE TEST SET VisualizzaRisposte = $visualizza_risposte WHERE Titolo = '$titolo'";
             $risultato = $_SESSION['conn']->query($sql_update_test);

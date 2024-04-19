@@ -251,6 +251,7 @@ if (!isset($_SESSION)){
                         $numeroProgressivo = $_POST['numeroQuesito'];
                         $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
 
+                        
                         // Salvataggio dei dati del quesito appena inserito
                         if ($tipologiaQuesito == "Risposta Chiusa") {
                             $rispostaData = "";
@@ -274,7 +275,15 @@ if (!isset($_SESSION)){
 
                         $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] + 1;
                         mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
-                    
+                        $statoCompletamento = $test->ottieniStatoCompletamento($idCompletamento);
+                        echo "stato completamento: " . $statoCompletamento;
+                        if ($statoCompletamento == "Concluso") {
+                            echo "<script>
+                                    window.alert('Test completato: le risposte inserite sono tutte corrette!');
+                                    window.location.href = '../navBar/testStudenti.php';
+                                </script>";
+                            exit();
+                        }
                     } else if (isset($_POST['verificaRisposta'])) {
                         // Ottengo i dati
                         $numQuesito = $_POST['numeroQuesito'];

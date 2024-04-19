@@ -148,7 +148,7 @@ if (!isset($_SESSION)) {
                 echo "<form id='testForm'>";
                 while ($datiTest = $sql_test->fetch_assoc()) {
                     $titoloTest = $datiTest['Titolo'];
-                    $statoCompletamento = $test->getStatoCompletamento($titoloTest, $email_login);
+                    $statoCompletamento = $test->getStatoCompletamento($titoloTest, $_SESSION['email']);
                     if ($statoCompletamento === false){
                         $statoCompletamento = "nessun completamento";
                     }
@@ -157,7 +157,7 @@ if (!isset($_SESSION)) {
 
                     $visualizzaRisposte = $test->visualizzaRisposte($titoloTest);
 
-                    if ($visualizzaRisposte == 0) {
+                    if ($visualizzaRisposte == 0 && $statoCompletamento != "Concluso") {
                         echo "<input type='radio' name='test' value='" . $titoloTest . "'>";
                     }
 
