@@ -3,7 +3,11 @@ include '../../connessione.php';
 if (!isset($_SESSION)) {
     session_start();
 }
-
+if ($_SESSION['ruolo'] != 'Docente') {
+    echo "Accesso Negato";
+    header('Location: ../../Accesso/Logout.php?message=Utente non autorizzato.');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

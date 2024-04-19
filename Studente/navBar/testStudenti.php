@@ -5,6 +5,11 @@ include '../../Condiviso/Test.php';
 if (!isset($_SESSION)) {
     session_start();
 }
+if ($_SESSION['ruolo'] != 'Studente') {
+    echo "Accesso Negato";
+    header('Location: ../../Accesso/Logout.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

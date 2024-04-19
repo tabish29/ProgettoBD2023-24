@@ -5,6 +5,13 @@ if (!isset($_SESSION)) {
 include 'navbarDocente.php';
 include '../../connessione.php';
 include '../../Condiviso/Messaggio.php';
+
+if ($_SESSION['ruolo'] != 'Docente') {
+    echo "Accesso Negato";
+    header('Location: ../../Accesso/Logout.php?message=Utente non autorizzato.');
+    exit();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

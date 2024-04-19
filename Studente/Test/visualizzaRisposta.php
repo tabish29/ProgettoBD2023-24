@@ -5,9 +5,9 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-if (!isset($_SESSION['email']) || !isset($_SESSION['ruolo'])) {
-    // Redirect a una pagina di login se l'utente non è autenticato
-    header("Location: index.html");
+if ($_SESSION['ruolo'] != 'Studente') {
+    echo "Accesso Negato";
+    header('Location: ../../Accesso/Logout.php?message=Utente non autorizzato.');
     exit();
 }
 
