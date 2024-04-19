@@ -18,21 +18,6 @@ GROUP BY QUESITO.NumeroProgressivo, QUESITO.TitoloTest
 ORDER BY NumeroTotaleRisposte DESC;
 
 
-
-CREATE VIEW classificaTestCompletati(codiceStudente,testSvolti) AS
-	SELECT
-		CodiceAlfaNumerico,
-		COUNT(*) AS num_test_completati
-	FROM STUDENTE, COMPLETAMENTO AS C1, COMPLETAMENTO AS C2
-	WHERE
-		(Email = C1.EmailStudente) AND (Email = C2.EmailStudente) AND (C1.TitoloTest <> C2.TitoloTest) AND (C1.Stato = "Concluso")
-	GROUP BY
-		STUDENTE.CodiceAlfaNumerico
-	ORDER BY
-		num_test_completati DESC;
-        
-        
--- NUOVE VIEW
         
 
 CREATE VIEW classifica_test_completati AS

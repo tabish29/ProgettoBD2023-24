@@ -87,7 +87,9 @@
           <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiDocenti.php' ? 'class="active"' : ''; ?>>
             <a href="messaggiDocenti.php">Messaggi</a>
           </li>
-         
+          <li <?php echo basename($_SERVER['PHP_SELF']) == 'statistiche.php' ? 'class="active"' : ''; ?>>
+            <a href="statistiche.php">Visualizza Statistiche</a>
+          </li>
       </div>
       <div class='altoDestra'>
         <button type="button" class="btnLogout btn btn-secondary"  onclick="window.location.href='../../Accesso/Logout.php'">Logout</button>
