@@ -1,7 +1,10 @@
 USE ESQL;
 
+
 DROP TRIGGER IF EXISTS cambio_stato_incompletamento_rispostaquesitorispostachiusa;
 DROP TRIGGER IF EXISTS cambio_stato_incompletamento_rispostaquesitocodice;
+DROP TRIGGER IF EXISTS cambio_stato_incompletamento_rispostaquesitoRC_conUpd;
+DROP TRIGGER IF EXISTS cambio_stato_incompletamento_rispostaQC_conUpd;
 DROP TRIGGER IF EXISTS cambio_stato_concluso_rispostaquesitoRC_Agg;
 DROP TRIGGER IF EXISTS cambio_stato_concluso_rispostaQuesitoC_Agg;
 DROP TRIGGER IF EXISTS cambio_stato_concluso_rispostaquesitorispostachiusa;
@@ -13,6 +16,8 @@ DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoAfterInsert;
 DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoAfterDelete;
 DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoCodiceAfterInsert;
 DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoCodiceAfterDelete;
+DROP TRIGGER IF EXISTS spaziTitoloTest;
+
 
 -- TRIGGER
 DELIMITER //
@@ -392,4 +397,20 @@ BEGIN
     WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito;
 END;
 //
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE TRIGGER spaziTitoloTest
+BEFORE INSERT ON TEST FOR EACH ROW
+BEGIN
+    DECLARE titoloModificato VARCHAR(100);
+    SET titoloModificato = TRIM(NEW.Titolo); -- Rimuove spazi vuoti all'inizio e alla fine
+    SET titoloModificato = REPLACE(titoloModificato, ' ', '_'); -- Sostituisce gli spazi vuoti con '_'
+    SET NEW.Titolo = titoloModificato; -- Aggiorna il titolo nel nuovo valore pulito
+END;
+
+//
+
 DELIMITER ;

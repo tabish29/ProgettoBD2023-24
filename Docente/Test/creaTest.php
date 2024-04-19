@@ -115,9 +115,10 @@ include '../../Condiviso/Test.php';
                 }
             }
         } catch (Exception $e) {
-            echo "Errore durante l'esecuzione dell'operazione': " . $e->getMessage();
-            echo '<br>';
-            echo '<a href="../">Torna alla schermata principale</a>';
+            echo '<script>window.alert("Errore durante la creazione del test!");
+            window.location.href = "../navBar/testDocenti.php"; 
+            </script>';
+            
         } 
         ?>
     </div>
