@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         case 'studenti_corrette':
             header('Location: ../Statistiche/studentiCorrette.php');
             exit;
-        case 'quesiti_ricevute':
+        case 'quesiti_ricevuti':
             header('Location: ../Statistiche/quesitiRicevuti.php');
             exit;
         default:

@@ -86,8 +86,8 @@ if (!isset($_SESSION)) {
 <?php
     // Inserire nome View e scommentare
 
-    $ottieniViewQuery = "SELECT * FROM classifica_test_completati";
-    /*
+    $ottieniViewQuery = "SELECT * FROM classifica_quesiti";
+    
     $risultato = $conn->query($ottieniViewQuery);
     
     if ($risultato) {
@@ -107,7 +107,7 @@ if (!isset($_SESSION)) {
         }
         echo "</table>";
     }
-    */
+    
 ?>
 <button class='button' onclick="window.location.href='../navBar/statistiche.php'">Indietro</button>
 </html>

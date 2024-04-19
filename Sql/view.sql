@@ -33,9 +33,14 @@ CREATE VIEW classifica_risposte_corrette AS
 
 -- view nr 3
 CREATE VIEW classifica_quesiti AS
-	SELECT q.NumeroProgressivo, q.TitoloTest, COUNT(r.NumeroProgressivoCompletamento) AS num_risposte_codice_inserite, 
-		COUNT(rc.NumeroProgressivoCompletamento) AS num_risposte_chiuse_inserite
-	FROM QUESITO AS q
-	LEFT JOIN RISPOSTAQUESITOCODICE AS r ON q.NumeroProgressivo = r.NumeroProgressivoQuesito
-    LEFT JOIN RISPOSTAQUESITORISPOSTACHIUSA AS rc ON q.NumeroProgressivo = rc.NumeroProgressivoQuesito
-	GROUP BY q.NumeroProgressivo, q.TitoloTest;
+	SELECT
+		NumeroProgressivoQuesito,
+		COUNT(*) AS numRisposteInserite
+	FROM
+		(SELECT NumeroProgressivoQuesito FROM RISPOSTAQUESITORISPOSTACHIUSA
+		UNION ALL
+		SELECT NumeroProgressivoQuesito FROM RISPOSTAQUESITOCODICE) AS Risposte
+	GROUP BY
+		NumeroProgressivoQuesito
+	ORDER BY
+		numRisposteInserite DESC;
