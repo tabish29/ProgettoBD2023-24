@@ -11,7 +11,7 @@
             return $result_all_tests;
         }
         
-        function creaTest($titolo, $foto,){
+        function creaTest($titolo, $foto){
             $email_login = $_SESSION['email'];
             $sql = "CALL CreazioneTest('$titolo', NOW(), '$foto', 0, '$email_login')";
             $risultato = $_SESSION['conn']->query($sql);
