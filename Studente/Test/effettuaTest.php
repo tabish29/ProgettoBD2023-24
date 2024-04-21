@@ -213,7 +213,13 @@ if ($_SESSION['ruolo'] != 'Studente') {
             font-style: normal;
             color: #222222;
         }
-
+        .erroreQuery{
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -308,9 +314,12 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
                         //verifico l'esito della risposta Data
                         $quesitoOgg = new Quesito();
-                        // TODO: chiamare metodo da realizzare (input: $rispostaData, output: $risultatoVerifica)
-                        //$risultatoVerifica = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
-                        $risultatoVerifica = true;
+                        try{
+                        $risultatoVerifica = $quesitoOgg->verificaRispostaCodice($_SESSION['titoloTest'], $numQuesito, $rispostaData);
+                        } catch (Exception $e) {
+                            echo "<label class='erroreQuery'>" . $e->getMessage() . "</label>";
+                            $risultatoVerifica = false;
+                        }
                         $messaggio = "";
                         if ($risultatoVerifica == true){
                             $messaggio = "Risposta corretta";

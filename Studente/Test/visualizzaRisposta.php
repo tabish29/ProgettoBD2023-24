@@ -174,10 +174,15 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
         global $tabella;
         $tabella = new Tabella();
         $nomiTabella = $tabella->tabelleDelTest($titoloTest);
+        $nomiInseriti = array();
         if (!empty($nomiTabella)) {
             foreach ($nomiTabella as $nomeTabella) {
+                if (in_array($nomeTabella, $nomiInseriti)) {
+                    continue;
+                }
                 $datiTabella = $tabella->ottieniContenutoTabella($nomeTabella);
                 if ($datiTabella) {
+                    $nomiInseriti[] = $nomeTabella;
                     echo "<br><br><br><i><label class='labelNomeTabella'> Tabella: </i>" . $nomeTabella . "</label>";
                     echo "<table>";
                     echo "<tr>";

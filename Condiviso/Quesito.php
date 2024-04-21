@@ -56,8 +56,9 @@ class Quesito{
         }
     }
 
-    function verificaRispostaCodice($rispostaData, $rispostaCorretta) {
+    function verificaRispostaCodice($titoloTest, $numeroProgressivo, $rispostaData) {
         try {
+            $rispostaCorretta = $this->ottieniRispostaCorrettaCasualeCodice($titoloTest, $numeroProgressivo);
             if (!$rispostaCorretta) {
                 throw new Exception("Variabile rispostaCorretta non esiste");
             }
@@ -83,7 +84,7 @@ class Quesito{
             }
         } catch (Exception $e) {
             // Gestisce eventuali errori di database
-            echo "Eccezione nella verifica della risposta: " . $e->getMessage() . "<br>";
+            throw new Exception("Eccezione nella verifica della risposta:<br> " . $e->getMessage());
             return 0;  
         }
     }
