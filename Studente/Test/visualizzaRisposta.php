@@ -74,7 +74,20 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             background-color: #f2f2f2;
             text-align: center;
         }
-
+        button {
+            color: black;
+            background-color: #ffcc00;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -204,8 +217,9 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
         } 
     }
     ?>
-
-    
+    <div >
+        <button  class='button' onclick="window.location.href = '../navBar/testStudenti.php';">Torna ai test</button>
+    </div>
 </div>
 
 </body>
