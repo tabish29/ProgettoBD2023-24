@@ -15,6 +15,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
 
 $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificato.";
+
 ?>
 
 <!DOCTYPE html>
