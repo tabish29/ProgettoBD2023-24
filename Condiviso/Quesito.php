@@ -33,17 +33,34 @@ class Quesito{
         }
     }
 
-    function ottieniRispostaCorrettaCodice($titoloTest, $numeroProgressivo){
-        $rispostaCorretta = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-        $rispostaCorretta = $_SESSION['conn'] -> query($rispostaCorretta);
-        $rispostaCorretta = $rispostaCorretta -> fetch_assoc();
-        $rispostaCorretta = $rispostaCorretta['TestoSoluzione'];
-        return $rispostaCorretta;
+    function ottieniRispostaCorrettaCasualeCodice($titoloTest, $numeroProgressivo) {
+        $sql = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = ? AND TitoloTest = ?";
+        $stmt = $_SESSION['conn']->prepare($sql);
+        $stmt->bind_param("is", $numeroProgressivo, $titoloTest);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $risposte = [];
+
+        foreach ($rows as $row) {
+            $risposte[] = $row['TestoSoluzione'];
+        }
+    
+        // Seleziona una risposta casuale se l'array non è vuoto
+        if (!empty($risposte)) {
+            $indexCasuale = array_rand($risposte);  
+            return $risposte[$indexCasuale];  
+        } else {
+            return null;  
+        }
     }
 
     function verificaRispostaCodice($rispostaData, $rispostaCorretta) {
         try {
+            if (!$rispostaCorretta) {
+                throw new Exception("Variabile rispostaCorretta non esiste");
+            }
             // Esegue la query della soluzione corretta
             $resultSoluzione = $_SESSION['conn']->query($rispostaCorretta);
             if (!$resultSoluzione) {
