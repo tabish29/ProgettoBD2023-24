@@ -174,5 +174,14 @@ class Quesito{
         return $risultato;
     }
 
+    function ottieniRispostaDataRC($idCompletamento, $numeroProgressivo, $titoloTest){
+        
+        $sql = "SELECT OpzioneScelta FROM RISPOSTAQUESITORISPOSTACHIUSA WHERE NumeroProgressivoCompletamento = $idCompletamento AND NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+        $risultato = $_SESSION['conn']->query($sql);
+        $_SESSION['conn']->next_result();
+        $risultato = $risultato->fetch_assoc();
+        return $risultato['OpzioneScelta'];
+    }
+
 }
 ?>

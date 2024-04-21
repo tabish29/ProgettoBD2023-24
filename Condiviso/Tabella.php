@@ -61,7 +61,8 @@ include '../../connessione.php';
             $risultato = $_SESSION['conn']->query($query);
             return $risultato;
         }
-            
+        
+       
     }
     
 ?>

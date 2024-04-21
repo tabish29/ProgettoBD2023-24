@@ -1,5 +1,7 @@
 <?php
 include '../../connessione.php';
+include '../../Condiviso/Test.php';
+include '../../Condiviso/Tabella.php';
 
 if (!isset($_SESSION)) {
     session_start();
@@ -50,6 +52,28 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             color: #000;
             line-height: 1.5;
         }
+
+        table {
+            width: auto;
+            min-width: 40%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -57,46 +81,111 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
 <div class="container">
     <h2>Risposte al Test: <?php echo htmlspecialchars($idTest); ?></h2>
     <?php
-    if ($idTest !== "ID del test non specificato.") {
-        $queryQuesiti = "SELECT NumeroProgressivoQuesito, CampoTesto AS RispostaCorretta
-                         FROM OPZIONERISPOSTA
-                         WHERE TitoloTest = ? AND RispostaCorretta = TRUE";
-        $stmtQuesiti = $conn->prepare($queryQuesiti);
-        $stmtQuesiti->bind_param("s", $idTest);
-        $stmtQuesiti->execute();
-        $resultQuesiti = $stmtQuesiti->get_result();
+    global $test;
+    $test = new Test();
 
-        $numeroDomanda = 1;
+    global $quesito;
+    $test = new Test();
 
-        if ($resultQuesiti->num_rows > 0) {
-            while ($rowQuesito = $resultQuesiti->fetch_assoc()) {
-                $numeroProgressivoQuesito = $rowQuesito['NumeroProgressivoQuesito'];
-                $queryRispostaData = "SELECT OpzioneScelta
-                                      FROM RISPOSTAQUESITORISPOSTACHIUSA
-                                      WHERE NumeroProgressivoQuesito = ?
-                                      ORDER BY NumeroProgressivoCompletamento DESC
-                                      LIMIT 1";
-                $stmtRisposta = $conn->prepare($queryRispostaData);
-                $stmtRisposta->bind_param("i", $numeroProgressivoQuesito);
-                $stmtRisposta->execute();
-                $resultRisposta = $stmtRisposta->get_result();
+    global $tabella;
+    $tabella = new Tabella();
 
-                if ($rowRisposta = $resultRisposta->fetch_assoc()) {
-                    echo "<p><strong>Domanda n-" . $numeroDomanda ."</strong> <br>Risposta corretta: " . htmlspecialchars($rowQuesito['RispostaCorretta']) .
-                        "<br>Risposta data: " . htmlspecialchars($rowRisposta['OpzioneScelta']) . "</p>";
-                } else {
-                    echo "<p>Domanda n-" . $numeroDomanda . "<br>Risposta corretta: " . htmlspecialchars($rowQuesito['RispostaCorretta']) .
-                        "<br>Risposta data: Nessuna risposta fornita.</p>";
+    $titoloTest = $idTest;
+    
+    $quesitiTest = $test->ottieniQuesitiPerTest($titoloTest);
+
+    if (empty($quesitiTest)) {
+        echo "<br><p class='classQuesito'>Nessun quesito presente</p>";
+    } else {
+        echo "<p>Tabelle:</p>";
+        stampaTabella($titoloTest);
+        mostraQuesito($quesitiTest,$titoloTest);                        
+        
+    }
+
+
+    function mostraQuesito($arrayQuesiti,$titoloTest){
+         
+        global $test;
+        global $quesito;
+        global $tabella;
+
+        $numeroDellaDomanda = 0;
+        $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
+        while ($numeroDellaDomanda < count($arrayQuesiti)) {
+
+            $questoQuesito = $arrayQuesiti[$numeroDellaDomanda];
+    
+            $numeroProgressivo = $questoQuesito['NumeroProgressivo'];
+            $descrizione = $questoQuesito['Descrizione'];
+            $numeroRisposte = $questoQuesito['NumeroRisposte'];
+    
+            $quesitoOgg = new Quesito();
+            $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($titoloTest, $numeroProgressivo);
+            ?>
+    
+                
+                <br><p class='classQuesito'>Quesito nr. <?php echo ($numeroDellaDomanda+1) ?></p>
+                <p>Domanda: <?php echo $descrizione ?></p>
+                
+                <?php
+                // Gestione grafica delle risposte
+                if ($tipologiaQuesito == "Risposta Chiusa") {
+                    $soluzioni = $test->ottieniRisposte($numeroProgressivo, $titoloTest);
+                    if (!empty($soluzioni)) {
+                        $i = 1;
+                        foreach ($soluzioni as $soluzione) {
+                        $risposta = $soluzione['CampoTesto'];
+                        
+                        echo "<label>" . $i .": " .  $risposta . "</><br>";
+                        
+                        $i++;
+                        }
+                    } 
+                    ?>
+                    <p>Risposta data: <?php echo $quesitoOgg->ottieniRispostaDataRC($idCompletamento,$numeroProgressivo, $titoloTest) ?></p>
+                    <?php
+                } elseif ($tipologiaQuesito == "Codice") {
+                    echo "<p>Risposta data:</p>";
+                    echo "DA FARE";
+
                 }
-                $numeroDomanda++;
-                $stmtRisposta->close();
-            }
-        } else {
-            echo "<p>Nessun quesito trovato per questo test.</p>";
+                $numeroDellaDomanda++;
+
         }
-        $stmtQuesiti->close();
+    }
+
+    function stampaTabella($titoloTest){
+        global $tabella;
+        $tabella = new Tabella();
+        $nomiTabella = $tabella->tabelleDelTest($titoloTest);
+        if (!empty($nomiTabella)) {
+            foreach ($nomiTabella as $nomeTabella) {
+                $datiTabella = $tabella->ottieniContenutoTabella($nomeTabella);
+                if ($datiTabella) {
+                    echo "<br><br><br><label class='labelNomeTabella'> Tabella: " . $nomeTabella . "</label>";
+                    echo "<table>";
+                    echo "<tr>";
+                    while ($campo = $datiTabella->fetch_field()) {
+                        echo "<th>" . htmlspecialchars($campo->name) . "</th>";
+                    }
+                    echo "</tr>";
+        
+                    while ($row = $datiTabella->fetch_assoc()) {
+                        echo "<tr>";
+                        foreach ($row as $value) {
+                            echo "<td>" . htmlspecialchars($value) . "</td>";
+                        }
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                }
+            }
+        } 
     }
     ?>
+
+    
 </div>
 
 </body>
