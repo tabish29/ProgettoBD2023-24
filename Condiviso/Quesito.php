@@ -34,28 +34,27 @@ class Quesito{
     }
 
     function ottieniRispostaCorrettaCodice($titoloTest, $numeroProgressivo){
-        global $conn;
         $rispostaCorretta = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
-        $rispostaCorretta = $conn -> query($rispostaCorretta);
+        $rispostaCorretta = $_SESSION['conn'] -> query($rispostaCorretta);
         $rispostaCorretta = $rispostaCorretta -> fetch_assoc();
         $rispostaCorretta = $rispostaCorretta['TestoSoluzione'];
         return $rispostaCorretta;
 
     }
 
-    function verificaRispostaCodice($conn, $rispostaData, $rispostaCorretta) {
+    function verificaRispostaCodice($rispostaData, $rispostaCorretta) {
         try {
             // Esegue la query della soluzione corretta
-            $resultSoluzione = $conn->query($rispostaCorretta);
+            $resultSoluzione = $_SESSION['conn']->query($rispostaCorretta);
             if (!$resultSoluzione) {
-                throw new Exception("Errore nell'esecuzione della query della soluzione: " . $conn->error);
+                throw new Exception("Errore nell'esecuzione della query della soluzione: " . $_SESSION['conn']->error);
             }
             $soluzioneResults = $resultSoluzione->fetch_all(MYSQLI_ASSOC);
     
             // Esegue la query della risposta data dall'utente
-            $resultRispostaData = $conn->query($rispostaData);
+            $resultRispostaData = $_SESSION['conn']->query($rispostaData);
             if (!$resultRispostaData) {
-                throw new Exception("Errore nell'esecuzione della query della risposta data: " . $conn->error);
+                throw new Exception("Errore nell'esecuzione della query della risposta data: " . $_SESSION['conn']->error);
             }
             $rispostaDataResults = $resultRispostaData->fetch_all(MYSQLI_ASSOC);
     
