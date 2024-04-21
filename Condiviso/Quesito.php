@@ -70,53 +70,6 @@ class Quesito{
             return 0;  
         }
     }
-
-    function controllaSoluzioneQuesitoCodice($conn, $idQuestion, $titleTest, $queryAnswer) {
-        try {
-            // Prepara e esegui la query per ottenere una sola soluzione dal database
-            $sql = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = ? AND TitoloTest = ? ORDER BY NumeroProgressivo DESC LIMIT 1";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("is", $idQuestion, $titleTest);
-            $stmt->execute();
-            $result = $stmt->get_result();
-    
-            if ($row = $result->fetch_assoc()) {
-                $querySolution = $row['TestoSoluzione'];
-            } else {
-                echo "Nessuna soluzione trovata per il quesito specificato.<br>";
-                return false;
-            }
-        } catch (Exception $e) {
-            echo "Errore durante il recupero della soluzione: " . $e->getMessage() . "<br>";
-            return false;
-        }
-    
-        try {
-            // Esegui la query della soluzione
-            $resultSolution = $conn->query($querySolution);
-            $solutionData = $resultSolution->fetch_all(MYSQLI_ASSOC);
-        } catch (Exception $e) {
-            echo "Errore durante l'esecuzione della query della soluzione: " . $e->getMessage() . "<br>";
-            return false;
-        }
-    
-        try {
-            // Esegui la query data dall'utente
-            $resultAnswer = $conn->query($queryAnswer);
-            $answerData = $resultAnswer->fetch_all(MYSQLI_ASSOC);
-        } catch (Exception $e) {
-            echo "Errore durante l'esecuzione della query dell'utente: " . $e->getMessage() . "<br>";
-            return false;
-        }
-    
-        // Confronta i risultati delle due query
-        if ($answerData == $solutionData) {
-            return true; // Le risposte sono uguali
-        } else {
-            return false; // Le risposte sono diverse
-        }
-    }
-    
     
 
     function creaQuesitoRispostaChiusa($titoloTest, $livDifficolta, $descrizione){
