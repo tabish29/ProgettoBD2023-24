@@ -117,8 +117,8 @@ include '../Condiviso/Utente.php';
                 <h2>Login Utente</h2>
                 <label class='labelReg' for="ruolo_login">Ruolo:</label>
                 <select class='areaInsRuolo' for="ruolo_login" name="ruolo_login">
-                    <option value="docente">Docente</option>
-                    <option value="studente">Studente</option>
+                    <option value="Docente">Docente</option>
+                    <option value="Studente">Studente</option>
                 </select>
 
                 <label class='labelReg' for="email_login">Email:</label>
@@ -151,9 +151,9 @@ include '../Condiviso/Utente.php';
         } else {
             // Query per verificare se l'email esiste nella tabella del ruolo selezionato
             $emailPresente = "";
-            if ($ruolo_login === "docente") {
+            if ($ruolo_login === "Docente") {
                 $emailPresente = $utente->emailPresenteDocente($email_login, $password_login);
-            } else if ($ruolo_login === "studente") {
+            } else if ($ruolo_login === "Studente") {
                 $emailPresente = $utente->emailPresenteStudente($email_login, $password_login);
             }
 
@@ -165,11 +165,11 @@ include '../Condiviso/Utente.php';
                 //Imposta le variabili di sessione
                 $_SESSION['email'] = $email_login; //NON SPOSTARE DA QUI
                 $_SESSION['ruolo'] = $ruolo_login; //NON SPOSTARE DA QUI
-                if ($ruolo_login === "docente") {
+                if ($ruolo_login === "Docente") {
                     echo '<script>window.alert("Accesso effettuato!");
                             window.location.href = "../Docente/navBar/testDocenti.php";
                         </script>';
-                } else if ($ruolo_login === "studente") {
+                } else if ($ruolo_login === "Studente") {
                     echo '<script>window.alert("Accesso effettuato!");
                             window.location.href = "../Studente/navBar/testStudenti.php";
                         </script>';

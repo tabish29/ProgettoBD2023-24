@@ -4,12 +4,14 @@ include '../../connessione.php';
 if (!isset($_SESSION)) {
     session_start();
 }
+include 'navbarStudente.php';
 
-if ($_SESSION['ruolo'] != 'Docente') {
+if ($_SESSION['ruolo'] != 'Studente') {
     echo "Accesso Negato";
     header('Location: ../../Accesso/Logout.php?message=Utente non autorizzato.');
     exit();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +28,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
             width: auto;
             height: auto;
             background-color: #f9acac;
-            text-align: center;
         }
 
         .container {
@@ -44,6 +45,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
             background-color: #ffcc00;
             border: none;
             padding: 10px 20px;
+            margin-right: 10px;
             text-align: center;
             text-decoration: none;
             font-weight: bold;
@@ -64,58 +66,45 @@ if ($_SESSION['ruolo'] != 'Docente') {
             width: auto;
 
         }
-        table {
-            width: auto;
-            min-width: 50%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            table-layout: fixed;
-            background-color: whitesmoke;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            word-wrap: break-word;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            text-align: center;
-        }
+        
     </style>
 </head>
-<html>
-
 <?php
-    // Inserire nome View e scommentare
-
-    $ottieniViewQuery = "SELECT * FROM classifica_risposte_corrette";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Ottenere il valore selezionato dal menu a tendina
+    $scelta = $_POST['scelta'];
     
-    $risultato = $conn->query($ottieniViewQuery);
-    
-    if ($risultato) {
-        echo "<table>";
-        echo "<tr>";
-        while ($datiView = $risultato->fetch_field()) {
-            echo "<th>" . htmlspecialchars($datiView->name) . "</th>";
-        }
-        echo "</tr>";
-
-        while ($riga = $risultato->fetch_assoc()) {
-            echo "<tr>";
-            foreach ($riga as $value) {
-                echo "<td>" . htmlspecialchars($value) . "</td>";
-            }
-            echo "</tr>";
-        }
-        echo "</table>";
+    // Effettuare il reindirizzamento in base all'opzione selezionata
+    switch ($scelta) {
+        case 'studenti_completati':
+            header('Location: ../../Condiviso/Statistiche/studentiCompletati.php');
+            exit;
+        case 'studenti_corrette':
+            header('Location: ../../Condiviso/Statistiche/studentiCorrette.php');
+            exit;
+        case 'quesiti_ricevuti':
+            header('Location: ../../Condiviso/Statistiche/quesitiRicevuti.php');
+            exit;
+        default:
+            break;
     }
-    
+}
 ?>
-<button class='button' onclick="window.location.href='../navBar/statistiche.php'">Indietro</button>
+<body>
+    <div class="container">
+        <form action="statistiche.php" method="post">
+            <label for="sceltaLabel">Seleziona la statistica da visionare:</label><br>
+            <select name="scelta" id="scelta">
+                <option value="studenti_completati">Studenti: test completati</option>
+                <option value="studenti_corrette">Studenti: risposte corrette</option>
+                <option value="quesiti_ricevuti">Quesiti: risposte ricevute</option>
+            </select>
+            <button class='button' type="submit" value="Seleziona">Seleziona</button>
+        </form>
+    </div>
+
+</body>
+
 </html>
 
 

@@ -85,10 +85,13 @@
           <li <?php echo basename($_SERVER['PHP_SELF']) == 'messaggiStudenti.php' ? 'class="active"' : ''; ?>>
             <a href="messaggiStudenti.php">Messaggi</a>
           </li>
+          <li <?php echo basename($_SERVER['PHP_SELF']) == 'statistiche.php' ? 'class="active"' : ''; ?>>
+            <a href="statistiche.php">Visualizza Statistiche</a>
+          </li>
         </ul>
         <div class='altoDestra'>
         <button type="button" class="btnLogout btn btn-secondary" onclick="window.location.href='../../Accesso/Logout.php'">Logout</button>
-  </div>
+      </div>
       </div>
     </nav>
     <h2 class='containerNavH2'>HomePage Studente</h2>

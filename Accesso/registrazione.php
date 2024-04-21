@@ -126,8 +126,8 @@ if (!isset($_SESSION)) {
 
                 <label class='labelReg' for="ruolo">Ruolo:</label>
                 <select class='areaInsRuolo' id="ruolo" name="ruolo">
-                    <option value="docente">Docente</option>
-                    <option value="studente">Studente</option>
+                    <option value="Docente">Docente</option>
+                    <option value="Studente">Studente</option>
                 </select>
 
                 <label class='labelReg' for="nome">Nome:</label>
@@ -178,10 +178,10 @@ if (!isset($_SESSION)) {
             var campiDocente = document.getElementById('docente-fields');
 
             // Mostra i campi aggiuntivi per studenti
-            if (ruolo === 'studente') {
+            if (ruolo === 'Studente') {
                 campiStudente.style.display = 'block';
                 campiDocente.style.display = 'none';
-            } else if (ruolo === 'docente') {
+            } else if (ruolo === 'Docente') {
                 campiStudente.style.display = 'none';
                 campiDocente.style.display = 'block';
             } else {
@@ -229,7 +229,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Se il ruolo è "studente", recupera i campi aggiuntivi specifici per gli studenti
-        if ($ruolo === "studente") {
+        if ($ruolo === "Studente") {
             $codice_alfanumerico = $_POST['codice_alfanumerico'];
             $anno_immatricolazione = $_POST['anno_immatricolazione'];
 
@@ -244,7 +244,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Se il ruolo è "docente", recupera i campi aggiuntivi specifici per i docenti
-        if ($ruolo === "docente") {
+        if ($ruolo === "Docente") {
             $nome_corso = $_POST['nome_corso'];
             $nome_dipartimento = $_POST['nome_dipartimento'];
 

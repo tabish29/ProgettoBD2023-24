@@ -5,11 +5,7 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-if ($_SESSION['ruolo'] != 'Docente') {
-    echo "Accesso Negato";
-    header('Location: ../../Accesso/Logout.php?message=Utente non autorizzato.');
-    exit();
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -110,8 +106,13 @@ if ($_SESSION['ruolo'] != 'Docente') {
         }
         echo "</table>";
     }
+    if ($_SESSION['ruolo'] == 'Docente') {
+        echo "<button class='button' onclick=\"window.location.href='../../Docente/navBar/statistiche.php'\">Indietro</button>";
+      } else if ($_SESSION['ruolo'] == 'Studente') {
+        echo "<button class='button' onclick=\"window.location.href='../../Studente/navBar/statistiche.php'\">Indietro</button>";
+      }
 ?>
-<button class='button' onclick="window.location.href='../navBar/statistiche.php'">Indietro</button>
+
 </html>
 
 

@@ -7,14 +7,12 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-$messaggio = "";
+$messaggio = "Logout effettuato con successo.";
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (isset($_GET['message'])) {
       $messaggio = $_GET['message'];
   }
-} else {
-  $messaggio = "Logout effettuato con successo.";
-}
+} 
 
 session_unset(); // Unset all session variables
 $conn->close();

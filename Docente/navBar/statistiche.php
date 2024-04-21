@@ -77,13 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Effettuare il reindirizzamento in base all'opzione selezionata
     switch ($scelta) {
         case 'studenti_completati':
-            header('Location: ../Statistiche/studentiCompletati.php');
+            header('Location: ../../Condiviso/Statistiche/studentiCompletati.php');
             exit;
         case 'studenti_corrette':
-            header('Location: ../Statistiche/studentiCorrette.php');
+            header('Location: ../../Condiviso/Statistiche/studentiCorrette.php');
             exit;
         case 'quesiti_ricevuti':
-            header('Location: ../Statistiche/quesitiRicevuti.php');
+            header('Location: ../../Condiviso/Statistiche/quesitiRicevuti.php');
             exit;
         default:
             break;
