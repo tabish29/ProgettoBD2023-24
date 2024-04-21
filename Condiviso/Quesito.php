@@ -43,23 +43,35 @@ class Quesito{
 
     }
 
-    function verificaRispostaCodice($testId, $numQuesito, $rispostaData, $rispostaCorretta) {
-        global $conn;
-            $soluzione = $conn -> prepare($rispostaCorretta);                
-            $soluzione -> execute();
-            $soluzione = $soluzione -> get_result();
-    
-            $rispostaDataSoluzione = $conn -> prepare($rispostaData);
-            $rispostaDataSoluzione -> execute();
-            $rispostaDataSoluzione = $rispostaDataSoluzione -> get_result();
-            
-            if($rispostaDataSoluzione == $soluzione) { 
-                return 1;
-            } else {
-                return 0;
+    function verificaRispostaCodice($conn, $rispostaData, $rispostaCorretta) {
+        try {
+            // Esegue la query della soluzione corretta
+            $resultSoluzione = $conn->query($rispostaCorretta);
+            if (!$resultSoluzione) {
+                throw new Exception("Errore nell'esecuzione della query della soluzione: " . $conn->error);
             }
-        
+            $soluzioneResults = $resultSoluzione->fetch_all(MYSQLI_ASSOC);
+    
+            // Esegue la query della risposta data dall'utente
+            $resultRispostaData = $conn->query($rispostaData);
+            if (!$resultRispostaData) {
+                throw new Exception("Errore nell'esecuzione della query della risposta data: " . $conn->error);
+            }
+            $rispostaDataResults = $resultRispostaData->fetch_all(MYSQLI_ASSOC);
+    
+          
+            if ($soluzioneResults == $rispostaDataResults) {
+                return 1;  
+            } else {
+                return 0;  
+            }
+        } catch (Exception $e) {
+            // Gestisce eventuali errori di database
+            echo "Eccezione nella verifica della risposta: " . $e->getMessage() . "<br>";
+            return 0;  
+        }
     }
+    
 
     function creaQuesitoRispostaChiusa($titoloTest, $livDifficolta, $descrizione){
         $sql_creaQuesitoQuery = "CALL CreazioneQuesitoRispostaChiusa('$titoloTest', '$livDifficolta', '$descrizione', @numeroProgressivoQuesito)";
