@@ -200,5 +200,29 @@ class Quesito{
         return $risultato['OpzioneScelta'];
     }
 
+    function ottieniRispostaCorrettaRC($numeroProgressivo, $titoloTest){
+        $sql = "SELECT CampoTesto FROM OPZIONERISPOSTA WHERE NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest' AND RispostaCorretta = 1";
+        $risultato = $_SESSION['conn']->query($sql);
+        $_SESSION['conn']->next_result();
+        $risultato = $risultato->fetch_assoc();
+        return $risultato['CampoTesto'];
+    }
+
+    function ottieniRispostaDataCodice($idCompletamento, $numeroProgressivo, $titoloTest){
+        $sql = "SELECT Testo FROM RISPOSTAQUESITOCODICE WHERE NumeroProgressivoCompletamento = $idCompletamento AND NumeroProgressivoQuesito = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+        $risultato = $_SESSION['conn']->query($sql);
+        $_SESSION['conn']->next_result();
+        $risultato = $risultato->fetch_assoc();
+        return $risultato['Testo'];
+    }
+
+    function ottieniRispostaCorrettaCodice($numeroProgressivo, $titoloTest){
+        $sql = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = $numeroProgressivo AND TitoloTest = '$titoloTest'";
+        $risultato = $_SESSION['conn']->query($sql);
+        $_SESSION['conn']->next_result();
+        $risultato = $risultato->fetch_assoc();
+        return $risultato['TestoSoluzione'];
+    }
+
 }
 ?>

@@ -97,7 +97,7 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
     if (empty($quesitiTest)) {
         echo "<br><p class='classQuesito'>Nessun quesito presente</p>";
     } else {
-        echo "<p>Tabelle:</p>";
+        echo "<p><b>Tabelle associate ai Quesiti del Test:</b></p>";
         stampaTabella($titoloTest);
         mostraQuesito($quesitiTest,$titoloTest);                        
         
@@ -125,8 +125,8 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             ?>
     
                 
-                <br><p class='classQuesito'>Quesito nr. <?php echo ($numeroDellaDomanda+1) ?></p>
-                <p>Domanda: <?php echo $descrizione ?></p>
+                <br><b><p class='classQuesito'>Quesito nr. <?php echo ($numeroDellaDomanda+1) ?></b></p>
+                <p><i>Testo Domanda: </i><?php echo $descrizione ?></p>
                 
                 <?php
                 // Gestione grafica delle risposte
@@ -134,6 +134,7 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
                     $soluzioni = $test->ottieniRisposte($numeroProgressivo, $titoloTest);
                     if (!empty($soluzioni)) {
                         $i = 1;
+                        echo "<label><i>Opzioni Risposta della Domanda:</i><br><br>";    
                         foreach ($soluzioni as $soluzione) {
                         $risposta = $soluzione['CampoTesto'];
                         
@@ -143,15 +144,28 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
                         }
                     } 
                     ?>
-                    <p>Risposta data: <?php echo $quesitoOgg->ottieniRispostaDataRC($idCompletamento,$numeroProgressivo, $titoloTest) ?></p>
+                    <p><i>Risposta data: </i><?php echo $quesitoOgg->ottieniRispostaDataRC($idCompletamento,$numeroProgressivo, $titoloTest) ?></p>
+                    <p><i>Risposta corretta: </i><?php echo $quesitoOgg->ottieniRispostaCorrettaRC($numeroProgressivo, $titoloTest) ?></p>
                     <?php
                 } elseif ($tipologiaQuesito == "Codice") {
-                    echo "<p>Risposta data:</p>";
-                    echo "DA FARE";
-
+                    $soluzioni = $test->ottieniSoluzioni($numeroProgressivo, $titoloTest);
+                    if (!empty($soluzioni)) {
+                        $i = 1;
+                        echo "<label><i>Soluzioni della Domanda:</i><br><br>";    
+                        foreach ($soluzioni as $soluzione) {
+                        $risposta = $soluzione['TestoSoluzione'];
+                        
+                        echo "<label>" . $i .": " .  $risposta . "</><br>";
+                        
+                        $i++;
+                        }
+                    }
+                    ?>
+                    <p><i>Risposta data: </i><?php echo $quesitoOgg->ottieniRispostaDataCodice($idCompletamento,$numeroProgressivo, $titoloTest) ?></p>
+                    <p><i>Risposta corretta: </i><?php echo $quesitoOgg->ottieniRispostaCorrettaCodice($numeroProgressivo, $titoloTest) ?></p>
+                    <?php
                 }
                 $numeroDellaDomanda++;
-
         }
     }
 
@@ -163,7 +177,7 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             foreach ($nomiTabella as $nomeTabella) {
                 $datiTabella = $tabella->ottieniContenutoTabella($nomeTabella);
                 if ($datiTabella) {
-                    echo "<br><br><br><label class='labelNomeTabella'> Tabella: " . $nomeTabella . "</label>";
+                    echo "<br><br><br><i><label class='labelNomeTabella'> Tabella: </i>" . $nomeTabella . "</label>";
                     echo "<table>";
                     echo "<tr>";
                     while ($campo = $datiTabella->fetch_field()) {
