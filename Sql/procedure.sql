@@ -203,7 +203,7 @@ DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
     IN TitoloTestTemp VARCHAR(20),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
-    IN DescrizioneTemp VARCHAR(50),
+    IN DescrizioneTemp VARCHAR(255),
     OUT numProgressivo INT
 )
 BEGIN
@@ -230,7 +230,7 @@ DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoCodice (
     IN TitoloTestTemp VARCHAR(20),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
-    IN DescrizioneTemp VARCHAR(50),
+    IN DescrizioneTemp VARCHAR(255),
     OUT numProgressivo INT
 )
 BEGIN
