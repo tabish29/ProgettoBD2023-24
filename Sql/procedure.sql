@@ -57,7 +57,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE AutenticazioneDocente (
-    IN EmailTemp VARCHAR(40),
+    IN EmailTemp VARCHAR(100),
     IN PasswordTemp VARCHAR(20),
     OUT AutenticatoTemp BOOLEAN
 )
@@ -74,7 +74,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE AutenticazioneStudente (
-    IN EmailTemp VARCHAR(40),
+    IN EmailTemp VARCHAR(100),
     IN PasswordTemp VARCHAR(20),
     OUT AutenticatoTemp BOOLEAN
 )
@@ -91,7 +91,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE RegistrazioneDocente (
-    IN EmailTemp VARCHAR(40),
+    IN EmailTemp VARCHAR(100),
     IN PasswordTemp VARCHAR(20),
     IN Nome VARCHAR (50),
     IN Cognome VARCHAR (50),
@@ -113,7 +113,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE RegistrazioneStudente (
-    IN EmailTemp VARCHAR(40),
+    IN EmailTemp VARCHAR(100),
     IN PasswordTemp VARCHAR(20),
     IN Nome VARCHAR (20),
     IN Cognome VARCHAR (20),
@@ -143,7 +143,7 @@ CREATE PROCEDURE CreazioneTabellaEsercizio (
     IN nomeTabella VARCHAR(20),
     IN dataCreazione DATETIME,
     IN numRighe INT,
-    IN emailDocente VARCHAR(40)
+    IN emailDocente VARCHAR(100)
 )
 BEGIN
 -- controllo che la tabella non esista già e che esista il docente
@@ -183,7 +183,7 @@ CREATE PROCEDURE CreazioneTest (
     IN DataCreazione datetime,
     IN Foto VARCHAR(100),
     IN VisualizzaRisposte BOOLEAN,
-    IN EmailDocente VARCHAR(40)
+    IN EmailDocente VARCHAR(100)
 )
 BEGIN
     DECLARE docenteEsistente INT DEFAULT 0;
@@ -340,7 +340,7 @@ CREATE PROCEDURE InserimentoMessaggioDocente(
     IN TitoloMessaggio_t VARCHAR(20),
     IN CampoTesto_t VARCHAR(500),
     IN Data_t DATETIME,
-    IN EmailDocenteMittente_t VARCHAR(40)
+    IN EmailDocenteMittente_t VARCHAR(100)
 )
 BEGIN
     DECLARE TestEsistente INT DEFAULT 0;
@@ -582,8 +582,8 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE inserisciMessaggioStudente(
-	IN emailStudenteTemp VARCHAR(40),
-    IN emailDocenteTemp VARCHAR(40),
+	IN emailStudenteTemp VARCHAR(100),
+    IN emailDocenteTemp VARCHAR(100),
     IN titoloTestTemp VARCHAR(100),
     IN titoloMess VARCHAR(20),
     IN testoMess VARCHAR(500)
