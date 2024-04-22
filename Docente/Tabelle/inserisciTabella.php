@@ -169,9 +169,9 @@ if ($_SESSION['ruolo'] != 'Docente') {
                             // Esegui il binding dei parametri e la query
                             $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
                             if ($stmt->execute()) {
-                                echo "Inserimento dell'attributo $nomeAttributo di tipo $tipo per la tabella $nomeTabella avvenuto con successo.<br>";
+                                echo "<br>Inserimento dell'attributo $nomeAttributo di tipo $tipo per la tabella $nomeTabella avvenuto con successo.<br>";
                             } else {
-                                echo "Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
+                                echo "<br>Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
                             }
 
                             // Chiudi lo statement

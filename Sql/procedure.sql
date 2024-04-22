@@ -115,8 +115,8 @@ DELIMITER //
 CREATE PROCEDURE RegistrazioneStudente (
     IN EmailTemp VARCHAR(100),
     IN PasswordTemp VARCHAR(20),
-    IN Nome VARCHAR (20),
-    IN Cognome VARCHAR (20),
+    IN Nome VARCHAR (50),
+    IN Cognome VARCHAR (50),
     IN RecapitoTelefonicoStudente INT,
     IN AnnoImmatricolazione INT,
     IN CodiceAlfaNumerico CHAR(16)
@@ -181,7 +181,7 @@ DELIMITER //
 CREATE PROCEDURE CreazioneTest (
     IN TitoloTest VARCHAR(100),
     IN DataCreazione datetime,
-    IN Foto VARCHAR(100),
+    IN Foto VARCHAR(255),
     IN VisualizzaRisposte BOOLEAN,
     IN EmailDocente VARCHAR(100)
 )
@@ -255,7 +255,7 @@ DELIMITER //
 CREATE PROCEDURE CreazioneCostituzione(
     IN numero_temp_progressivoQuesito INT,
     IN titoloTest_temp VARCHAR(100),
-    IN nome_temp_tabellaEsercizio VARCHAR(40)
+    IN nome_temp_tabellaEsercizio VARCHAR(20)
 )
 BEGIN
 	DECLARE TabellaEsistente INT DEFAULT 0;
@@ -275,7 +275,7 @@ DELIMITER //
 CREATE PROCEDURE InserimentoSoluzione (
     IN TitoloTestTemp VARCHAR(100),
     IN NumeroProgressivoTemp INT,
-    IN TestoSoluzioneTemp VARCHAR(40)
+    IN TestoSoluzioneTemp VARCHAR(500)
 )
 BEGIN
     DECLARE ProgressivoETestEsistenti INT DEFAULT 0;
@@ -297,7 +297,7 @@ DELIMITER //
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTestTemp VARCHAR(100),
     IN NumeroProgressivoQuesitoTemp INT,
-    IN CampoTestoTemp VARCHAR(2000),
+    IN CampoTestoTemp VARCHAR(200),
     IN RispostaCorrettaTemp BOOLEAN
 )
 BEGIN
@@ -319,7 +319,7 @@ DELIMITER //
 CREATE PROCEDURE SetOpzioneRispostaCorretta (
     IN TitoloTestTemp VARCHAR(100),
     IN NumeroProgressivoQuesitoTemp INT,
-    IN CampoTestoTemp VARCHAR(40)
+    IN CampoTestoTemp VARCHAR(200)
 )
 BEGIN
 	UPDATE OPZIONERISPOSTA
@@ -337,7 +337,7 @@ END
 DELIMITER //
 CREATE PROCEDURE InserimentoMessaggioDocente(
     IN TitoloTest_t VARCHAR(100),
-    IN TitoloMessaggio_t VARCHAR(20),
+    IN TitoloMessaggio_t VARCHAR(100),
     IN CampoTesto_t VARCHAR(500),
     IN Data_t DATETIME,
     IN EmailDocenteMittente_t VARCHAR(100)
@@ -347,7 +347,7 @@ BEGIN
     DECLARE DocenteEsistente INT DEFAULT 0;
     DECLARE IdMessaggio INT;
     DECLARE done INT DEFAULT FALSE;
-    DECLARE student_email VARCHAR(40);
+    DECLARE student_email VARCHAR(100);
     DECLARE student_cursor CURSOR FOR SELECT Email FROM STUDENTE;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
@@ -396,7 +396,7 @@ DELIMITER //
 CREATE PROCEDURE inserisciRispostaQuesitoCodice(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(100),
-    IN valoreRispostaTemp VARCHAR(2000),
+    IN valoreRispostaTemp VARCHAR(500),
     IN numeroQuesitoTemp INT,
     IN esitoRisposta BOOLEAN
 )
@@ -454,13 +454,13 @@ DELIMITER //
 CREATE PROCEDURE inserisciRispostaQuesitoRispostaChiusa(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(100),
-    IN valoreRispostaTemp VARCHAR(2000),
+    IN valoreRispostaTemp VARCHAR(200),
     IN numeroQuesitoTemp INT
 )
 BEGIN
     DECLARE numRispostaChiusa INT;
     DECLARE esitoRisposta BOOLEAN;
-    DECLARE rispostaCorretta VARCHAR(40);
+    DECLARE rispostaCorretta VARCHAR(200);
     DECLARE num_risposte INT;
     
 
@@ -585,7 +585,7 @@ CREATE PROCEDURE inserisciMessaggioStudente(
 	IN emailStudenteTemp VARCHAR(100),
     IN emailDocenteTemp VARCHAR(100),
     IN titoloTestTemp VARCHAR(100),
-    IN titoloMess VARCHAR(20),
+    IN titoloMess VARCHAR(100),
     IN testoMess VARCHAR(500)
 )
 BEGIN
@@ -619,7 +619,7 @@ END
 
 DELIMITER //
 CREATE PROCEDURE eliminaQuesito(
-    IN titoloTestTemp VARCHAR(20),
+    IN titoloTestTemp VARCHAR(190),
     IN numeroProgressivoTemp INT
 )
 BEGIN
