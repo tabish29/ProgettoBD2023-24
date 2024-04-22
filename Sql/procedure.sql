@@ -46,7 +46,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE VisualizzaQuesitiPerTest (
-    IN TitoloTestTemp VARCHAR(20)
+    IN TitoloTestTemp VARCHAR(100)
     )
 BEGIN
     -- Seleziona i quesiti corrispondenti al titolo del test specificato
@@ -165,7 +165,7 @@ END
 -- OK
 DELIMITER //
 CREATE PROCEDURE ModificaVisualizzazioneRisposte (
-    IN TitoloTestTemp VARCHAR(50),
+    IN TitoloTestTemp VARCHAR(100),
     IN ValoreTemp BOOLEAN
 )
 BEGIN
@@ -179,7 +179,7 @@ END
 -- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneTest (
-    IN TitoloTest VARCHAR(50),
+    IN TitoloTest VARCHAR(100),
     IN DataCreazione datetime,
     IN Foto VARCHAR(100),
     IN VisualizzaRisposte BOOLEAN,
@@ -201,7 +201,7 @@ END
 -- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
-    IN TitoloTestTemp VARCHAR(20),
+    IN TitoloTestTemp VARCHAR(100),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
     IN DescrizioneTemp VARCHAR(255),
     OUT numProgressivo INT
@@ -228,7 +228,7 @@ DELIMITER ;
 -- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoCodice (
-    IN TitoloTestTemp VARCHAR(20),
+    IN TitoloTestTemp VARCHAR(100),
     IN LivelloDifficoltaTemp ENUM("Basso","Medio","Alto"),
     IN DescrizioneTemp VARCHAR(255),
     OUT numProgressivo INT
@@ -273,7 +273,7 @@ END
 -- OK
 DELIMITER //
 CREATE PROCEDURE InserimentoSoluzione (
-    IN TitoloTestTemp VARCHAR(20),
+    IN TitoloTestTemp VARCHAR(100),
     IN NumeroProgressivoTemp INT,
     IN TestoSoluzioneTemp VARCHAR(40)
 )
@@ -295,7 +295,7 @@ END
 -- OK
 DELIMITER //
 CREATE PROCEDURE InserimentoOpzioneRisposta (
-    IN TitoloTestTemp VARCHAR(20),
+    IN TitoloTestTemp VARCHAR(100),
     IN NumeroProgressivoQuesitoTemp INT,
     IN CampoTestoTemp VARCHAR(2000),
     IN RispostaCorrettaTemp BOOLEAN
@@ -317,7 +317,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE PROCEDURE SetOpzioneRispostaCorretta (
-    IN TitoloTestTemp VARCHAR(20),
+    IN TitoloTestTemp VARCHAR(100),
     IN NumeroProgressivoQuesitoTemp INT,
     IN CampoTestoTemp VARCHAR(40)
 )
@@ -336,7 +336,7 @@ END
 -- OK
 DELIMITER //
 CREATE PROCEDURE InserimentoMessaggioDocente(
-    IN TitoloTest_t VARCHAR(20),
+    IN TitoloTest_t VARCHAR(100),
     IN TitoloMessaggio_t VARCHAR(20),
     IN CampoTesto_t VARCHAR(500),
     IN Data_t DATETIME,
@@ -395,7 +395,7 @@ DELIMITER //
 # aggiungere parte di controllo
 CREATE PROCEDURE inserisciRispostaQuesitoCodice(
     IN idCompletamentoTemp INT,
-    IN TitoloTestTemp VARCHAR(20),
+    IN TitoloTestTemp VARCHAR(100),
     IN valoreRispostaTemp VARCHAR(2000),
     IN numeroQuesitoTemp INT,
     IN esitoRisposta BOOLEAN
@@ -453,7 +453,7 @@ DELIMITER //
 
 CREATE PROCEDURE inserisciRispostaQuesitoRispostaChiusa(
     IN idCompletamentoTemp INT,
-    IN TitoloTestTemp VARCHAR(20),
+    IN TitoloTestTemp VARCHAR(100),
     IN valoreRispostaTemp VARCHAR(2000),
     IN numeroQuesitoTemp INT
 )
@@ -524,7 +524,7 @@ DELIMITER //
 
 CREATE PROCEDURE visualizzaEsitoRisposta(
     IN idCompletamentoTemp INT,
-    IN TitoloTestTemp VARCHAR(30),
+    IN TitoloTestTemp VARCHAR(100),
     IN numQuesito INT,
     OUT esitoRisposta BOOLEAN
 )
@@ -584,7 +584,7 @@ DELIMITER //
 CREATE PROCEDURE inserisciMessaggioStudente(
 	IN emailStudenteTemp VARCHAR(40),
     IN emailDocenteTemp VARCHAR(40),
-    IN titoloTestTemp VARCHAR(20),
+    IN titoloTestTemp VARCHAR(100),
     IN titoloMess VARCHAR(20),
     IN testoMess VARCHAR(500)
 )
@@ -610,7 +610,7 @@ END
 
 DELIMITER //
 CREATE PROCEDURE eliminaTest(
-    IN titoloTest VARCHAR(20)
+    IN titoloTest VARCHAR(100)
 )
 BEGIN
     DELETE FROM TEST WHERE Titolo = titoloTest;
@@ -629,7 +629,7 @@ END
 
 DELIMITER //
 CREATE PROCEDURE verificaPresenzaCollegamento(
-    IN titoloTestTemp VARCHAR(20),
+    IN titoloTestTemp VARCHAR(100),
     IN numeroProgressivoTemp INT,
     OUT presente BOOLEAN
 )
