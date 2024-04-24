@@ -174,17 +174,20 @@ include '../../Condiviso/Quesito.php';
                     var collegaButton = document.getElementsByName("salvataggioCollegamento")[0];
 
                     if (selectBox.value === "Nessuna tabella disponibile") {
-                        collegaButton.disabled = true; // Disabilita il pulsante se non è stato selezionato nessun elemento
+                        collegaButton.disabled = true;
                     } else {
-                        collegaButton.disabled = false; // Abilita il pulsante se è stato selezionato un elemento
+                        collegaButton.disabled = false;
                     }
                 }
+                window.onload = function() {
+                    checkSelection();
+                };
             </script>
 
             <div>
                 <h4>Collegamento Quesito a Tabella</h4>
                 <label class="label" for="LabelTab">A quale tabella vuoi collegare il quesito:</label>
-                <select class="listBox" id="TabelleDaCollegare" name="TabDaCollegare" onchange="checkSelection()">
+                <select class="listBox" id="TabelleDaCollegare" name="TabDaCollegare">
                     <?php 
                     while ($row = $resultTabelle->fetch_assoc()) {
                         echo "<option value='" . $row['Nome'] . "'>" . $row['Nome'] . "</option>";
@@ -196,6 +199,7 @@ include '../../Condiviso/Quesito.php';
                 </select>
                 <input type="submit" class="button" name="salvataggioCollegamento" value="Collega" data-action="salvataggioCollegamento" disabled>
             </div>
+
 
             <div>
                 <h5>Dopo aver collegato il quesito ad almeno una tabella, clicca su continua</h5>
