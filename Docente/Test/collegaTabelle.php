@@ -162,11 +162,6 @@ include '../../Condiviso/Quesito.php';
 
         ?>
 
-        <form id="quesitoForm" method="post" action="collegaTabelle.php">
-            <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
-            <input type="hidden" name="numeroProgressivoQuesito" value="<?php echo $numeroProgressivoQuesito; ?>">
-            <input type="hidden" name="numeroRisposte" value="<?php echo $numeroRisposte; ?>">
-            <VerticalPanel id="pannello">
             <script>
                 // Funzione per controllare se è stato selezionato un elemento nella lista
                 function checkSelection() {
@@ -184,6 +179,11 @@ include '../../Condiviso/Quesito.php';
                 };
             </script>
 
+        <form id="quesitoForm" method="post" action="collegaTabelle.php">
+            <input type="hidden" name="titoloTest" value="<?php echo $titoloTest; ?>">
+            <input type="hidden" name="numeroProgressivoQuesito" value="<?php echo $numeroProgressivoQuesito; ?>">
+            <input type="hidden" name="numeroRisposte" value="<?php echo $numeroRisposte; ?>">
+            <VerticalPanel id="pannello">
             <div>
                 <h4>Collegamento Quesito a Tabella</h4>
                 <label class="label" for="LabelTab">A quale tabella vuoi collegare il quesito:</label>
