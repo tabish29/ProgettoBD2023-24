@@ -361,12 +361,24 @@
 
         function inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numQuesito, $esito){
             //Try/Catch in effettuaTest
+            try{
                 $sql = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '$rispostaData', '$numQuesito', '$esito')";
                 $risultato = $_SESSION['conn']->query($sql);
                 $_SESSION['conn']->next_result();
 
                 $this->settaDataInserimento($idCompletamento);
                 return $risultato;
+            } catch (Exception $e){
+                $_SESSION['conn']->next_result();
+                $sql2 = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '', '', 'false')";
+
+                $risultato2 = $_SESSION['conn']->query($sql2);
+                $_SESSION['conn']->next_result();
+
+                $this->settaDataInserimento($idCompletamento);
+                return $risultato2;
+                
+            }
             
         }
 
