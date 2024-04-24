@@ -251,32 +251,35 @@ if ($_SESSION['ruolo'] != 'Studente') {
                 $_SESSION['domandaAttuale'] = 0;
             }
 
-            if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                if (isset($_GET['id'])) {
-                    $testId = $_GET['id'];
-                    $_SESSION['titoloTest'] = $testId;
-                    $_SESSION['domandaAttuale'] = 0; //TOgliere
-                    // Verifica se il completamento esiste e aprilo se necessario
-                    $test->creaOApriCompletamento($testId, $_SESSION['email']);
-                    mostraDatiTest($_SESSION['titoloTest'], '', -1);
-                    creaGrafica($_SESSION['titoloTest']);
-                }
-            }
+                    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                        if (isset($_GET['id'])) {
+                            $testId = $_GET['id'];
+                            $_SESSION['titoloTest'] = $testId;
+                            $_SESSION['domandaAttuale'] = 0; //TOgliere
+                            $_SESSION['RispostaData'] = "";
+                            // Verifica se il completamento esiste e aprilo se necessario
+                            $test->creaOApriCompletamento($testId, $_SESSION['email']);
+                            mostraDatiTest($_SESSION['titoloTest'], '', -1);
+                            creaGrafica($_SESSION['titoloTest']);
+                            
+                        }
+                    }
 
 
             /* TO DO:
                     - Salvare i dati quando viene premuto "Salva Test"
                     - Capire perchè non funziona la verifica della risposta di codice
                     */
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                global $test;
-                global $quesitoOgg;
-                $quesitoOgg = new Quesito();
-                if (isset($_POST['quesitoSuccessivo'])) {
-                    $titoloTest = $_SESSION['titoloTest'];
-                    $tipologiaQuesito = $_POST['tipologiaQuesito'];
-                    $numeroProgressivo = $_POST['numeroQuesito'];
-                    $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
+                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                    global $test;
+                    global $quesitoOgg;
+                    $quesitoOgg = new Quesito();
+                    if (isset($_POST['quesitoSuccessivo'])) {
+                        $_SESSION['RispostaData'] = "";
+                        $titoloTest = $_SESSION['titoloTest'];
+                        $tipologiaQuesito = $_POST['tipologiaQuesito'];
+                        $numeroProgressivo = $_POST['numeroQuesito'];
+                        $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
 
 
                     // Salvataggio dei dati del quesito appena inserito
@@ -303,30 +306,25 @@ if ($_SESSION['ruolo'] != 'Studente') {
                                 </script>";
                     }
 
-                    $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] + 1;
-                    mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
-                    $statoCompletamento = $test->ottieniStatoCompletamento($idCompletamento);
-                    echo "stato completamento: " . $statoCompletamento;
-                    if ($statoCompletamento == "Concluso") {
-                        echo "<script>
+                        $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] + 1;
+                        mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
+                        $statoCompletamento = $test->ottieniStatoCompletamento($idCompletamento);
+                        if ($statoCompletamento == "Concluso") {
+                            echo "<script>
                                     window.alert('Test completato: le risposte inserite sono tutte corrette!');
                                     window.location.href = '../navBar/testStudenti.php';
                                 </script>";
-                        exit();
-                    }
-                } else if (isset($_POST['verificaRisposta'])) {
-                    // Ottengo i dati
-                    $numQuesito = $_POST['numeroQuesito'];
-                    $tipologiaQuesito = $_POST['tipologiaQuesito'];
-                    $rispostaData = $_POST['codice'];
-            ?>
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            var textarea = document.getElementById("codice");
-                            textarea.value = "<?php echo $rispostaData; ?>";
-                        });
-                    </script>
-                    <?php
+                            exit();
+                        }
+                    } else if (isset($_POST['verificaRisposta'])) {
+
+                        // Ottengo i dati
+                        $numQuesito = $_POST['numeroQuesito'];
+                        $tipologiaQuesito = $_POST['tipologiaQuesito'];
+                        $rispostaData = $_POST['codice'];
+                        $_SESSION['RispostaData'] = $rispostaData;
+
+                        
 
                     $idCompletamento = $test->trovaIdCompletamento($_SESSION['titoloTest'], $_SESSION['email']);
 
@@ -372,22 +370,28 @@ if ($_SESSION['ruolo'] != 'Studente') {
                             echo "<script>
                                         window.alert('Errore nell'inserimento della risposta');
                                     </script>";
+                            }
+                        } catch (Exception $e) {
+
+                            echo "<label class='erroreQuery'>" . $e->getMessage() . "</label>";
                         }
-                    } catch (Exception $e) {
-                        echo "<label class='erroreQuery'>" . $e->getMessage() . "</label>";
-                    }
-                } else if (isset($_POST['salvaTest'])) {
-                    salvaDatiTest();
-                    echo '<script>
+                        
+                    } else if (isset($_POST['salvaTest'])) {
+                        $_SESSION['RispostaData'] = "";
+                        salvaDatiTest();
+                        echo '<script>
                                 window.alert("Test salvato correttamente!");
                                 window.location.href = "../navBar/testStudenti.php"; 
                             </script>';
-                    exit();
-                } else if (isset($_POST['quesitoPrecedente'])) {
-                    $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] - 1;
-                    mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
+                        exit();
+                        
+                    } else if (isset($_POST['quesitoPrecedente'])) {
+                        $_SESSION['RispostaData'] = "";
+                        $_SESSION['domandaAttuale'] = $_SESSION['domandaAttuale'] - 1;
+                        mostraQuesito($_SESSION['arrayQuesiti'], $_SESSION['domandaAttuale']);
+                    }
                 }
-            }
+            
 
             function mostraDatiTest($testId)
             {
@@ -488,24 +492,25 @@ if ($_SESSION['ruolo'] != 'Studente') {
                             } elseif ($tipologiaQuesito == "Codice") {
                                 ?>
                                 <p class='classInserimento'>Inserisci il codice:</p>
-                                <textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'></textarea>
+                                <textarea class='areaCodice' id='codice' name='codice' rows='10' cols='50'><?php if ($_SESSION['RispostaData'] != ""){ echo $_SESSION['RispostaData'];} ?></textarea>
                                 <button type='submit' name='verificaRisposta' id='verificaRisposta' class='btnVerifica'>Verifica Risposta</button>
                                 <label id='messaggioDiVerifica' class='labelVerifica'></label>
 
                             <?php
-                            }
-                            ?>
-                        </li><?php
-                                if ($numeroDellaDomanda != count($arrayQuesiti) - 1 && $numeroDellaDomanda != 0) {
-                                ?>
-                            <button type='submit' class='btnScorrimentoIndietro' name='quesitoPrecedente'>Indietro</button>
-                            <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>
-                        <?php
-                                } else if ($numeroDellaDomanda == 0) {
+                             
+                        }
                         ?>
-                            <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>
-                        <?php
-                                }
+                    </li><?php
+                        if ($numeroDellaDomanda != count($arrayQuesiti)-1 && $numeroDellaDomanda != 0) {
+                            ?>
+                                <button type='submit' class='btnScorrimentoIndietro' name='quesitoPrecedente'>Indietro</button>    
+                                <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>     
+                            <?php
+                        } else if ($numeroDellaDomanda == 0){
+                            ?>
+                            <button type='submit' class='btnScorrimentoAvanti' name='quesitoSuccessivo'>Avanti</button>     
+                            <?php
+                        }
 
                                 if ($numeroDellaDomanda == count($arrayQuesiti) - 1) {
                         ?>
