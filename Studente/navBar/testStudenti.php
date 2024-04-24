@@ -139,6 +139,10 @@ if ($_SESSION['ruolo'] != 'Studente') {
     <ul class="test-list">
             <?php
 
+            if (isset($_SESSION['RispostaData'])){
+                unset($_SESSION['RispostaData']);
+            }
+
             $test = new Test();
 
             $email_login = $_SESSION['email'];
