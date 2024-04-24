@@ -96,6 +96,9 @@ class Quesito{
 
     function verificaRispostaCodice($titoloTest, $numeroProgressivo, $rispostaData) {
         try {
+            if ($rispostaData == null || $rispostaData == "") {
+                return 0;
+            }
             $rispostaCorretta = $this->ottieniRispostaCorrettaCasualeCodice($titoloTest, $numeroProgressivo);
             echo"la risposta corretta individuata è la seguente $rispostaCorretta";
             if (!$rispostaCorretta) {
