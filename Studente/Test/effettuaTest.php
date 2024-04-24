@@ -338,18 +338,21 @@ if ($_SESSION['ruolo'] != 'Studente') {
                                 });
                             </script>
                         <?php
-
-                        $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $_SESSION['titoloTest'], $rispostaData, $numQuesito, $risultatoVerifica);
-                        if ($aggiuntaRisposta == 1) {
-                            
-                            $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
-                            mostraDatiTest($_SESSION['titoloTest'], $numDomanda);
-                            creaGrafica($_SESSION['titoloTest']);
-                        }
-                        else {
-                            echo "<script>
-                                    window.alert('Errore nell'inserimento della risposta');
-                                </script>";
+                        try{
+                            $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $_SESSION['titoloTest'], $rispostaData, $numQuesito, $risultatoVerifica);
+                            if ($aggiuntaRisposta == 1) {
+                                
+                                $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
+                                mostraDatiTest($_SESSION['titoloTest'], $numDomanda);
+                                creaGrafica($_SESSION['titoloTest']);
+                            }
+                            else {
+                                echo "<script>
+                                        window.alert('Errore nell'inserimento della risposta');
+                                    </script>";
+                            }
+                        } catch (Exception $e) {
+                            echo "<label class='erroreQuery'>" . $e->getMessage() . "</label>";
                         }
                         
                     } else if (isset($_POST['salvaTest'])) {

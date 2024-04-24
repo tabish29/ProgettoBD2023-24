@@ -96,6 +96,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
             <?php
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                try{
                 $codiceTabella = $_POST['codiceTabella']; // Questo è il codice SQL inserito dall'utente
 
                 // Divide la stringa in parti basandosi su "CREATE TABLE"
@@ -112,7 +113,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     // Rimuove eventuali parentesi o caratteri speciali dal nome della tabella
                     $nomeTabella = preg_replace('/[^A-Za-z0-9_]/', '', $nomeTabella);
 
-                    echo "<br>Il nome della tabella è: $nomeTabella\n"; //(da eliminare)
                 } else {
                     echo "<br>Nome della tabella non trovato nel codice SQL fornito.\n";
                 }
@@ -168,11 +168,9 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
                             // Esegui il binding dei parametri e la query
                             $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
-                            if ($stmt->execute()) {
-                                echo "<br>Inserimento dell'attributo $nomeAttributo di tipo $tipo per la tabella $nomeTabella avvenuto con successo.<br>";
-                            } else {
+                            if (!$stmt->execute()) {
                                 echo "<br>Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
-                            }
+                            } 
 
                             // Chiudi lo statement
                             $stmt->close();
@@ -180,11 +178,9 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     } else {
                         echo "Errore nell'esecuzione della query DESCRIBE";
                     }
-                    echo "sono prima del controllo ";
 
                     // Assumendo che $conn sia la tua connessione al database e $codiceTabella sia la query SQL inserita dall'utente
                     if (strpos(strtoupper($codiceTabella), 'FOREIGN KEY') !== false) {
-                        echo "<br>sono dentro il controllo ";
                         // La query contiene "FOREIGN KEY", quindi procedi con la verifica delle foreign key
 
                         // Query per trovare le foreign key della tabella appena creata
@@ -206,11 +202,9 @@ if ($_SESSION['ruolo'] != 'Docente') {
                                 $stmtVincolo->bind_param("ssss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $rowFk['REFERENCED_TABLE_NAME'], $rowFk['REFERENCED_COLUMN_NAME']);
                                 $stmtVincolo->execute();
 
-                                if ($stmtVincolo->execute()) {
-                                    echo "Avvenuto l'inserimento in VINCOLODIINTEGRITA: ";
-                                } else {
+                                if (!$stmtVincolo->execute()) {
                                     echo "Errore nell'inserimento in VINCOLODIINTEGRITA: " . $stmtVincolo->error;
-                                }
+                                } 
 
                                 $stmtVincolo->close();
                             }
@@ -224,6 +218,9 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     }
                 } else {
                     echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query </label>";
+                }
+                } catch (Exception $e) {
+                echo "<br><label>Errore nell'esecuzione della query " . $e->getMessage() . "</label>";
                 }
             }
             ?>
