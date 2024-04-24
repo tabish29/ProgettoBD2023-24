@@ -74,7 +74,20 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             background-color: #f2f2f2;
             text-align: center;
         }
-
+        button {
+            color: black;
+            background-color: #ffcc00;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -82,6 +95,8 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
 <div class="container">
     <h2>Risposte al Test: <?php echo htmlspecialchars($idTest); ?></h2>
     <?php
+
+    error_reporting(E_ERROR | E_PARSE); // senza questo stampa un warning se non è stat data una risposta
     global $test;
     $test = new Test();
 
@@ -143,9 +158,13 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
                         
                         $i++;
                         }
-                    } 
+                    }
+                    $rispData = $quesitoOgg->ottieniRispostaDataRC($idCompletamento,$numeroProgressivo, $titoloTest);
+                    if ($rispData == null) {
+                        $rispData = "<i>Non è stata data una risposta al quesito</i>";
+                    }
                     ?>
-                    <p><i>Risposta data: </i><?php echo $quesitoOgg->ottieniRispostaDataRC($idCompletamento,$numeroProgressivo, $titoloTest) ?></p>
+                    <p><i>Risposta data: </i><?php echo $rispData ?></p>
                     <p><i>Risposta corretta: </i><?php echo $quesitoOgg->ottieniRispostaCorrettaRC($numeroProgressivo, $titoloTest) ?></p>
                     <?php
                 } elseif ($tipologiaQuesito == "Codice") {
@@ -161,9 +180,12 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
                         $i++;
                         }
                     }
+                    $rispData = $quesitoOgg->ottieniRispostaDataCodice($idCompletamento,$numeroProgressivo, $titoloTest);
+                    if ($rispData == null) {
+                        $rispData = "<i>Non è stata data una risposta al quesito</i>";
+                    }
                     ?>
-                    <p><i>Risposta data: </i><?php echo $quesitoOgg->ottieniRispostaDataCodice($idCompletamento,$numeroProgressivo, $titoloTest) ?></p>
-                    <p><i>Risposta corretta: </i><?php echo $quesitoOgg->ottieniRispostaCorrettaCodice($numeroProgressivo, $titoloTest) ?></p>
+                    <p><i>Risposta data: </i><?php echo $rispData ?></p>
                     <?php
                 }
                 $numeroDellaDomanda++;
@@ -174,10 +196,15 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
         global $tabella;
         $tabella = new Tabella();
         $nomiTabella = $tabella->tabelleDelTest($titoloTest);
+        $nomiInseriti = array();
         if (!empty($nomiTabella)) {
             foreach ($nomiTabella as $nomeTabella) {
+                if (in_array($nomeTabella, $nomiInseriti)) {
+                    continue;
+                }
                 $datiTabella = $tabella->ottieniContenutoTabella($nomeTabella);
                 if ($datiTabella) {
+                    $nomiInseriti[] = $nomeTabella;
                     echo "<br><br><br><i><label class='labelNomeTabella'> Tabella: </i>" . $nomeTabella . "</label>";
                     echo "<table>";
                     echo "<tr>";
@@ -199,8 +226,9 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
         } 
     }
     ?>
-
-    
+    <div >
+        <button  class='button' onclick="window.location.href = '../navBar/testStudenti.php';">Torna ai test</button>
+    </div>
 </div>
 
 </body>

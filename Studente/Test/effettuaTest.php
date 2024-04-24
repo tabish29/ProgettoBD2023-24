@@ -213,7 +213,13 @@ if ($_SESSION['ruolo'] != 'Studente') {
             font-style: normal;
             color: #222222;
         }
-
+        .erroreQuery{
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            font-style: normal;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -249,8 +255,8 @@ if ($_SESSION['ruolo'] != 'Studente') {
                     */
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     global $test;
-                    global $quesito;
-
+                    global $quesitoOgg;
+                    $quesitoOgg = new Quesito();
                     if (isset($_POST['quesitoSuccessivo'])) {
                         $titoloTest = $_SESSION['titoloTest'];
                         $tipologiaQuesito = $_POST['tipologiaQuesito'];
@@ -268,7 +274,11 @@ if ($_SESSION['ruolo'] != 'Studente') {
                         } else if ($tipologiaQuesito == "Codice") {
                             $rispostaData = $_POST['codice'];
                             //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
-                            $risultatoVerifica = true;
+                            try{
+                                $risultatoVerifica = $quesitoOgg->verificaRispostaCodice($_SESSION['titoloTest'], $numeroProgressivo, $rispostaData);
+                            } catch (Exception $e) {
+                                $risultatoVerifica = false;
+                            }                            
                             $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo, $risultatoVerifica);
                             
                         }
@@ -337,18 +347,21 @@ if ($_SESSION['ruolo'] != 'Studente') {
                                 });
                             </script>
                         <?php
-
-                        $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $_SESSION['titoloTest'], $rispostaData, $numQuesito, $risultatoVerifica);
-                        if ($aggiuntaRisposta == 1) {
-                            
-                            $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
-                            mostraDatiTest($_SESSION['titoloTest'], $numDomanda);
-                            creaGrafica($_SESSION['titoloTest']);
-                        }
-                        else {
-                            echo "<script>
-                                    window.alert('Errore nell'inserimento della risposta');
-                                </script>";
+                        try{
+                            $aggiuntaRisposta = $test->inserisciRispostaQuesitoCodice($idCompletamento, $_SESSION['titoloTest'], $rispostaData, $numQuesito, $risultatoVerifica);
+                            if ($aggiuntaRisposta == 1) {
+                                
+                                $numDomanda = $_POST['numeroDomanda']; //Serve solo per la stampa delle domande
+                                mostraDatiTest($_SESSION['titoloTest'], $numDomanda);
+                                creaGrafica($_SESSION['titoloTest']);
+                            }
+                            else {
+                                echo "<script>
+                                        window.alert('Errore nell'inserimento della risposta');
+                                    </script>";
+                            }
+                        } catch (Exception $e) {
+                            echo "<label class='erroreQuery'>" . $e->getMessage() . "</label>";
                         }
                         
                     } else if (isset($_POST['salvaTest'])) {
@@ -392,7 +405,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             
             function salvaDatiTest(){
                 global $test;
-                
+                global $quesitoOgg;
                 $tipologiaQuesito = $_POST['tipologiaQuesito'];
                 $numeroProgressivo = $_POST['numeroQuesito'];
                 $idCompletamento = $test->trovaIdCompletamento($_SESSION['titoloTest'], $_SESSION['email']);
@@ -405,8 +418,11 @@ if ($_SESSION['ruolo'] != 'Studente') {
                     $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$_SESSION['titoloTest'], $rispostaData, $numeroProgressivo);
                 } else if ($tipologiaQuesito == "Codice") {
                     $rispostaData = $_POST['codice'];
-                    //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
-                    $risultatoVerifica = true;
+                    try{
+                        $risultatoVerifica = $quesitoOgg->verificaRispostaCodice($_SESSION['titoloTest'], $numeroProgressivo, $rispostaData);
+                    } catch (Exception $e) {
+                        $risultatoVerifica = false;
+                    }
                     $inserimento = $test -> inserisciRispostaQuesitoCodice($idCompletamento,$_SESSION['titoloTest'], $rispostaData, $numeroProgressivo, $risultatoVerifica);
                             
                 }
