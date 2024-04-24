@@ -9,7 +9,7 @@ class Messaggio {
 
     function getMessaggiRicevutiDocente($email) {
         try {
-            $sql_all_messagesRicevuti = "SELECT * FROM ricezionedocente as RD, messaggio as M, inviostudente as S WHERE ((EmailDocenteDestinatario = ?) AND (RD.TitoloTest = M.TitoloTest) AND (RD.TitoloTest = S.TitoloTest) AND (M.id = RD.Id))";
+            $sql_all_messagesRicevuti = "SELECT * FROM ricezionedocente as RD, messaggio as M, inviostudente as S WHERE ((EmailDocenteDestinatario = ?) AND (RD.TitoloTest = M.TitoloTest) AND (RD.TitoloTest = S.TitoloTest) AND (M.id = RD.Id) AND (S.Id = RD.Id))";
             $stmt = $_SESSION['conn']->prepare($sql_all_messagesRicevuti);
             $stmt->bind_param("s", $email);
             $stmt->execute();
