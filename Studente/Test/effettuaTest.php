@@ -310,12 +310,24 @@ if ($_SESSION['ruolo'] != 'Studente') {
                         $quesitoOgg = new Quesito();
                         // TODO: chiamare metodo da realizzare (input: $rispostaData, output: $risultatoVerifica)
                         //$risultatoVerifica = $quesitoOgg->ottieniRispostaCorrettaCodice($testId, $numQuesito);
-                        $risultatoVerifica = true;
-                        $messaggio = "";
-                        if ($risultatoVerifica == true){
-                            $messaggio = "Risposta corretta";
-                        } else {
-                            $messaggio = "Risposta errata";
+                        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['verificaRisposta'])) {
+                            $numeroProgressivo = $_POST['numeroQuesito'];
+                            $titoloTest = $_SESSION['titoloTest'];
+                            $rispostaData = $_POST['codice'];  // La risposta data dall'utente
+                        
+                            // Ottieni una risposta corretta casuale dal database
+                            $soluzioneDocente = $quesitoOgg->ottieniRispostaCorrettaCasualeCodice($titoloTest, $numeroProgressivo);
+                            $singolasoluzioneDocente = $quesitoOgg->ottieniSingolaRispostaCorrettaCodice($titoloTest, $numeroProgressivo); 
+                        
+                            // Verifica la correttezza della risposta data dall'utente
+                            $esitoVerifica = $quesitoOgg->verificaRispostaCodice($rispostaData, $singolasoluzioneDocente);
+                        
+                            // Output del risultato della verifica
+                            if ($esitoVerifica == 1) {
+                                echo "<p>Risposta corretta!</p>";
+                            } else {
+                                echo "<p>Risposta errata. La soluzione corretta era: $soluzioneDocente</p>";
+                            }
                         }
                         ?>
                             <script>
