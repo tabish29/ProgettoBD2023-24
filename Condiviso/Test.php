@@ -370,7 +370,7 @@
                 return $risultato;
             } catch (Exception $e){
                 $_SESSION['conn']->next_result();
-                $sql2 = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '', '', 'false')";
+                $sql2 = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '', '$numQuesito', 'false')";
 
                 $risultato2 = $_SESSION['conn']->query($sql2);
                 $_SESSION['conn']->next_result();

@@ -76,34 +76,12 @@ class Quesito{
         }
     }
 
-    function ottieniSingolaRispostaCorrettaCodice($titoloTest, $numeroProgressivo) {
-        $sql = "SELECT TestoSoluzione FROM SOLUZIONE WHERE NumeroProgressivo = ? AND TitoloTest = ? ORDER BY RAND() LIMIT 1";
-        $stmt = $_SESSION['conn']->prepare($sql);
-        $stmt->bind_param("is", $numeroProgressivo, $titoloTest);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    
-        $row = $result->fetch_assoc(); // fetch_assoc() invece di fetch_all() poiché ci aspettiamo una sola riga
-        
-        // Controlla se abbiamo ottenuto una risposta e la restituisce, altrimenti restituisce null
-        if ($row) {
-            return $row['TestoSoluzione'];
-        } else {
-            return null;
-        }
-    }
-    
-
     function verificaRispostaCodice($titoloTest, $numeroProgressivo, $rispostaData) {
         try {
             if ($rispostaData == null || $rispostaData == "") {
                 return 0;
             }
             $rispostaCorretta = $this->ottieniRispostaCorrettaCasualeCodice($titoloTest, $numeroProgressivo);
-            echo"la risposta corretta individuata è la seguente $rispostaCorretta";
-            if (!$rispostaCorretta) {
-                throw new Exception("Variabile rispostaCorretta non esiste");
-            }
             // Esegue la query della soluzione corretta
             $resultSoluzione = $_SESSION['conn']->query($rispostaCorretta);
             
@@ -121,8 +99,7 @@ class Quesito{
                 return 0;  
             }
         } catch (Exception $e) {
-            echo "Eccezione: " . $e->getMessage();
-            return false; 
+            throw new Exception("Errore: " . $e->getMessage());
         }
     }
     
