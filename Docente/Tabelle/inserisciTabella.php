@@ -214,7 +214,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
                         $stmtFk->close();
                     } else {
-                        echo "La query inserita non contiene foreign key.";
+                        // La query non contiene "FOREIGN KEY"
                     }
                 } else {
                     echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query </label>";

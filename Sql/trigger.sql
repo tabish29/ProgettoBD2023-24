@@ -18,8 +18,6 @@ DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoCodiceAfterInsert;
 DROP TRIGGER IF EXISTS AggiornaNumeroRisposteQuesitoCodiceAfterDelete;
 DROP TRIGGER IF EXISTS spaziTitoloTest;
 
-
--- TRIGGER
 DELIMITER //
 CREATE TRIGGER cambio_stato_incompletamento_rispostaquesitorispostachiusa
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA  
@@ -173,7 +171,7 @@ BEGIN
     DECLARE num_risposte_corrette INT;
     DECLARE num_progressivo_completamento INT;
     
-    -- Ottieni il numero progressivo di completamento
+    -- Ottiene il numero progressivo di completamento
     SET num_progressivo_completamento = NEW.NumeroProgressivoCompletamento;
 
     -- Conta il numero totale di quesiti per il test
@@ -222,7 +220,7 @@ BEGIN
     DECLARE num_risposte_corrette INT;
     DECLARE num_progressivo_completamento INT;
     
-    -- Ottieni il numero progressivo di completamento
+    -- Ottiene il numero progressivo di completamento
     SET num_progressivo_completamento = NEW.NumeroProgressivoCompletamento;
 
     
@@ -351,14 +349,13 @@ DELIMITER ;
 
 
 DELIMITER //
--- TRIGGER PER CAMBIARE L'ATTRIBUTO NUMERORISPOSTE DELLA TAVELLA QUESITO(IN RISPOSTA CI DOVREBBE ESSERE ANCHE IL TITOLO DEL TEST DATO CHE SOLO IL NUMERO PROGRESSIVO DEL QUESITO NON è SUFFICIENTE PER INDENTIFICARLO DALLA TABELLA RIPSOSTA )
 CREATE TRIGGER AggiornaNumeroRisposteQuesitoAfterInsert
 AFTER INSERT ON RISPOSTAQUESITORISPOSTACHIUSA
 FOR EACH ROW
 BEGIN
     UPDATE QUESITO
     SET NumeroRisposte = NumeroRisposte + 1
-    WHERE NumeroProgressivo = NEW.NumeroProgressivoQuesito;
+    WHERE NumeroProgressivo = NEW.NumeroProgressivoQuesito AND TitoloTest = NEW.TitoloTest;
 END;
 //
 DELIMITER ;
@@ -370,7 +367,7 @@ FOR EACH ROW
 BEGIN
     UPDATE QUESITO
     SET NumeroRisposte = NumeroRisposte - 1
-    WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito;
+    WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito AND TitoloTest = OLD.TitoloTest;
 END;
 //
 DELIMITER ;
@@ -382,7 +379,7 @@ FOR EACH ROW
 BEGIN
     UPDATE QUESITO
     SET NumeroRisposte = NumeroRisposte + 1
-    WHERE NumeroProgressivo = NEW.NumeroProgressivoQuesito;
+    WHERE NumeroProgressivo = NEW.NumeroProgressivoQuesito AND TitoloTest = NEW.TitoloTest;
 END;
 //
 DELIMITER ;
@@ -394,7 +391,7 @@ FOR EACH ROW
 BEGIN
     UPDATE QUESITO
     SET NumeroRisposte = NumeroRisposte - 1
-    WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito;
+    WHERE NumeroProgressivo = OLD.NumeroProgressivoQuesito AND TitoloTest = OLD.TitoloTest;
 END;
 //
 DELIMITER ;

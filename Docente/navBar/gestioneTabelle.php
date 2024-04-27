@@ -78,6 +78,12 @@ if ($_SESSION['ruolo'] != 'Docente') {
         button[disabled]:hover {
             background-color: #b8860b;
         }
+        p{
+            color: black;
+            font-weight: bold;
+            font-size: 20px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
     </style>
 </head>
 
@@ -123,8 +129,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
                 // Preparazione della query per eliminare la tabella
                 $sqlDeleteTable = "DROP TABLE " . $nomeTabella; // Attenzione ai rischi di SQL injection se il nome della tabella non è controllato accuratamente
                 if ($conn->query($sqlDeleteTable)) {
-                    // Query eseguita con successo
-                    echo "<p>Tabella eliminata con successo.</p>";
                     // Elimina anche l'informazione della tabella da TABELLADIESERCIZIO
                     $sqlDeleteInfo = "DELETE FROM TABELLADIESERCIZIO WHERE Nome = ?";
                     $stmt = $conn->prepare($sqlDeleteInfo);
@@ -133,7 +137,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     $stmt->close();
                     // Reset della selezione dopo l'eliminazione
                     $selectedTabella = "";
-                    echo "<p>Tabella eliminata con successo. Selezionare un'altra tabella.</p>";
+                    echo "<p>Tabella eliminata con successo";
                 } else {
                     echo "<p>Errore nell'eliminazione della tabella: " . $conn->error . "</p>";
                 }

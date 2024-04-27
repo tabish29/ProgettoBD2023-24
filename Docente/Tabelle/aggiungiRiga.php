@@ -95,12 +95,10 @@ if ($_SESSION['ruolo'] != 'Docente') {
                 $tableName = $matches[1];
                 if ($conn->query($codiceRiga)) {
                     $last_id = $conn->insert_id;
-                    echo "<p class='messaggioConferma'>Riga inserita con successo. ID nuovo: $last_id</p>";
                     $query = "SELECT * FROM $tableName WHERE id = $last_id";
                     $result = $conn->query($query);
                     if ($result && $rowData = $result->fetch_assoc()) {
                         $testoRiga = implode(",", $rowData);
-                        echo "<p class='messaggioConferma'>Dati della nuova riga: $testoRiga</p>";
 
                         //inserire il coidce per linseirmet nella tabella riga
                         // Preparazione per l'inserimento nella tabella Riga

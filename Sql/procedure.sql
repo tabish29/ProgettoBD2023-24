@@ -105,7 +105,7 @@ BEGIN
         -- Inserisce l'utente nella tabella Utenti
         INSERT INTO Docente (Email,PasswordDocente,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso) VALUES (EmailTemp,PasswordTemp,Nome,Cognome,RecapitoTelefonicoDocente,NomeDipartimento,NomeCorso);
     ELSE
-     -- Se l'email esiste già, restituisci un messaggio di errore
+     -- Se l'email esiste già, restituisce un messaggio di errore
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Docente";
     END IF;
 END //
@@ -127,7 +127,7 @@ BEGIN
         -- Inserisce l'utente nella tabella Utenti
         INSERT INTO STUDENTE (Email,PasswordStudente,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico) VALUES (EmailTemp,PasswordTemp,Nome,Cognome,RecapitoTelefonicoStudente,AnnoImmatricolazione,CodiceAlfaNumerico);
     ELSE
-     -- Se l'email esiste già, restituisci un messaggio di errore
+     -- Se l'email esiste già, restituisce un messaggio di errore
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = "L\'email inserita è già presente nella tabella Studente";
     END IF;
 END //
@@ -137,7 +137,6 @@ DELIMITER ;
 
 -- PROCEDURE PER I DOCENTI
 
--- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneTabellaEsercizio (
     IN nomeTabella VARCHAR(20),
@@ -154,15 +153,13 @@ SET docenteEsistente = ( SELECT COUNT(*) FROM DOCENTE WHERE (emailDocente = DOCE
 
 -- se non esiste la tabella ed esiste il docente la inserisco
 IF (TabellaNonEsistente = 0 AND docenteEsistente=1) THEN 
-INSERT INTO TABELLADIESERCIZIO VALUES(NomeTabella, dataCreazione, numRighe, emailDocente);
+    INSERT INTO TABELLADIESERCIZIO VALUES(NomeTabella, dataCreazione, numRighe, emailDocente);
 END IF;
 
 END
 // DELIMITER ;
 
 
-
--- OK
 DELIMITER //
 CREATE PROCEDURE ModificaVisualizzazioneRisposte (
     IN TitoloTestTemp VARCHAR(100),
@@ -176,7 +173,6 @@ END
 
 
 
--- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneTest (
     IN TitoloTest VARCHAR(100),
@@ -198,7 +194,6 @@ END
 // DELIMITER ;
 
 
--- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoRispostaChiusa (
     IN TitoloTestTemp VARCHAR(100),
@@ -225,7 +220,6 @@ DELIMITER ;
 
 
 
--- OK
 DELIMITER //
 CREATE PROCEDURE CreazioneQuesitoCodice (
     IN TitoloTestTemp VARCHAR(100),
@@ -269,8 +263,9 @@ BEGIN
     END IF;
 END
 // DELIMITER ;
-# Faccio mettere in input il progressivo al docente, dovrà essere visibile nel programma
--- OK
+
+
+
 DELIMITER //
 CREATE PROCEDURE InserimentoSoluzione (
     IN TitoloTestTemp VARCHAR(100),
@@ -291,8 +286,6 @@ END
 
 
 
-# qui ho reso auto_increment il progressivo e come prima faccio inserire il progressivo
--- OK
 DELIMITER //
 CREATE PROCEDURE InserimentoOpzioneRisposta (
     IN TitoloTestTemp VARCHAR(100),
@@ -332,8 +325,6 @@ END
 
 
 
-
--- OK
 DELIMITER //
 CREATE PROCEDURE InserimentoMessaggioDocente(
     IN TitoloTest_t VARCHAR(100),
@@ -389,10 +380,7 @@ DELIMITER ;
 -- PROCEDURE PER GLI STUDENTI
 
 DELIMITER //
-DELIMITER //
 
-
-# aggiungere parte di controllo
 CREATE PROCEDURE inserisciRispostaQuesitoCodice(
     IN idCompletamentoTemp INT,
     IN TitoloTestTemp VARCHAR(100),
@@ -594,7 +582,7 @@ BEGIN
     INSERT INTO MESSAGGIO (TitoloTest, TitoloMessaggio, CampoTesto, Data)
     VALUES (titoloTestTemp, titoloMess, testoMess, NOW());
     
-    -- salvo l'ID del messaggio -> potrebbe esserci un errore in quanto i campi per la ricerca noon sono univoci
+    -- salvo l'ID del messaggio
     SELECT Id INTO IDMess
     FROM MESSAGGIO
     WHERE (TitoloTest=titoloTestTemp) AND (TitoloMessaggio = titoloMess) AND (testoMess = CampoTesto);

@@ -4,7 +4,6 @@ DROP VIEW IF EXISTS classifica_test_completati;
 DROP VIEW IF EXISTS classifica_risposte_corrette;
 DROP VIEW IF EXISTS classifica_quesiti;
 
--- VIEW
 -- view nr 1
 CREATE VIEW classifica_test_completati AS
 	SELECT s.CodiceAlfaNumerico, COUNT(*) AS numero_test_completati
