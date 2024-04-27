@@ -1,5 +1,5 @@
 <?php
-if (!isset($_SESSION)){
+if (!isset($_SESSION)) {
     session_start();
 }
 include '../../connessione.php';
@@ -12,6 +12,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +23,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
             padding: 0;
             background-color: #f9acac;
         }
+
         .container {
             text-align: center;
             width: 70%;
@@ -41,7 +43,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
             font-weight: bold;
             font-style: normal;
             color: #222222;
-            background-color: #acf9ba; 
+            background-color: #acf9ba;
         }
 
         .areaInserimento {
@@ -64,6 +66,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <?php
@@ -71,7 +74,8 @@ if ($_SESSION['ruolo'] != 'Docente') {
             $email_login = $_SESSION['email'];
 
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                function creaGrafica() {
+                function creaGrafica()
+                {
                     echo "
                     <h2 class='creaTest'>Crea Test</h2>
                     <form id='creaTestForm' action='creaTest.php' method='post' enctype='multipart/form-data'>
@@ -94,12 +98,19 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
                 if (isset($_POST['action']) && $_POST['action'] == 'crea') {
                     $titolo = $_POST['titolo'];
-                    $foto = "../Immagini/default.png";
-                    if (isset($_FILES['foto']) && $_FILES['foto']['name'] != ""){
+                    $directoryDestinazione = "../Immagini/";  // Cartella di destinazione per le foto
+                    $foto = $directoryDestinazione . "default.png"; // Immagine predefinita se non viene caricato nulla
+                    if (isset($_FILES['foto']) && $_FILES['foto']['name'] != "") {
                         $nomeFileFoto = $_FILES['foto']['name'];
-                        $foto = "../Immagini/" . $nomeFileFoto;
-                    }                 
-                    $data = date('Y-m-d H:i:s');// Data e ora correnti
+                        $foto = $directoryDestinazione . $nomeFileFoto;
+
+                        // Sposta il file caricato nella directory destinazione
+                        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $foto)) {
+                            echo '<script>window.alert("Errore durante il caricamento del file!");</script>';
+                            exit;
+                        }
+                    }
+                    $data = date('Y-m-d H:i:s'); // Data e ora correnti
 
                     $email_login = $_SESSION['email'];
 
@@ -111,7 +122,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                                 window.alert("Test creato correttamente!");
                                 window.location.href = "../navBar/testDocenti.php"; 
                             </script>';
-                        exit();                   
+                        exit();
                     } else {
                         echo '<script>window.alert("Errore durante la creazione del test!");</script>';
                     }
@@ -123,9 +134,9 @@ if ($_SESSION['ruolo'] != 'Docente') {
             echo '<script>window.alert("Errore durante la creazione del test!");
             window.location.href = "../navBar/testDocenti.php"; 
             </script>';
-            
-        } 
+        }
         ?>
     </div>
 </body>
+
 </html>

@@ -161,10 +161,12 @@ include '../Condiviso/Utente.php';
             // Verifica se l'email esiste nella tabella del ruolo selezionato
             if ($emailPresente->num_rows <= 0) {
                 echo '<script>window.alert("Credenziali errate!");</script>';
+                  
             } else {
                 //Imposta le variabili di sessione
                 $_SESSION['email'] = $email_login; //NON SPOSTARE DA QUI
                 $_SESSION['ruolo'] = $ruolo_login; //NON SPOSTARE DA QUI
+               
                 if ($ruolo_login === "Docente") {
                     echo '<script>window.alert("Accesso effettuato!");
                             window.location.href = "../Docente/navBar/testDocenti.php";

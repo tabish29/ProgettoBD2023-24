@@ -110,8 +110,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     // Il nome della tabella dovrebbe essere la prima parte dopo "CREATE TABLE"
                     $nomeTabella = $partiDopoCreateTable[0];
 
-                    // Rimuove eventuali parentesi o caratteri speciali dal nome della tabella
-                    $nomeTabella = preg_replace('/[^A-Za-z0-9_]/', '', $nomeTabella);
 
                 } else {
                     echo "<br>Nome della tabella non trovato nel codice SQL fornito.\n";
@@ -176,7 +174,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                             $stmt->close();
                         }
                     } else {
-                        echo "Errore nell'esecuzione della query DESCRIBE";
+                        echo "Errore nell'esecuzione della query DESCRIBE"  . $conn->error;
                     }
 
                     // Assumendo che $conn sia la tua connessione al database e $codiceTabella sia la query SQL inserita dall'utente
