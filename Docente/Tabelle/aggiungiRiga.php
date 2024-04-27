@@ -91,7 +91,8 @@ if ($_SESSION['ruolo'] != 'Docente') {
         <?php
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $codiceRiga = $_POST['codiceRiga'];
-            if (preg_match("/^INSERT INTO \s*(\w+)\s* \(([\w, ]+)\)\s*VALUES\s*\(([\w', ]+)\);$/i", $codiceRiga, $matches)) {
+          
+            if (preg_match("/^INSERT INTO\s+([a-zA-Z0-9_àèìòùÀÈÌÒÙäëïöüÄËÏÖÜçÇ\-]+)\s*\(([a-zA-Z0-9_\s,àèìòùÀÈÌÒÙäëïöüÄËÏÖÜçÇ\-]+)\)\s*VALUES\s*\((.*)\);$/i", $codiceRiga, $matches)) {
                 $tableName = $matches[1];
                 if ($conn->query($codiceRiga)) {
                     $last_id = $conn->insert_id;

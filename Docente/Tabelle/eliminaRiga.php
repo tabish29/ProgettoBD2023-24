@@ -94,7 +94,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
 
             // Validazione del formato SQL per il DELETE
-            if (preg_match("/^DELETE FROM \s*(\w+)\s*WHERE\s*(.+);$/i", $codiceRiga, $matches)) {
+            if (preg_match("/^DELETE FROM \s*([a-zA-Z0-9_àèìòùÀÈÌÒÙäëïöüÄËÏÖÜçÇ\-]+)\s*WHERE\s*(.+);$/i", $codiceRiga, $matches)) {
                 $tableName = $matches[1];
                 $whereCondition = $matches[2];
 
