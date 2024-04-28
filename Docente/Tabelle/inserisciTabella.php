@@ -141,7 +141,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
                             if ($stmtInserimentoTabella->execute()) {
                                 $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Tabella_Esercizio: ' . $nomeTabella . '', 'Orario' => date('Y-m-d H:i:s')];
                                 writeLog($mongoDBManager, $document);
-                                echo "<br><label class='messaggioConferma'>Inserimento in TABELLADIESERCIZIO avvenuto con successo.</label>";
                             } else {
                                 echo "<br><label class='messaggioErrato'>Errore nell'inserimento in TABELLADIESERCIZIO</label>";
                             }
