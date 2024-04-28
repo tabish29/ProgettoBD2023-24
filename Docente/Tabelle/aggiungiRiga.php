@@ -106,7 +106,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                         $stmt = $conn->prepare($insertQuery);
                         $stmt->bind_param("ss", $testoRiga, $tableName);
                         if ($stmt->execute()) {
-                            echo "<p class='messaggioConferma'>Dati riga salvati con successo.</p>";
+                            echo "<p class='messaggioConferma'>Riga aggiunta con successo</p>";
                             $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata riga nella tabella: '.$tableName.'', 'Orario' => date('Y-m-d H:i:s')];
                             writeLog($mongoDBManager, $document); 
                         } else {
