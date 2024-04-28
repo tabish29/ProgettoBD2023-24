@@ -98,7 +98,7 @@ include '../../Condiviso/Quesito.php';
     <div class="container">
         <h2>Creazione Quesito</h2>
         <?php
-
+        $mongoDBManager = connessioneMongoDB();
         // Ottenere tutte le tabelle di esercizio
         $tabella = new Tabella();
         $quesito = new Quesito();
@@ -129,6 +129,8 @@ include '../../Condiviso/Quesito.php';
                     $sql_collegaTabella = $quesito->collegaTabella($numeroProgressivoQuesito, $titoloTest, $TabDaCollegare); 
                     if ($sql_collegaTabella){
                         $booleanCollegamento = true;
+                        $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creato collegamento tra quesito: '.$numeroProgressivoQuesito.' con la tabella:'.$TabDaCollegare, 'Orario' => date('Y-m-d H:i:s')];
+                        writeLog($mongoDBManager, $document); 
                         echo "Tabella collegata con successo";
                     }
                 } catch (Exception $e) {

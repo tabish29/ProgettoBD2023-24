@@ -93,7 +93,8 @@
 <body>
     <div class="container">
         <h2>Creazione Quesito</h2>
-        <?php
+        <?php 
+            $mongoDBManager = connessioneMongoDB();
 
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 $datiTest = []; // NumProgressivo, Tipo, TitoloTest, NumeroRisposte, NumeroRisposteInserite 
@@ -116,7 +117,7 @@
                 $_SESSION['datiTestAttuale'][4] = $datiTest[4] + 1;
                 $datiTest = $_SESSION['datiTestAttuale'];
                 
-                //Scommentare dopo la realizzazione delle query
+               
                 $sql_queryNuovaOpzioneOSoluzione = ''; 
                 $titolo = $datiTest[2];
                 $numProgressivoQuesito = $datiTest[0];
@@ -125,8 +126,16 @@
 
                     if ($datiTest[1] == "RC"){
                         $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoOpzioneRisposta($datiTest[2],$datiTest[0], $valoreInserito);
+                        if($sql_queryNuovaOpzioneOSoluzione){
+                            $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Opzione risposta: '.$valoreInserito.' nel quesito risposta chiusa con id: '.$datiTest[0].' del test:'.$datiTest[2], 'Orario' => date('Y-m-d H:i:s')];
+                            writeLog($mongoDBManager, $document); 
+                        }
                     } else if ($datiTest[1] == "COD"){
                         $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoSoluzione($datiTest[2],$datiTest[0], $valoreInserito);
+                        if($sql_queryNuovaOpzioneOSoluzione){
+                            $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Soluzione:'.$valoreInserito.' nel quesito di codice con id: '.$datiTest[0].' del test:'.$datiTest[2], 'Orario' => date('Y-m-d H:i:s')];
+                            writeLog($mongoDBManager, $document); 
+                        }
                     }
 
                     if ($sql_queryNuovaOpzioneOSoluzione == false){
@@ -139,8 +148,16 @@
                 } else if ($datiTest[3] - $datiTest[4] == 0){
                     if ($datiTest[1] == "RC"){
                         $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoOpzioneRisposta($datiTest[2],$datiTest[0], $valoreInserito);
+                        if($sql_queryNuovaOpzioneOSoluzione){
+                            $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Opzione risposta: '.$valoreInserito.' nel quesito risposta chiusa con id: '.$datiTest[0].' del test:'.$datiTest[2], 'Orario' => date('Y-m-d H:i:s')];
+                            writeLog($mongoDBManager, $document); 
+                        }
                     } else if ($datiTest[1] == "COD"){
                         $sql_queryNuovaOpzioneOSoluzione = $quesito->inserimentoSoluzione($datiTest[2],$datiTest[0], $valoreInserito);
+                        if($sql_queryNuovaOpzioneOSoluzione){
+                            $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Soluzione:'.$valoreInserito.' nel quesito di codice con id: '.$datiTest[0].' del test:'.$datiTest[2], 'Orario' => date('Y-m-d H:i:s')];
+                            writeLog($mongoDBManager, $document); 
+                        }
                     }
 
                     $datiTest[4]++;
