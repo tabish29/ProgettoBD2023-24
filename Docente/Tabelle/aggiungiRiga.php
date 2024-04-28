@@ -101,12 +101,12 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     if ($result && $rowData = $result->fetch_assoc()) {
                         $testoRiga = implode(",", $rowData);
 
-                        //inserire il coidce per linseirmet nella tabella riga
-                        // Preparazione per l'inserimento nella tabella Riga
                         $insertQuery = "INSERT INTO Riga (Testo,NomeTabella) VALUES (?, ?)";
                         $stmt = $conn->prepare($insertQuery);
                         $stmt->bind_param("ss", $testoRiga, $tableName);
                         if ($stmt->execute()) {
+                            $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata riga nella tabella: '.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
+                            writeLog($mongoDBManager, $document); 
                             echo "<p class='messaggioConferma'>Dati riga salvati con successo.</p>";
                         } else {
                             echo "<p class='messaggioErrato'>Errore nel salvataggio dati riga.</p>";

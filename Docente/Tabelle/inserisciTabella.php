@@ -1,13 +1,16 @@
 <?php
 include '../../connessione.php';
+
 if (!isset($_SESSION)) {
     session_start();
 }
+
 if ($_SESSION['ruolo'] != 'Docente') {
     echo "Accesso Negato";
     header('Location: ../../Accesso/Logout.php?message=Utente non autorizzato.');
     exit();
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,24 +85,23 @@ if ($_SESSION['ruolo'] != 'Docente') {
     <div class="container">
         <h2>Inserisci Tabella</h2>
         <ul>
-
             <form action="inserisciTabella.php" method="post">
                 <div class="form-group">
                     <label class="label">Scrivi il codice SQL della Tabella:</label><br>
                     <textarea id='codiceTabella' name='codiceTabella' rows='20' cols='100'></textarea><br>
                     <input type="submit" value="Inserisci Tabella" class="inseriscibtn">
                 </div>
-
             </form>
             <button id="modificaTest" class="inseriscibtn" onclick="window.location.href='../navBar/gestioneTabelle.php'">Back</button>
 
             <?php
+            $mongoDBManager = connessioneMongoDB();
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 try{
                 $codiceTabella = $_POST['codiceTabella']; // Questo è il codice SQL inserito dall'utente
 
-                // Divide la stringa in parti basandosi su "CREATE TABLE"
+                // Divide la stringa dopo "CREATE TABLE"
                 $parti = explode("CREATE TABLE", $codiceTabella);
 
                 // Controlla se abbiamo ottenuto almeno due parti
@@ -107,10 +109,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     // Divide la seconda parte (dopo "CREATE TABLE") basandosi sugli spazi
                     $partiDopoCreateTable = explode(" ", trim($parti[1]));
 
-                    // Il nome della tabella dovrebbe essere la prima parte dopo "CREATE TABLE"
                     $nomeTabella = $partiDopoCreateTable[0];
-
-
                 } else {
                     echo "<br>Nome della tabella non trovato nel codice SQL fornito.\n";
                 }
@@ -128,21 +127,22 @@ if ($_SESSION['ruolo'] != 'Docente') {
                             $result->free();
                         }
                     } while ($conn->next_result());
+
                     // Esegui la query per inserire nella tabella TABELLADIESERCIZIO
                     $email = $_SESSION['email'];
-                    $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, '$email')"; //(da cambiare devo creare una varibaile che si prende l'email del docente)
-
-                    // Prepara la query
+                    $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, '$email')";
                     $stmtInserimentoTabella = $conn->prepare($queryInserimentoTabella);
 
                     // Esegui il binding dei parametri e esegui la query
                     $stmtInserimentoTabella->bind_param("s", $nomeTabella);
                     if ($stmtInserimentoTabella->execute()) {
+                        $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Tabella_Esercizio: '.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
+                        writeLog($mongoDBManager, $document); 
                         echo "<br><label class='messaggioConferma'>Inserimento in TABELLADIESERCIZIO avvenuto con successo.</label>";
                     } else {
                         echo "<br><label class='messaggioErrato'>Errore nell'inserimento in TABELLADIESERCIZIO</label>";
                     }
-                    // Chiudi lo statement
+              
                     $stmtInserimentoTabella->close();
 
                     $query = "DESCRIBE " . $nomeTabella;
@@ -168,18 +168,19 @@ if ($_SESSION['ruolo'] != 'Docente') {
                             $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
                             if (!$stmt->execute()) {
                                 echo "<br>Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
-                            } 
-
-                            // Chiudi lo statement
+                            }else{
+                                $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creati Attributi della tabella: '.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
+                                writeLog($mongoDBManager, $document); 
+                            }
+                          
                             $stmt->close();
                         }
                     } else {
                         echo "Errore nell'esecuzione della query DESCRIBE"  . $conn->error;
                     }
 
-                    // Assumendo che $conn sia la tua connessione al database e $codiceTabella sia la query SQL inserita dall'utente
+                     //controllo se la query contiene "FOREIGN KEY"
                     if (strpos(strtoupper($codiceTabella), 'FOREIGN KEY') !== false) {
-                        // La query contiene "FOREIGN KEY", quindi procedi con la verifica delle foreign key
 
                         // Query per trovare le foreign key della tabella appena creata
                         $queryForeignKey = "SELECT TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
@@ -194,15 +195,21 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
                         if ($resultFk->num_rows > 0) {
                             while ($rowFk = $resultFk->fetch_assoc()) {
-                                // Qui inserisci i dettagli della foreign key in Vincolo di integrità
+                                // dettagli della foreign key in Vincolo di integrità
                                 $queryInserimentoVincolo = "INSERT INTO VINCOLODIINTEGRITA (NomeTabellaUno, NomeAttributoUno, NomeTabellaDue, NomeAttributoDue) VALUES (?, ?, ?, ?)";
                                 $stmtVincolo = $conn->prepare($queryInserimentoVincolo);
                                 $stmtVincolo->bind_param("ssss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $rowFk['REFERENCED_TABLE_NAME'], $rowFk['REFERENCED_COLUMN_NAME']);
-                                $stmtVincolo->execute();
 
                                 if (!$stmtVincolo->execute()) {
                                     echo "Errore nell'inserimento in VINCOLODIINTEGRITA: " . $stmtVincolo->error;
-                                } 
+                                } else{
+                                    $document = [
+                                        'Tipologia Evento' => 'Creazione',
+                                        'Evento' => 'Creato vincolo di integrità tra la tabella referenziante: ' . $rowFk['TABLE_NAME'] . ' e la tabella referenziata: ' . $rowFk['REFERENCED_TABLE_NAME'],
+                                        'Orario' => date('Y-m-d H:i:s')
+                                    ];
+                                    writeLog($mongoDBManager, $document);
+                                }
 
                                 $stmtVincolo->close();
                             }
@@ -222,8 +229,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
                 }
             }
             ?>
-
-
         </ul>
 
     </div>

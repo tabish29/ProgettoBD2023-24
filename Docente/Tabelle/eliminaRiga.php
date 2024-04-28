@@ -112,7 +112,8 @@ if ($_SESSION['ruolo'] != 'Docente') {
                         $stmt = $conn->prepare($deleteFromRiga);
                         $stmt->bind_param("ss", $tableName, $testoRiga);
                         if ($stmt->execute()) {
-                            echo "<p class='messaggioConferma'>Riga con testo \"$testoRiga\" eliminata con successo dalla tabella Riga.</p>";
+                            $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminata una riga dalla tabella:'.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
+                            writeLog($mongoDBManager, $document); 
                         } else {
                             echo "<p class='messaggioErrato'>Errore nell'eliminare la riga dalla tabella Riga: " . $stmt->error . "</p>";
                         }
@@ -121,13 +122,12 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     
                     // Esegui la query inserita dal docente
                     if ($conn->query($codiceRiga)) {
-                        // Query del docente eseguita correttamente, procedi con l'eliminazione delle righe dalla tabella Riga
-                        echo "<p class='messaggioConferma'>eseguita la query di eliminazione del docente: $codiceRiga </p>";
+                        echo "<p class='messaggioConferma'>eliminazione avvenuta con successo</p>";
                     } else {
-                        echo "<p class='messaggioErrato'>errore nell'esecuzione della query di eliminazione del docente </p>";
+                        echo "<p class='messaggioErrato'>errore nell'esecuzione della query di eliminazione </p>";
                     }
                 } else {
-                    echo "<p class='messaggioErrato'>Errore nell'eseguire la query di selezione: " . $conn->error . "</p>";
+                    echo "<p class='messaggioErrato'>Errore nell'eseguire la query di selezione </p>";
                 }
             } else {
                 echo "<p class='messaggioErrato'>Formato SQL non valido.</p>";
