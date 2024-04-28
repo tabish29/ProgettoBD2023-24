@@ -154,16 +154,23 @@
     
         function inserisciRispostaQuesitoRispostaChiusa($idCompletamento, $testId, $rispostaData, $numQuesito) {
              try{
+                $mongoDBManager = connessioneMongoDB();
                 $sql = "CALL inserisciRispostaQuesitoRispostaChiusa(?, ?, ?, ?)";
                 $stmt = $_SESSION['conn']->prepare($sql);
                 $stmt->bind_param("issi", $idCompletamento, $testId, $rispostaData, $numQuesito);
                 $stmt->execute();
                 $stmt->close();
+               
+                $document = [
+                        'Tipologia Evento' => 'Creazione',
+                        'Evento' => 'Inserita risposta: '.$rispostaData.' al quesito: '.$numQuesito.' del test: ' . $testId,
+                        'Orario' => date('Y-m-d H:i:s')
+                 ];
+                writeLog($mongoDBManager, $document);
 
                 $this->settaDataInserimento($idCompletamento);
-             }
-                catch (Exception $e){
-                    echo "Errore: " . $e->getMessage();
+             }catch (Exception $e){
+                    echo "Errore nell'inserimento della risposta";
                     return false;
                 }
         }
@@ -362,18 +369,32 @@
         function inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numQuesito, $esito){
             //Try/Catch in effettuaTest
             try{
+                $mongoDBManager = connessioneMongoDB();
                 $sql = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '$rispostaData', '$numQuesito', '$esito')";
                 $risultato = $_SESSION['conn']->query($sql);
                 $_SESSION['conn']->next_result();
-
+                $document = [
+                    'Tipologia Evento' => 'Creazione',
+                    'Evento' => 'Inserita risposta: '.$rispostaData.' al quesito: '.$numQuesito.' del test: ' . $titoloTest,
+                    'Orario' => date('Y-m-d H:i:s')
+                ];
+                writeLog($mongoDBManager, $document);
                 $this->settaDataInserimento($idCompletamento);
                 return $risultato;
             } catch (Exception $e){
                 $_SESSION['conn']->next_result();
                 $sql2 = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '', '$numQuesito', 'false')";
+                
 
                 $risultato2 = $_SESSION['conn']->query($sql2);
                 $_SESSION['conn']->next_result();
+
+                $document = [
+                    'Tipologia Evento' => 'Creazione',
+                    'Evento' => 'Inserita risposta: '.$rispostaData.' al quesito: '.$numQuesito.' del test: ' . $titoloTest,
+                    'Orario' => date('Y-m-d H:i:s')
+                ];
+                writeLog($mongoDBManager, $document);
 
                 $this->settaDataInserimento($idCompletamento);
                 return $risultato2;

@@ -241,7 +241,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
         <h2 class='testH2'>Effettua il Test</h2>
         <ul class="test-details">
             <?php
-
+                    $mongoDBManager = connessioneMongoDB();
                     global $test;
                     $test = new Test();    
                     $primaRisposta = true;
@@ -281,6 +281,12 @@ if ($_SESSION['ruolo'] != 'Studente') {
                                 $rispostaData = $_POST['risposta'];
                             } 
                             $inserimento = $test -> inserisciRispostaQuesitoRispostaChiusa($idCompletamento,$titoloTest, $rispostaData, $numeroProgressivo);
+
+                            if($inserimento){
+                                $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Inserita risposta al test: ' . $titoloTest . '', 'Orario' => date('Y-m-d H:i:s')];
+                                writeLog($mongoDBManager, $document);
+                            }
+
                         } else if ($tipologiaQuesito == "Codice") {
                             $rispostaData = $_POST['codice'];
                             //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
@@ -417,13 +423,10 @@ if ($_SESSION['ruolo'] != 'Studente') {
                             
                 }
 
-                
-
                 $_SESSION['titoloTest'] = "";
                 $_SESSION['numeroDomande'] = "";
                 $_SESSION['datiQuesito'] = array();
                 $_SESSION['RispostaData'] = "";
-                
                 
             }
 
