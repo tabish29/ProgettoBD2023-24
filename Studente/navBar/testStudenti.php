@@ -37,7 +37,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
         }
 
-
         .test-list {
             list-style-type: none;
             padding: 0;
@@ -66,7 +65,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
         .test-item p,
         .test-item label {
             text-align: left;
-            /* Allinea il testo a sinistra */
             margin: auto;
             font-size: small;
             font: Arial;
@@ -79,10 +77,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
         .test-item:last-child {
             margin-bottom: 0;
-            /* Rimuove il margine inferiore dall'ultimo elemento */
         }
-
-
 
         input {
             margin: 0.4rem;
@@ -101,18 +96,20 @@ if ($_SESSION['ruolo'] != 'Studente') {
         .test-item label {
             font-size: 15px;
         }
+
         .test-item {
-        display: inline-block; /* Aggiunta di display inline-block */
-        margin-left : 20px; /* Aggiunta di margine a sinistra per separare i test */
-        margin-right: 20px; /* Aggiunta di margine a destra per separare i test */
-        margin-bottom: 20px; /* Aggiunta di margine inferiore per separare i test */
+        display: inline-block; 
+        margin-left : 20px; 
+        margin-right: 20px;
+        margin-bottom: 20px;
         padding: 10px;
-        width: auto; /* Modifica della larghezza del singolo test */
+        width: auto; 
         height: auto;
         background-color: #f9f9f9;
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
+
         button{
             color: black;
             background-color: #ffcc00;
@@ -128,6 +125,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             cursor: pointer;
 
         }
+
     </style>
 </head>
 

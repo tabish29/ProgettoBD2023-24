@@ -39,17 +39,18 @@ if ($_SESSION['ruolo'] != 'Studente') {
             word-wrap: break-word;
         }
 
-        
         h2 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         .test-details {
             list-style-type: none;
             padding: 0;
             width: auto;
             height: auto;
         }
+
         .test-form {
             width: auto;
             height: auto;
@@ -60,6 +61,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             text-align: center;
             word-wrap: break-word;        
         }
+
         .test-item {
             width: auto;
             height: auto;
@@ -86,20 +88,23 @@ if ($_SESSION['ruolo'] != 'Studente') {
         .form-container {
             margin-top: 20px;
         }
+
         .form-group {
             margin-bottom: 10px;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 5px;
         }
-        
+    
         .classQuesito{
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
         }
+
         .btnVerifica{
             width: auto;
             height: auto;
@@ -112,6 +117,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             color: #222222;
             background-color: #acf9ba; 
         }
+
         .btnSalva{
             width: 100px;
             height: 40px;
@@ -141,6 +147,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             background-color: #7cfc00; 
             float: right;
         }
+
         .btnScorrimentoIndietro{
             width: 100px;
             height: 40px;
@@ -162,6 +169,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             font:  sans-serif;
             font-style: bold;
         }
+
         .classInserimento{
             text-align: left;
             margin-bottom: 20px;
@@ -169,11 +177,13 @@ if ($_SESSION['ruolo'] != 'Studente') {
             font-style: italic;
             text-decoration: underline;
         }
+
         .areaCodice{
             width: 50%;
             display: block;
             margin:auto;
         }
+
         .labelVerifica{
             text-align: center;
             font: sans-serif;
@@ -186,6 +196,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             display: block;
             
         }
+
         table {
             width: auto;
             min-width: 40%;
@@ -206,6 +217,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             background-color: #f2f2f2;
             text-align: center;
         }
+
         .labelNomeTabella{
             text-align: center;
             font-size: 16px;
@@ -213,6 +225,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             font-style: normal;
             color: #222222;
         }
+
         .erroreQuery{
             text-align: center;
             font-size: 16px;
@@ -220,6 +233,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
             font-style: normal;
             color: red;
         }
+
     </style>
 </head>
 <body>
@@ -248,12 +262,7 @@ if ($_SESSION['ruolo'] != 'Studente') {
                             
                         }
                     }
-
-                    
-                    /* TO DO:
-                    - Salvare i dati quando viene premuto "Salva Test"
-                    - Capire perchè non funziona la verifica della risposta di codice
-                    */
+  
                 if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     global $test;
                     global $quesitoOgg;
@@ -265,7 +274,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                         $numeroProgressivo = $_POST['numeroQuesito'];
                         $idCompletamento = $test->trovaIdCompletamento($titoloTest, $_SESSION['email']);
 
-                        
                         // Salvataggio dei dati del quesito appena inserito
                         if ($tipologiaQuesito == "Risposta Chiusa") {
                             $rispostaData = "";
@@ -346,8 +354,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                                         window.alert('Errore nell'inserimento della risposta');
                                     </script>";
                             }
-                        
-                        
                     } else if (isset($_POST['salvaTest'])) {
                         $_SESSION['rispostaData'] = "";
                         salvaDatiTest();
@@ -380,8 +386,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                 }
                 echo "</div>";
             }
-
-            
 
             function creaGrafica($testId)
             {
@@ -498,7 +502,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                 }
             }
             
-
             function stampaTabella($titoloTest, $numeroQuesito){
                 global $tabella;
                 $tabella = new Tabella();

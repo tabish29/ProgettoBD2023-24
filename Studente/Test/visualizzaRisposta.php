@@ -37,7 +37,7 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             width: 80%;
             margin: 20px auto;
             padding: 20px;
-            background-color: #FFE4E1; /* Sfondo rosa leggero */
+            background-color: #FFE4E1; 
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -74,6 +74,7 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             background-color: #f2f2f2;
             text-align: center;
         }
+
         button {
             color: black;
             background-color: #ffcc00;
@@ -88,6 +89,7 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
             border-radius: 5px;
             cursor: pointer;
         }
+
     </style>
 </head>
 <body>
@@ -119,7 +121,6 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
         
     }
 
-
     function mostraQuesito($arrayQuesiti,$titoloTest){
          
         global $test;
@@ -138,8 +139,8 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
     
             $quesitoOgg = new Quesito();
             $tipologiaQuesito = $quesitoOgg->ottieniTipologiaQuesito($titoloTest, $numeroProgressivo);
+          
             ?>
-    
                 
                 <br><b><p class='classQuesito'>Quesito nr. <?php echo ($numeroDellaDomanda+1) ?></b></p>
                 <p><i>Testo Domanda: </i><?php echo $descrizione ?></p>
