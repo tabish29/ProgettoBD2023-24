@@ -102,7 +102,7 @@ include '../../Condiviso/Quesito.php';
     <div class="container">
         <h2>Creazione Quesito</h2>
         <?php
-
+        $mongoDBManager = connessioneMongoDB();
         // Ottenere tutte le tabelle di esercizio
         $quesito = new Quesito();
 
@@ -126,6 +126,8 @@ include '../../Condiviso/Quesito.php';
             }
 
             if (isset($numeroProgressivoQuesito)) {
+                $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creato Quesito id: '.$numeroProgressivoQuesito.' del test:'.$titoloTest, 'Orario' => date('Y-m-d H:i:s')];
+                writeLog($mongoDBManager, $document); 
                 echo '<script>
                 window.alert("Quesito salvato con successo. Procedi ora a collegare le tabelle.");
                 window.location.href = "collegaTabelle.php?id=' . $titoloTest . ';' . $numeroProgressivoQuesito . ';' . $numeroRisposte . '";

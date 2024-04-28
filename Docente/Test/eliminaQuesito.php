@@ -37,6 +37,7 @@
     <div class="container">
         <ul>
         <?php
+          $mongoDBManager = connessioneMongoDB();
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 $campiSchermataPrecedente = explode(";",$_GET['idTest']);
                 $titoloTest = $campiSchermataPrecedente[0];
@@ -45,6 +46,8 @@
                 $risultato = $test->cancellaQuesito($titoloTest, $numeroProgressivo);
 
                 if ($risultato === TRUE) {
+                    $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminato Quesito id:: '.$numeroProgressivo.' del test:'.$titoloTest, 'Orario' => date('Y-m-d H:i:s')];
+                    writeLog($mongoDBManager, $document); 
                     echo '<script>
                                 window.alert("Quesito cancellato correttamente!");
                                 window.location.href = "modificaTest.php?id='.$titoloTest.'";
@@ -60,9 +63,6 @@
         
                         
             }
-
-         
-
             
         ?>
         </ul>

@@ -53,6 +53,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
     <div class="container">
 
         <?php
+         $mongoDBManager = connessioneMongoDB();
         $quesito = new Quesito();
         $titoloTest = "";
         $domanda = "";
@@ -110,6 +111,8 @@ if ($_SESSION['ruolo'] != 'Docente') {
             $sql_inserisciRispostaCorretta = $quesito->setOpzioneRispostaCorretta($titoloTest, $domanda, $rispostaSelezionata); 
             // se l'update avviene con successo questa variabile diventa = 1, quindi proseguo
             if ($sql_inserisciRispostaCorretta = 1) {
+                $document = ['Tipologia Evento' => 'Aggiornamento', 'Evento' => 'Selezionata Opzione risposta correta: '.$rispostaSelezionata.' ,per il quesito risposta chiusa con id: '.$domanda.' del test:'.$titoloTest, 'Orario' => date('Y-m-d H:i:s')];
+                writeLog($mongoDBManager, $document); 
                 echo "Risposta corretta inserita con successo.";
                 header("Location: modificaTest.php?id=$titoloTest");
                 exit;

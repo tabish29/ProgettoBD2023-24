@@ -123,6 +123,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
 
             <?php
+             $mongoDBManager = connessioneMongoDB();
             if (isset($_POST['delete']) && !empty($_POST['nomeTabella'])) {
                 $nomeTabella = $_POST['nomeTabella'];
 
@@ -134,12 +135,15 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     $stmt = $conn->prepare($sqlDeleteInfo);
                     $stmt->bind_param("s", $nomeTabella);
                     $stmt->execute();
+                    $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminata Tabella_Esercizio: '.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
+                    writeLog($mongoDBManager, $document); 
+
                     $stmt->close();
                     // Reset della selezione dopo l'eliminazione
                     $selectedTabella = "";
                     echo "<p>Tabella eliminata con successo";
                 } else {
-                    echo "<p>Errore nell'eliminazione della tabella: " . $conn->error . "</p>";
+                    echo "<p>Errore nell'eliminazione della tabella</p>";
                 }
             }
             ?>
