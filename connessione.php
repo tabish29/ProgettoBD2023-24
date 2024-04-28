@@ -31,7 +31,7 @@
     
     if (!function_exists('writeLog')) {
         function writeLog($manager, $document) {
-            $mongoDatabase = "ESQLDB";
+            $mongoDatabase = "ESQL";
             $mongoCollection = "logs";
     
             $bulkWrite = new MongoDB\Driver\BulkWrite;
