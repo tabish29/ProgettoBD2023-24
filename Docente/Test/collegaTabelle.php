@@ -161,7 +161,7 @@ include '../../Condiviso/Quesito.php';
         }
 
         ?>
-
+        
             <script>
                 // Funzione per controllare se è stato selezionato un elemento nella lista
                 function checkSelection() {
