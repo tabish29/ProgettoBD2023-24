@@ -87,6 +87,7 @@
         <h2>Modifica Test</h2>
         <ul>
             <?php
+            $mongoDBManager = connessioneMongoDB();
             
             function creaGraficaQuesiti($titoloTest)
             {
@@ -220,6 +221,8 @@
 
                 // Esegue la query di aggiornamento
                 if ($sql_Aggiornamento) {
+                    $document = ['Tipologia Evento' => 'Aggiornamento', 'Evento' => 'Aggiornato Test: '.$titolo.'', 'Orario' => date('Y-m-d H:i:s')];
+                    writeLog($mongoDBManager, $document); 
                     echo '<script>
                                 window.alert("Test aggiornato con successo.");
                                 window.location.href = "../navBar/testDocenti.php"; 

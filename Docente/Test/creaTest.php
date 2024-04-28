@@ -70,6 +70,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
 <body>
     <div class="container">
         <?php
+        $mongoDBManager = connessioneMongoDB();
         try {
             $email_login = $_SESSION['email'];
 
@@ -118,6 +119,8 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     $risultato = $test->creaTest($titolo, $foto);
 
                     if ($risultato === TRUE && mysqli_affected_rows($conn) > 0) {
+                        $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creato Test: '.$titolo.'', 'Orario' => date('Y-m-d H:i:s')];
+                        writeLog($mongoDBManager, $document); 
                         echo '<script>
                                 window.alert("Test creato correttamente!");
                                 window.location.href = "../navBar/testDocenti.php"; 

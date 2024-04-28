@@ -37,7 +37,7 @@
         <h2>Cancella Test</h2>
         <ul>
         <?php
-              
+            $mongoDBManager = connessioneMongoDB();
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 $titoloTest = $_GET['id'];
                 $test = new Test();
@@ -45,6 +45,9 @@
                 $risultato = $test->cancellaTest($titoloTest);
 
                 if ($risultato === TRUE) {
+                    $document = ['Tipologia Evento' => 'Cancellazione', 'Evento' => 'Cancellato Test: '.$titoloTest.'', 'Orario' => date('Y-m-d H:i:s')];
+                    writeLog($mongoDBManager, $document); 
+                    
                     echo '<script>
                                 window.alert("Test cancellato correttamente!");
                                 window.location.href = "../navBar/testDocenti.php"; 
