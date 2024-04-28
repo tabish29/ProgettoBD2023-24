@@ -24,6 +24,7 @@
             background-color: #f9acac;
             line-height: 1.4;
         }
+
         .container {
             text-align: center;
             width: 70%;
@@ -32,12 +33,14 @@
             background-color: #f9acac;
             border-radius: 5px;
         }
+
         .divQuesiti {
             background-color: #fcfcf0;
             margin: auto;
             width: 30%;
             height: 30%;
         }
+
         .salvaBtn {
             color: black;
             background-color: #ffcc00;
@@ -52,11 +55,13 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .areaInserimento {
             width: 40%;
             display: block;
             margin:auto;
         }
+
         .label {
             text-align: center;
             font-family: sans-serif;
@@ -65,6 +70,7 @@
             color: black;
             display: block;
         }
+
         .test-item {
             padding: 10px;
             margin-bottom: 5px;
@@ -72,22 +78,27 @@
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
+
         .form-group {
             margin-bottom: 10px;
         }
+
         .quesitoLabel {
             font-size: 16px;
             font-weight: bold;
             font-style: normal;
             color: #222222;
         }
+
         .listBox {
             width: auto;
         }
+
         .areaInserimento {
             width: 50%;
             height: 50px;
         }
+        
     </style>
 </head>
 <body>
