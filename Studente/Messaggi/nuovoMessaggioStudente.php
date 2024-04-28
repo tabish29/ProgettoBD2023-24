@@ -94,7 +94,7 @@
 <body>
     <div class="container">
         <?php
-            
+            $mongoDBManager = connessioneMongoDB();
             
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -112,6 +112,8 @@
                     $messaggio = new Messaggio();
                     $risultato = $messaggio->inserisciMessaggioStudente($email_login, $email_docente, $titoloTest, $oggetto, $testo);
                     if ($risultato == true) {
+                        $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creato nuovo messaggio da parte dello studente: '.$email_login.' con oggetto: '.$oggetto.' verso il docente'.$email_docente, 'Orario' => date('Y-m-d H:i:s')];
+                        writeLog($mongoDBManager, $document); 
                         echo '<script>window.alert("Messaggio inviato con successo!");</script>';
                     } else {
                         echo '<script>window.alert("Errore nell\'invio del messaggio.");</script>';
