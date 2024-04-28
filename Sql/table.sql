@@ -104,7 +104,7 @@ CREATE TABLE INVIODOCENTE (
 
 CREATE TABLE COMPLETAMENTO (
 	NumeroProgressivo INT auto_increment,
-	Stato ENUM("Aperto","InCompletamento","Concluso") NOT NULL,  -- non credo sia corretto mettere not null,non credo che sia necessario avere questo attributo come chiave primaria(dopo crea casino con le tabelle risposta)
+	Stato ENUM("Aperto","InCompletamento","Concluso") NOT NULL, 
 	TitoloTest VARCHAR(100)NOT NULL,
     EmailStudente VARCHAR(100)NOT NULL,
     DataPrimaRisposta DATETIME,
