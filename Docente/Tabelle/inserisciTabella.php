@@ -98,134 +98,130 @@ if ($_SESSION['ruolo'] != 'Docente') {
             $mongoDBManager = connessioneMongoDB();
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                try{
-                $codiceTabella = $_POST['codiceTabella']; // Questo è il codice SQL inserito dall'utente
+                try {
+                    $codiceTabella = $_POST['codiceTabella']; // codice SQL inserito dal docente
 
-                // Divide la stringa dopo "CREATE TABLE"
-                $parti = explode("CREATE TABLE", $codiceTabella);
+                    // Divide la stringa dopo "CREATE TABLE"
+                    $parti = explode("CREATE TABLE", $codiceTabella);
 
-                // Controlla se abbiamo ottenuto almeno due parti
-                if (count($parti) > 1) {
-                    // Divide la seconda parte (dopo "CREATE TABLE") basandosi sugli spazi
-                    $partiDopoCreateTable = explode(" ", trim($parti[1]));
+                    // Controlla se abbiamo ottenuto almeno due parti
+                    if (count($parti) > 1) {
+                        // Divide la seconda parte (dopo "CREATE TABLE") basandosi sugli spazi
+                        $partiDopoCreateTable = explode(" ", trim($parti[1]));
 
-                    $nomeTabella = $partiDopoCreateTable[0];
-                } else {
-                    echo "<br>Nome della tabella non trovato nel codice SQL fornito.\n";
-                }
-
-                // Logica per eseguire il codice SQL
-                if ($conn->multi_query($codiceTabella)) {
-                    $messaggio = "Query eseguita con successo.";
-                    echo "<br><label class = 'messaggioConferma'>Query eseguita con successo.</label>";
-
-                    do {
-                        if ($result = $conn->store_result()) {
-                            while ($row = $result->fetch_assoc()) {
-                                // Processa i tuoi risultati qui, se necessario
-                            }
-                            $result->free();
-                        }
-                    } while ($conn->next_result());
-
-                    // Esegui la query per inserire nella tabella TABELLADIESERCIZIO
-                    $email = $_SESSION['email'];
-                    $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, '$email')";
-                    $stmtInserimentoTabella = $conn->prepare($queryInserimentoTabella);
-
-                    // Esegui il binding dei parametri e esegui la query
-                    $stmtInserimentoTabella->bind_param("s", $nomeTabella);
-                    if ($stmtInserimentoTabella->execute()) {
-                        $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Tabella_Esercizio: '.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
-                        writeLog($mongoDBManager, $document); 
-                        echo "<br><label class='messaggioConferma'>Inserimento in TABELLADIESERCIZIO avvenuto con successo.</label>";
+                        $nomeTabella = $partiDopoCreateTable[0];
                     } else {
-                        echo "<br><label class='messaggioErrato'>Errore nell'inserimento in TABELLADIESERCIZIO</label>";
-                    }
-              
-                    $stmtInserimentoTabella->close();
-
-                    $query = "DESCRIBE " . $nomeTabella;
-                    $result = $conn->query($query);
-
-                    if ($result) {
-                        while ($row = $result->fetch_assoc()) {
-                            $nomeAttributo = $row['Field'];
-                            $tipo = $row['Type'];
-
-
-                            // Prepara la query per inserire nella tabella ATTRIBUTO
-                            $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
-                            $stmt = $conn->prepare($insertQuery);
-
-                            // Controlla se lo statement è stato preparato correttamente
-                            if ($stmt === false) {
-                                echo "Errore nella preparazione della query";
-                                continue; // Salta all'iterazione successiva del ciclo
-                            }
-
-                            // Esegui il binding dei parametri e la query
-                            $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
-                            if (!$stmt->execute()) {
-                                echo "<br>Errore nell'inserimento dell'attributo $nomeAttributo: " . $stmt->error . "<br>";
-                            }else{
-                                $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creati Attributi della tabella: '.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
-                                writeLog($mongoDBManager, $document); 
-                            }
-                          
-                            $stmt->close();
-                        }
-                    } else {
-                        echo "Errore nell'esecuzione della query DESCRIBE"  . $conn->error;
+                        echo "<br><label class='messaggioErrato'>Nome della tabella non trovato nel codice SQL fornito</label>";
                     }
 
-                     //controllo se la query contiene "FOREIGN KEY"
-                    if (strpos(strtoupper($codiceTabella), 'FOREIGN KEY') !== false) {
+                    if (strlen($nomeTabella) > 20) {
+                        echo "<br><label class='messaggioErrato'>Errore: il nome della tabella supera il numero massimo di caratteri consentito(20)</label>";
+                    } else {
+                        // Logica per eseguire il codice SQL
+                        if ($conn->multi_query($codiceTabella)) {
+                            $messaggio = "Query eseguita con successo.";
+                            echo "<br><label class = 'messaggioConferma'>Query eseguita con successo.</label>";
 
-                        // Query per trovare le foreign key della tabella appena creata
-                        $queryForeignKey = "SELECT TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
+                            do {
+                                if ($result = $conn->store_result()) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        // Processa i tuoi risultati qui, se necessario
+                                    }
+                                    $result->free();
+                                }
+                            } while ($conn->next_result());
+
+                            // Esegui la query per inserire nella tabella TABELLADIESERCIZIO
+                            $email = $_SESSION['email'];
+                            $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, '$email')";
+                            $stmtInserimentoTabella = $conn->prepare($queryInserimentoTabella);
+
+                            // Esegui il binding dei parametri e esegui la query
+                            $stmtInserimentoTabella->bind_param("s", $nomeTabella);
+                            if ($stmtInserimentoTabella->execute()) {
+                                $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Tabella_Esercizio: ' . $nomeTabella . '', 'Orario' => date('Y-m-d H:i:s')];
+                                writeLog($mongoDBManager, $document);
+                                echo "<br><label class='messaggioConferma'>Inserimento in TABELLADIESERCIZIO avvenuto con successo.</label>";
+                            } else {
+                                echo "<br><label class='messaggioErrato'>Errore nell'inserimento in TABELLADIESERCIZIO</label>";
+                            }
+
+                            $stmtInserimentoTabella->close();
+
+                            $query = "DESCRIBE " . $nomeTabella;
+                            $result = $conn->query($query);
+
+                            if ($result) {
+                                while ($row = $result->fetch_assoc()) {
+                                    $nomeAttributo = $row['Field'];
+                                    $tipo = $row['Type'];
+
+
+                                    // Prepara la query per inserire nella tabella ATTRIBUTO
+                                    $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
+                                    $stmt = $conn->prepare($insertQuery);
+
+                                    // Esegui il binding dei parametri e la query
+                                    $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
+                                    if (!$stmt->execute()) {
+                                        echo "<br><label class='messaggioErrato'>Errore nell'inserimento dell'attributo $nomeAttributo</label>";
+                                    } else {
+                                        $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creati Attributi della tabella: ' . $nomeTabella . '', 'Orario' => date('Y-m-d H:i:s')];
+                                        writeLog($mongoDBManager, $document);
+                                    }
+
+                                    $stmt->close();
+                                }
+                            } else {
+                                echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query DESCRIBE </label>";
+                            }
+
+                            //controllo se la query contiene "FOREIGN KEY"
+                            if (strpos(strtoupper($codiceTabella), 'FOREIGN KEY') !== false) {
+
+                                // Query per trovare le foreign key della tabella appena creata
+                                $queryForeignKey = "SELECT TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME 
                                             FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
                                             WHERE TABLE_SCHEMA = 'ESQL' AND TABLE_NAME = ? AND REFERENCED_TABLE_NAME IS NOT NULL";
 
-                        $stmtFk = $conn->prepare($queryForeignKey);
-                        $stmtFk->bind_param("s", $nomeTabella);
-                        $stmtFk->execute();
-                        $resultFk = $stmtFk->get_result();
+                                $stmtFk = $conn->prepare($queryForeignKey);
+                                $stmtFk->bind_param("s", $nomeTabella);
+                                $stmtFk->execute();
+                                $resultFk = $stmtFk->get_result();
 
 
-                        if ($resultFk->num_rows > 0) {
-                            while ($rowFk = $resultFk->fetch_assoc()) {
-                                // dettagli della foreign key in Vincolo di integrità
-                                $queryInserimentoVincolo = "INSERT INTO VINCOLODIINTEGRITA (NomeTabellaUno, NomeAttributoUno, NomeTabellaDue, NomeAttributoDue) VALUES (?, ?, ?, ?)";
-                                $stmtVincolo = $conn->prepare($queryInserimentoVincolo);
-                                $stmtVincolo->bind_param("ssss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $rowFk['REFERENCED_TABLE_NAME'], $rowFk['REFERENCED_COLUMN_NAME']);
+                                if ($resultFk->num_rows > 0) {
+                                    while ($rowFk = $resultFk->fetch_assoc()) {
+                                        // dettagli della foreign key in Vincolo di integrità
+                                        $queryInserimentoVincolo = "INSERT INTO VINCOLODIINTEGRITA (NomeTabellaUno, NomeAttributoUno, NomeTabellaDue, NomeAttributoDue) VALUES (?, ?, ?, ?)";
+                                        $stmtVincolo = $conn->prepare($queryInserimentoVincolo);
+                                        $stmtVincolo->bind_param("ssss", $rowFk['TABLE_NAME'], $rowFk['COLUMN_NAME'], $rowFk['REFERENCED_TABLE_NAME'], $rowFk['REFERENCED_COLUMN_NAME']);
 
-                                if (!$stmtVincolo->execute()) {
-                                    echo "Errore nell'inserimento in VINCOLODIINTEGRITA: " . $stmtVincolo->error;
-                                } else{
-                                    $document = [
-                                        'Tipologia Evento' => 'Creazione',
-                                        'Evento' => 'Creato vincolo di integrità tra la tabella referenziante: ' . $rowFk['TABLE_NAME'] . ' e la tabella referenziata: ' . $rowFk['REFERENCED_TABLE_NAME'],
-                                        'Orario' => date('Y-m-d H:i:s')
-                                    ];
-                                    writeLog($mongoDBManager, $document);
+                                        if (!$stmtVincolo->execute()) {
+                                            echo "<br><label class='messaggioErrato'>Errore nell'inserimento in VINCOLODIINTEGRITA: " . $stmtVincolo->error."</label>";
+                                        } else {
+                                            $document = [
+                                                'Tipologia Evento' => 'Creazione',
+                                                'Evento' => 'Creato vincolo di integrità tra la tabella referenziante: ' . $rowFk['TABLE_NAME'] . ' e la tabella referenziata: ' . $rowFk['REFERENCED_TABLE_NAME'],
+                                                'Orario' => date('Y-m-d H:i:s')
+                                            ];
+                                            writeLog($mongoDBManager, $document);
+                                        }
+
+                                        $stmtVincolo->close();
+                                    }
+                                } else {
+                                    echo "Nessuna foreign key trovata per la tabella $nomeTabella.";
                                 }
 
-                                $stmtVincolo->close();
+                                $stmtFk->close();
                             }
                         } else {
-                            echo "Nessuna foreign key trovata per la tabella $nomeTabella.";
+                            echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query </label>";
                         }
-
-                        $stmtFk->close();
-                    } else {
-                        // La query non contiene "FOREIGN KEY"
                     }
-                } else {
-                    echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query </label>";
-                }
                 } catch (Exception $e) {
-                echo "<br><label>Errore nell'esecuzione della query " . $e->getMessage() . "</label>";
+                    echo "<br><label class='messaggioErrato'>Errore nell'esecuzione della query </label>";
                 }
             }
             ?>
