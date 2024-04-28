@@ -113,7 +113,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
                         $stmt = $conn->prepare($deleteFromRiga);
                         $stmt->bind_param("ss", $tableName, $testoRiga);
                         if ($stmt->execute()) {
-                            echo "<p class='messaggioConferma'>Eliminazione avvenuta con successo.</p>";
                             $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminata una riga dalla tabella:'.$tableName.'', 'Orario' => date('Y-m-d H:i:s')];
                             writeLog($mongoDBManager, $document); 
                         } else {
@@ -124,7 +123,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                     
                     // Esegui la query inserita dal docente
                     if ($conn->query($codiceRiga)) {
-                        echo "<p class='messaggioConferma'>eliminazione avvenuta con successo</p>";
+                        echo "<p class='messaggioConferma'>Eliminazione avvenuta con successo</p>";
                     } else {
                         echo "<p class='messaggioErrato'>errore nell'esecuzione della query di eliminazione </p>";
                     }
