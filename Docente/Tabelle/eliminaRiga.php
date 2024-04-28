@@ -113,7 +113,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                         $stmt = $conn->prepare($deleteFromRiga);
                         $stmt->bind_param("ss", $tableName, $testoRiga);
                         if ($stmt->execute()) {
-                            $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminata una riga dalla tabella:'.$tableName.'', 'Orario' => date('Y-m-d H:i:s')];
+                            $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminata riga dalla tabella:'.$tableName.'', 'Orario' => date('Y-m-d H:i:s')];
                             writeLog($mongoDBManager, $document); 
                         } else {
                             echo "<p class='messaggioErrato'>Errore nell'eliminare la riga dalla tabella Riga: " . $stmt->error . "</p>";
