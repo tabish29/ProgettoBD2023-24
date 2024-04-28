@@ -89,6 +89,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
         </form>
         <button id="modificaTest" class="inseriscibtn" onclick="window.location.href='../navBar/gestioneTabelle.php'">Back</button>
         <?php
+            $mongoDBManager = connessioneMongoDB();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $codiceRiga = $_POST['codiceRiga'];
 
@@ -112,7 +113,8 @@ if ($_SESSION['ruolo'] != 'Docente') {
                         $stmt = $conn->prepare($deleteFromRiga);
                         $stmt->bind_param("ss", $tableName, $testoRiga);
                         if ($stmt->execute()) {
-                            $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminata una riga dalla tabella:'.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
+                            echo "<p class='messaggioConferma'>Eliminazione avvenuta con successo.</p>";
+                            $document = ['Tipologia Evento' => 'Eliminazione', 'Evento' => 'Eliminata una riga dalla tabella:'.$tableName.'', 'Orario' => date('Y-m-d H:i:s')];
                             writeLog($mongoDBManager, $document); 
                         } else {
                             echo "<p class='messaggioErrato'>Errore nell'eliminare la riga dalla tabella Riga: " . $stmt->error . "</p>";

@@ -89,6 +89,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
         </form>
         <button id="modificaTest" class="inseriscibtn" onclick="window.location.href='../navBar/gestioneTabelle.php'">Back</button>
         <?php
+            $mongoDBManager = connessioneMongoDB();
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $codiceRiga = $_POST['codiceRiga'];
           
@@ -105,9 +106,9 @@ if ($_SESSION['ruolo'] != 'Docente') {
                         $stmt = $conn->prepare($insertQuery);
                         $stmt->bind_param("ss", $testoRiga, $tableName);
                         if ($stmt->execute()) {
-                            $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata riga nella tabella: '.$nomeTabella.'', 'Orario' => date('Y-m-d H:i:s')];
-                            writeLog($mongoDBManager, $document); 
                             echo "<p class='messaggioConferma'>Dati riga salvati con successo.</p>";
+                            $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata riga nella tabella: '.$tableName.'', 'Orario' => date('Y-m-d H:i:s')];
+                            writeLog($mongoDBManager, $document); 
                         } else {
                             echo "<p class='messaggioErrato'>Errore nel salvataggio dati riga.</p>";
                         }
