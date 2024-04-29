@@ -1,0 +1,5 @@
+Per avviare il progetto:
+1. Avviare, con XAMP o Mamp, Apache e MySQL
+2. Fare il run del codice nella cartella SQL nel seguente ordine: table, procedure, trigger, view
+3. Scaricare e installare mongodb e creare una connessione
+4. Inserire i dati per la connessione nel file "connessione.php"
