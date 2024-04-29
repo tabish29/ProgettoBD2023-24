@@ -240,7 +240,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $risultatoStudente = $utente->registrazioneStudente($email, $password, $nome, $cognome, $recapito_telefonico, $anno_immatricolazione, $codice_alfanumerico);
 
             if ($risultatoStudente) {
-                $document = ['Tipologia Evento' => 'Registrazione', 'Evento' => 'Registrato Utente: '.$email.'', 'Orario' => date('Y-m-d H:i:s')];
+                $document = ['Tipologia Evento' => 'Registrazione', 'Evento' => 'Registrato Studente: '.$email.'', 'Orario' => date('Y-m-d H:i:s')];
                 writeLog($mongoDBManager, $document); 
 
                 echo '<script>window.alert("Registrazione avvenuta con successo!");
@@ -258,7 +258,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $risultatoDocente = $utente->registrazioneDocente($email, $password, $nome, $cognome, $recapito_telefonico, $nome_dipartimento, $nome_corso);
             if ($risultatoDocente) {
-                $document = ['Tipologia Evento' => 'Registrazione', 'Evento' => 'Registrato Utente: '.$email.'', 'Orario' => date('Y-m-d H:i:s')];
+                $document = ['Tipologia Evento' => 'Registrazione', 'Evento' => 'Registrato Docente: '.$email.'', 'Orario' => date('Y-m-d H:i:s')];
                     writeLog($mongoDBManager, $document); 
 
                 echo '<script>window.alert("Registrazione avvenuta con successo!");
