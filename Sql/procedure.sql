@@ -632,7 +632,18 @@ CREATE PROCEDURE ricezioneMessaggiStudente(
 )
 BEGIN
     SELECT * 
-    FROM messaggio as M, ricezionestudente as S
-    WHERE (M.Id = S.Id) AND (emailStudenteTemp = S.EmailStudenteDestinatario) AND (M.TitoloTest=S.TitoloTest);
+    FROM messaggio as M, ricezionestudente as S, invioDocente AS id
+    WHERE (M.Id = S.Id) AND (emailStudenteTemp = S.EmailStudenteDestinatario) AND (M.TitoloTest=S.TitoloTest) AND (id.Id = M.Id);
+END
+// DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE messaggiInviatiDaStudente(
+    IN emailStudenteTemp VARCHAR(100)
+)
+BEGIN
+    SELECT * 
+    FROM messaggio as M, inviostudente as D, ricezioneDocente as RD
+    WHERE (M.Id = D.Id) AND (D.EmailStudenteMittente = emailStudenteTemp) AND (RD.Id = M.Id);
 END
 // DELIMITER ;

@@ -63,7 +63,7 @@ class Messaggio {
 
     function getMessaggiInviatiStudente($email) {
         try {
-            $sql_all_messagesInviati = "SELECT * FROM messaggio as M, inviostudente as D WHERE (M.Id = D.Id) AND (D.EmailStudenteMittente = ?)";
+            $sql_all_messagesInviati = "CALL messaggiInviatiDaStudente(?)";
             $stmt = $_SESSION['conn']->prepare($sql_all_messagesInviati);
             $stmt->bind_param("s", $email);
             $stmt->execute();
