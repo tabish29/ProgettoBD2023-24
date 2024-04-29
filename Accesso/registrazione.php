@@ -22,7 +22,7 @@ if (!isset($_SESSION)) {
 
         input[type="submit"] {
             background-color: #4CAF50;
-            color: rgb(0, 0, 0);
+            color: white;
             font-size: medium;
             padding: 10px 20px;
             border: rgb(0, 0, 0);
