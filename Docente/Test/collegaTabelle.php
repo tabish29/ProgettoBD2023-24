@@ -209,6 +209,10 @@ include '../../Condiviso/Quesito.php';
             </div>
 
             </VerticalPanel>
+            <div>
+                <br>
+                <a href='../navBar/testDocenti.php' class="button">Torna alla HomePage</a>
+            </div>
         </form>
     </div>
 </body>
