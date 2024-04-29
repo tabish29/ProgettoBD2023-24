@@ -165,19 +165,23 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
                     echo "<form id='testForm'>";
                     while ($row = $result_all_tests->fetch_assoc()) {
+                        if ($row['EmailDocente'] == $_SESSION['email']){
                         echo "<li class='test-item'>";
                         echo "<input type='radio' name='test' value='" . $row['Titolo'] . "'>";
-
-                        foreach ($row as $key => $value) {
-
-                            if ($key === 'Foto') {
-                                echo "<Label class='labelBold'>Foto:</label><br>";
-                                echo "<img src='" . $value . "'  width=200px height=200px />";
-                                //TODO: foto sono caricate in locale, andrebbero messe su db
-                            } else {
-                                echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";
-                            }
                         }
+                        foreach ($row as $key => $value) {
+                            if ($row['EmailDocente'] == $_SESSION['email']){
+                                if ($key === 'Foto') {
+                                    echo "<Label class='labelBold'>Foto:</label><br>";
+                                    echo "<img src='" . $value . "'  width=200px height=200px />";
+                                    //TODO: foto sono caricate in locale, andrebbero messe su db
+                                }  else {
+                                    echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";
+                                }
+                            }
+                            
+                        }
+                            
                         echo "</li>";
                     }
                     echo "<input type='hidden' name='action' id='actionField'>";

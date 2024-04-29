@@ -209,6 +209,9 @@ if (!isset($_SESSION)) {
 
 <?php
 // Verifica se è stata inviata una richiesta POST
+$mongoDBManager = connessioneMongoDB();
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $utente = new Utente();
     // Recupero i dati inseriti nel form di registrazione
@@ -237,7 +240,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $risultatoStudente = $utente->registrazioneStudente($email, $password, $nome, $cognome, $recapito_telefonico, $anno_immatricolazione, $codice_alfanumerico);
 
             if ($risultatoStudente) {
-                echo '<script>window.alert("Registrazione avvenuta con successo!");</script>';
+                $document = ['Tipologia Evento' => 'Registrazione', 'Evento' => 'Registrato Utente: '.$email.'', 'Orario' => date('Y-m-d H:i:s')];
+                writeLog($mongoDBManager, $document); 
+
+                echo '<script>window.alert("Registrazione avvenuta con successo!");
+                    window.location.href = "login.php";
+                    </script>';
             } else {
                 echo '<script>window.alert("Errore, riprova!");</script>';
             }
@@ -250,6 +258,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $risultatoDocente = $utente->registrazioneDocente($email, $password, $nome, $cognome, $recapito_telefonico, $nome_dipartimento, $nome_corso);
             if ($risultatoDocente) {
+                $document = ['Tipologia Evento' => 'Registrazione', 'Evento' => 'Registrato Utente: '.$email.'', 'Orario' => date('Y-m-d H:i:s')];
+                    writeLog($mongoDBManager, $document); 
+
                 echo '<script>window.alert("Registrazione avvenuta con successo!");
                             window.location.href = "login.php";
                         </script>';
