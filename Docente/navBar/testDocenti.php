@@ -174,7 +174,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
                                 if ($key === 'Foto') {
                                     echo "<Label class='labelBold'>Foto:</label><br>";
                                     echo "<img src='" . $value . "'  width=200px height=200px />";
-                                    //TODO: foto sono caricate in locale, andrebbero messe su db
                                 }  else {
                                     echo "<p><Label class='labelBold'>" . ucfirst($key) . ":</label> " . $value . "</p>";
                                 }

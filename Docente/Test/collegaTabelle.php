@@ -99,7 +99,7 @@ include '../../Condiviso/Quesito.php';
         <h2>Creazione Quesito</h2>
         <?php
         $mongoDBManager = connessioneMongoDB();
-        // Ottenere tutte le tabelle di esercizio
+
         $tabella = new Tabella();
         $quesito = new Quesito();
         $numeroProgressivoQuesito;

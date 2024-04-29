@@ -85,7 +85,6 @@ if (!isset($_SESSION)) {
 <html>
 
 <?php
-    // Inserire nome View e scommentare
 
     $ottieniViewQuery = "SELECT * FROM classifica_risposte_corrette";
     

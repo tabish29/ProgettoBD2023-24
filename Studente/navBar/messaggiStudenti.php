@@ -129,11 +129,9 @@ if ($_SESSION['ruolo'] != 'Studente') {
         $email_login = $_SESSION['email'];
         echo "<h2 class='messH2'>Messaggi ricevuti: </h2>";
 
-        // modificato ----> DA CONTROLLARE !
         $sql_messaggiRicevuti = $messaggio->getMessaggiRicevutiStudente($email_login);
 
         if ($sql_messaggiRicevuti!=false) {
-            // Stampa i valori di tutti i messaggi
             echo "<ul class='mess-list'>";
             while ($mess = $sql_messaggiRicevuti->fetch_assoc()) {
                 echo "<li class='mess-item'>";
@@ -154,7 +152,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
 
         if ($messaggiInviati!=false) {
-            // Stampa i valori di tutti i messaggi
             echo "<ul class='mess-list'>";
             while ($mess = $messaggiInviati->fetch_assoc()) {
                 echo "<li class='mess-item'>";

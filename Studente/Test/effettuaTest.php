@@ -254,7 +254,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                             $_SESSION['titoloTest'] = $testId;
                             $_SESSION['domandaAttuale'] = 0; 
                             $_SESSION['RispostaData'] = "";
-                            // Verifica se il completamento esiste e aprilo se necessario
                             $test->creaOApriCompletamento($testId, $_SESSION['email']);
                             mostraDatiTest($_SESSION['titoloTest'], '', -1);
                             creaGrafica($_SESSION['titoloTest']);
@@ -283,7 +282,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
                         } else if ($tipologiaQuesito == "Codice") {
                             $rispostaData = $_POST['codice'];
-                            //Chiamare metodo da test che prende in input $rispostaData e restituisce $risultatoVerifica (boolean)
                             try{
                                 $risultatoVerifica = $quesitoOgg->verificaRispostaCodice($_SESSION['titoloTest'], $numeroProgressivo, $rispostaData);
                             } catch (Exception $e) {
@@ -310,7 +308,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                             exit();
                         }
                     } else if (isset($_POST['verificaRisposta'])) {
-                        // Ottengo i dati
                         $numQuesito = $_POST['numeroQuesito'];
                         $tipologiaQuesito = $_POST['tipologiaQuesito'];
                         $rispostaData = $_POST['codice'];
@@ -377,7 +374,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                 $titoloTest = $testDetails['Titolo'];
                 $_SESSION['arrayQuesiti'] = $test->ottieniQuesitiPerTest($titoloTest);
                 
-                // Verifica se ci sono quesiti
                 if (empty($_SESSION['arrayQuesiti'])) {
                     echo "<br><p class='classQuesito'>Nessun quesito presente</p>";
                 } else {

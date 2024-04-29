@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   }
 } 
 
-session_unset(); // Unset all session variables
+session_unset(); 
 $conn->close();
 session_destroy(); 
 ?>        <script>

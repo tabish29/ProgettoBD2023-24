@@ -99,9 +99,7 @@
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                // Verifica se sono stati inviati i dati del form
                 if (isset($_POST['selectDocente']) && isset($_POST['selectTest']) && isset($_POST['oggetto']) && isset($_POST['testo'])) {
-                    // Recupera i dati dal form
                     $email_docente = $_POST['selectDocente'];
                     $titoloTest = $_POST['selectTest'];
                     $oggetto = $_POST['oggetto'];
@@ -119,8 +117,6 @@
                         echo '<script>window.alert("Errore nell\'invio del messaggio.");</script>';
                     }
 
-                    // Chiudi la connessione al database
-                    // $conn->close();
                 } else {
                     echo "Campi del modulo non validi.";
                 }
@@ -133,11 +129,9 @@
                 <label class="labelMess" for="selectTest">Seleziona un test:</label><br>
                 <select class="listBox" id="selectTest" name="selectTest"><br>
                     <?php
-                        // Recupera i nomi dei test dal database
                         $query_test2 = "CALL visualizzaTestDisponibili()";
                         $result_test2 = $conn->query($query_test2);
 
-                        // Aggiungi opzioni alla ListBox
                         while ($row_test = $result_test2->fetch_assoc()) {
                             echo "<option value='" . $row_test['Titolo'] . "'>" . $row_test['Titolo'] . "</option>";
                         }
@@ -151,11 +145,9 @@
                 <label for="selectDocente" class="labelMess">Seleziona un docente:</label><br>
                 <select class='listBox' id="selectDocente" name="selectDocente"><br>
                     <?php
-                        // Recupera i nomi dei docenti dal database
                         $query_doc = "CALL VisualizzaDocenti()";
                         $result_doc = $conn->query($query_doc);
 
-                        // Aggiungi opzioni alla ListBox
                         while ($row_test = $result_doc->fetch_assoc()) {
                             echo "<option value='" . $row_test['Email'] . "'>" . $row_test['Email'] . "</option>";
                         }

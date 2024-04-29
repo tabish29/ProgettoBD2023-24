@@ -112,7 +112,7 @@ include '../Condiviso/Utente.php';
     </div>
     <div class='parteInferiore'>
         <div class="login-form">
-            <!-- Form per il login -->
+            
             <form action="login.php" method="POST">
                 <h2>Login Utente</h2>
                 <label class='labelReg' for="ruolo_login">Ruolo:</label>
@@ -164,8 +164,8 @@ include '../Condiviso/Utente.php';
                   
             } else {
                 //Imposta le variabili di sessione
-                $_SESSION['email'] = $email_login; //NON SPOSTARE DA QUI
-                $_SESSION['ruolo'] = $ruolo_login; //NON SPOSTARE DA QUI
+                $_SESSION['email'] = $email_login; 
+                $_SESSION['ruolo'] = $ruolo_login; 
                
                 if ($ruolo_login === "Docente") {
                     echo '<script>window.alert("Accesso effettuato!");

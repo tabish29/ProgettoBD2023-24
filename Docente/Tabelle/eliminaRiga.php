@@ -99,7 +99,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                 $tableName = $matches[1];
                 $whereCondition = $matches[2];
 
-                // Esegui la query di selezione basata sulla condizione specificata nella DELETE
+                // Esecuzione della query di selezione basata sulla condizione specificata nella DELETE
                 $selectQuery = "SELECT * FROM $tableName WHERE $whereCondition";
                 $result = $conn->query($selectQuery);
 
@@ -121,7 +121,7 @@ if ($_SESSION['ruolo'] != 'Docente') {
                         $stmt->close();
                     }
                     
-                    // Esegui la query inserita dal docente
+                    // Esecuzione della query inserita dal docente
                     if ($conn->query($codiceRiga)) {
                         echo "<p class='messaggioConferma'>Eliminazione avvenuta con successo</p>";
                     } else {

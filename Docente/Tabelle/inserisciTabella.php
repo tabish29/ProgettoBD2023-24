@@ -122,21 +122,14 @@ if ($_SESSION['ruolo'] != 'Docente') {
                             $messaggio = "Query eseguita con successo.";
                             echo "<br><label class = 'messaggioConferma'>Query eseguita con successo.</label>";
 
-                            do {
-                                if ($result = $conn->store_result()) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        // Processa i tuoi risultati qui, se necessario
-                                    }
-                                    $result->free();
-                                }
-                            } while ($conn->next_result());
+                            
 
-                            // Esegui la query per inserire nella tabella TABELLADIESERCIZIO
+                            // Esecuzione della query per inserire nella tabella TABELLADIESERCIZIO
                             $email = $_SESSION['email'];
                             $queryInserimentoTabella = "INSERT INTO TABELLADIESERCIZIO (Nome, DataCreazione, num_righe, EmailDocente) VALUES (?, NOW(), 0, '$email')";
                             $stmtInserimentoTabella = $conn->prepare($queryInserimentoTabella);
 
-                            // Esegui il binding dei parametri e esegui la query
+                            // Esecuzione del binding dei parametri e esegui la query
                             $stmtInserimentoTabella->bind_param("s", $nomeTabella);
                             if ($stmtInserimentoTabella->execute()) {
                                 $document = ['Tipologia Evento' => 'Creazione', 'Evento' => 'Creata Tabella_Esercizio: ' . $nomeTabella . '', 'Orario' => date('Y-m-d H:i:s')];
@@ -156,11 +149,11 @@ if ($_SESSION['ruolo'] != 'Docente') {
                                     $tipo = $row['Type'];
 
 
-                                    // Prepara la query per inserire nella tabella ATTRIBUTO
+                                    // Preparazione della query per inserire nella tabella ATTRIBUTO
                                     $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
                                     $stmt = $conn->prepare($insertQuery);
 
-                                    // Esegui il binding dei parametri e la query
+                                    // Esecuzione del binding dei parametri e la query
                                     $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
                                     if (!$stmt->execute()) {
                                         echo "<br><label class='messaggioErrato'>Errore nell'inserimento dell'attributo $nomeAttributo</label>";

@@ -82,7 +82,6 @@ include '../../connessione.php';
             }
         }
 
-        //TO DO: si potrebbe mettere in GestioneTabelle.php
         function ottieniContenutoTabella($nomeTabella){
             try{
                 $query = "SELECT * FROM " . $nomeTabella;

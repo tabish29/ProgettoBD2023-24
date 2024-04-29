@@ -71,10 +71,8 @@ if ($_SESSION['ruolo'] != 'Docente') {
 </head>
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ottenere il valore selezionato dal menu a tendina
     $scelta = $_POST['scelta'];
     
-    // Effettuare il reindirizzamento in base all'opzione selezionata
     switch ($scelta) {
         case 'studenti_completati':
             header('Location: ../../Condiviso/Statistiche/studentiCompletati.php');

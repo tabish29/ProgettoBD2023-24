@@ -1,9 +1,7 @@
--- elimino se esiste, poi ricreo il database 
 DROP DATABASE IF EXISTS ESQL;
 CREATE DATABASE IF NOT EXISTS ESQL;
 USE ESQL;
 
--- Creo le tabelle
 CREATE TABLE DOCENTE (
 	Email VARCHAR(100) PRIMARY KEY,
     PasswordDocente VARCHAR(20) NOT NULL,
@@ -140,7 +138,7 @@ CREATE TABLE ATTRIBUTO (
     Tipo VARCHAR(30) NOT NULL,
     chiavePrimaria BOOLEAN,
     
-    PRIMARY KEY(NomeAttributo, NomeTabella), -- Nome attributo va messo nella prima posizione se no dà problema di indicizzazione
+    PRIMARY KEY(NomeAttributo, NomeTabella),
     
     FOREIGN KEY(NomeTabella) REFERENCES TABELLADIESERCIZIO(Nome) ON DELETE CASCADE
 

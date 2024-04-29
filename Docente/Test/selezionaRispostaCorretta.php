@@ -107,7 +107,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
             $rispostaSelezionata = $_POST['rispostaSelezionata'];
             $titoloTest = $_POST['titoloTest'];
             $quesito = new Quesito();
-            //$inserisciRispostaCorretta = "UPDATE opzionerisposta SET RispostaCorretta = 1 WHERE CampoTesto = '$rispostaSelezionata' AND TitoloTest = '$titoloTest' AND NumeroProgressivoQuesito = '$domanda'";
             $sql_inserisciRispostaCorretta = $quesito->setOpzioneRispostaCorretta($titoloTest, $domanda, $rispostaSelezionata); 
             // se l'update avviene con successo questa variabile diventa = 1, quindi proseguo
             if ($sql_inserisciRispostaCorretta = 1) {

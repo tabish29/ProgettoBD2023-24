@@ -207,7 +207,6 @@
                 $stmt->execute();
                 $stmt->close();
         
-                // Ora esegui una query separata per recuperare il valore del parametro di output
                 $sql_output = "SELECT @esito AS esito";
                 $result = $_SESSION['conn']->query($sql_output);
                 if ($result->num_rows > 0) {
@@ -367,7 +366,6 @@
         }
 
         function inserisciRispostaQuesitoCodice($idCompletamento, $titoloTest, $rispostaData, $numQuesito, $esito){
-            //Try/Catch in effettuaTest
             try{
                 $mongoDBManager = connessioneMongoDB();
                 $sql = "CALL inserisciRispostaQuesitoCodice('$idCompletamento', '$titoloTest', '$rispostaData', '$numQuesito', '$esito')";

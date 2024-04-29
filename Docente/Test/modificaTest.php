@@ -104,7 +104,7 @@
                         $tipologia = $QuesitoOggetto->ottieniTipologiaQuesito($titoloTest, $quesito['NumeroProgressivo']);
                         echo "<div class='divQuesiti'>";
                         echo "<span style=\"display: inline;\">";
-                        // Aggiungi un campo di input di tipo checkbox con il nome del quesito come valore
+                        // Aggiungo un campo di input di tipo checkbox con il nome del quesito come valore
                         echo "<input type='radio' name='quesito_selezionato' value='" . $quesito['NumeroProgressivo'] . "'>";
                         // Accesso ai dati del quesito
                         foreach ($quesito as $chiave => $valore) {
@@ -116,7 +116,7 @@
                         echo "<label class='label'>Tipologia: </label> " . $tipologia . "<br>";
                         // Verifica della tipologia del quesito
                         if ($tipologia == "Risposta Chiusa") {
-                            // Se è una risposta chiusa, ottieni e visualizza le soluzioni
+                            // Se è una risposta chiusa, si ottengono e si visualizzano le soluzioni
                             $soluzioni = $test->ottieniRisposte($quesito['NumeroProgressivo'], $titoloTest);
                             echo "<label class='label'>Soluzioni:</label>";
                             if (empty($soluzioni)) {
@@ -131,7 +131,7 @@
                                 }
                             }
                         } else if ($tipologia == "Codice") {
-                            // Se è un quesito di tipo Codice, ottieni e visualizza le soluzioni
+                            // Se è un quesito di tipo Codice, si ottengono e si visualizzano le soluzioni
                             $soluzioni = $test->ottieniSoluzioni($quesito['NumeroProgressivo'], $titoloTest);
                             echo "<label class='label'>Soluzioni:</label><br>";
                             if (empty($soluzioni)) {
@@ -152,7 +152,6 @@
 
             function mostraDatiTest()
                 {
-                    //include '../connessione.php';
                     // Preleva il Titolo del test dalla query string
                     $testId = $_GET['id'];
                     $test = new Test();
@@ -181,10 +180,6 @@
                     }
             }
 
-            /*
-            * ATTENZIONE: Se il Titolo ha uno spazio nel nome, la richiesta nel post non viene inviata correttamente
-            * e il test non viene aggiornato.
-            */
             function creaGraficaValoriComuni()
                 {
                     $testId = $_GET['id'];
@@ -216,10 +211,11 @@
                 $visualizza_risposte = isset($_POST['visualizzaRisposte']) ? '1' : '0';
 
                 $test = new Test();
+
                 // Query SQL per aggiornare il test nel database
                 $sql_Aggiornamento = $test->aggiornaTest($titolo, $visualizza_risposte);
 
-                // Esegue la query di aggiornamento
+                // Esecuzione della query di aggiornamento
                 if ($sql_Aggiornamento) {
                     $document = ['Tipologia Evento' => 'Aggiornamento', 'Evento' => 'Aggiornato Test: '.$titolo.'', 'Orario' => date('Y-m-d H:i:s')];
                     writeLog($mongoDBManager, $document); 

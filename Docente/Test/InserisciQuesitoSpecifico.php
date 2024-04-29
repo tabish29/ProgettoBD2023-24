@@ -117,7 +117,6 @@
                 array_push($datiTest, 0);
                 
                 $_SESSION['datiTestAttuale'] = $datiTest;
-                //$conn->next_result();
             }
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['datiTestAttuale']) && !empty($_SESSION['datiTestAttuale'])) {

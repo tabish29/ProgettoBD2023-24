@@ -123,7 +123,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
         $messaggiRicevuti = $messaggio->getMessaggiRicevutiDocente($email_login);
 
         if ($messaggiRicevuti->num_rows > 0) {
-            // Stampa i valori di tutti i messaggi
             echo "<ul class='mess-list'>";
             while ($mess = $messaggiRicevuti->fetch_assoc()) {
                 echo "<li class='mess-item'>";
@@ -143,7 +142,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
         $messaggiInviati = $messaggio->getMessaggiInviatiDocente($email_login);
 
         if ($messaggiInviati->num_rows > 0) {
-            // Stampa i valori di tutti i messaggi
             echo "<ul class='mess-list'>";
             while ($mess = $messaggiInviati->fetch_assoc()) {
                 echo "<li class='mess-item'>";

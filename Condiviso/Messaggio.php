@@ -3,7 +3,8 @@ include '../../connessione.php';
 
 class Messaggio {
     function __construct() {
-        // Assicurati che gli errori SQL lancino eccezioni
+        
+        // Assicura che gli errori SQL lancino eccezioni
         $_SESSION['conn']->report_mode = MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT;
     }
 

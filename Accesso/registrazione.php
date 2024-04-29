@@ -120,7 +120,7 @@ if (!isset($_SESSION)) {
     </div>
     <div class="parteInferiore">
         <div class="registration-form">
-            <!-- Form per la registrazione -->
+            
             <form action="registrazione.php" method="POST">
                 <h2>Registrazione Utente</h2>
 

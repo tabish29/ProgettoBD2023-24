@@ -103,15 +103,12 @@
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                // Verifica se sono stati inviati i dati del form
                 if (isset($_POST['selectTest']) && isset($_POST['oggetto']) && isset($_POST['testo'])) {
-                    // Recupera i dati dal form
                     $titoloTest = $_POST['selectTest'];
                     $oggetto = $_POST['oggetto'];
                     $testo = $_POST['testo'];
 
                     $email_login = $_SESSION['email'];
-                    // Esempio: Salva nel database
                     $messaggio = new Messaggio();
                     $risultato = $messaggio->inserisciMessaggioDocente($titoloTest, $oggetto, $testo, $email_login);
                     if ($risultato) {
@@ -138,9 +135,7 @@
                 <select class='listBox'id="selectTest" name="selectTest">
                     <?php
                         $test = new Test();
-                        // Recupera i nomi dei test dal database
                         $testOttenuti = $test->ottieniTuttiITest();
-                        // Aggiungi opzioni alla ListBox
                         while ($datiTest = $testOttenuti->fetch_assoc()) {
                             echo "<option value='" . $datiTest['Titolo'] . "'>" . $datiTest['Titolo'] . "</option>";
                         }

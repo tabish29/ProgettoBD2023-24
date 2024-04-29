@@ -147,10 +147,8 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
             echo "<h2 class = 'testListH2'>Lista Test: </h2>";
 
-            // Query per selezionare tutti i test
             $sql_test = $test->ottieniTuttiITest();
             
-            // Verifica se ci sono test 
             if ($sql_test->num_rows > 0) {
                 echo "<form id='testForm'>";
                 while ($datiTest = $sql_test->fetch_assoc()) {
@@ -174,7 +172,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
                     echo "<p> Stato completamento: " . $statoCompletamento . "</p><br>";
 
                     if ($visualizzaRisposte == 1) {
-                        //TODO: uniformare la sintassi di queste due righe di codice 
                         $urlVisualizza = "../Test/visualizzaRisposta.php?idTest=" . urlencode($titoloTest);
                         echo "<a href='" . htmlspecialchars($urlVisualizza) . "' class='button'>Visualizza Risposta</a>";
                     }
