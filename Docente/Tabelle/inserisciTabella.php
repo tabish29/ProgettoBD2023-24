@@ -147,14 +147,15 @@ if ($_SESSION['ruolo'] != 'Docente') {
                                 while ($row = $result->fetch_assoc()) {
                                     $nomeAttributo = $row['Field'];
                                     $tipo = $row['Type'];
+                                    $isChiavePrimaria = $row['Key'] == 'PRI' ? true : false; 
 
 
                                     // Preparazione della query per inserire nella tabella ATTRIBUTO
-                                    $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo) VALUES (?, ?, ?)";
+                                    $insertQuery = "INSERT INTO ATTRIBUTO (NomeTabella, NomeAttributo, Tipo, chiavePrimaria) VALUES (?, ?, ?, ?)";
                                     $stmt = $conn->prepare($insertQuery);
 
                                     // Esecuzione del binding dei parametri e la query
-                                    $stmt->bind_param("sss", $nomeTabella, $nomeAttributo, $tipo);
+                                    $stmt->bind_param("sssi", $nomeTabella, $nomeAttributo, $tipo,  $isChiavePrimaria);
                                     if (!$stmt->execute()) {
                                         echo "<br><label class='messaggioErrato'>Errore nell'inserimento dell'attributo $nomeAttributo</label>";
                                     } else {
