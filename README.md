@@ -53,7 +53,7 @@ Assicurarsi di avere installati i seguenti strumenti:
 
 4. **Avviare Apache e MySQL**  
    A seconda dell'ambiente scelto (**XAMPP** o **MAMP**), aprire il pannello di controllo e avviare i servizi **Apache**.
-   Una volta completata la configurazione, puoi accedere all'applicazione nel tuo browser utilizzando il seguente link:
+   Una volta completata la configurazione, si può accedere all'applicazione nel browser utilizzando il seguente link:
       - Per **XAMPP**: [http://localhost/ProgettoBD2023-24](http://localhost/ProgettoBD2023-24)
       - Per **MAMP**: [http://localhost:8888/ProgettoBD2023-24](http://localhost:8888/ProgettoBD2023-24)
 
