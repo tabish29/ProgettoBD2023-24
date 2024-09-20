@@ -72,7 +72,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
 
         .test-item:hover {
             background-color: #9c9c9c;
-            /* Cambia colore al passaggio del mouse */
         }
 
         .test-item:last-child {

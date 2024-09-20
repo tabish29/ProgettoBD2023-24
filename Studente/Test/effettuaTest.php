@@ -79,7 +79,6 @@ if ($_SESSION['ruolo'] != 'Studente') {
         .test-item p,
         .test-item label {
             text-align: center;
-            /* Allinea il testo a sinistra */
             margin: auto;
             font-size: medium;
             font: Arial;

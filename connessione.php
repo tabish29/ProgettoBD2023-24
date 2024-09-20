@@ -6,7 +6,7 @@
     $servername = "localhost"; // Il tuo server
     $username = "root"; // Il tuo username
     $password = ""; // La tua password (di solito è vuota di default)
-    $dbname = "ESQL"; // Il nome del tuo database
+    $dbname = "ESQL"; // Il nome del database 
 
     // Connessione al database
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -21,8 +21,8 @@
         function connessioneMongoDB() {
             date_default_timezone_set("Europe/Rome");
     
-            $mongoHost = "localhost";
-            $mongoPort = 27017;
+            $mongoHost = "localhost"; // Il tuo server
+            $mongoPort = 27017; // Porta in cui si ha avviato il database di MongoDB (di solito di default 27017)
     
             $manager = new MongoDB\Driver\Manager("mongodb://$mongoHost:$mongoPort");
             return $manager;
@@ -31,7 +31,7 @@
     
     if (!function_exists('writeLog')) {
         function writeLog($manager, $document) {
-            $mongoDatabase = "ESQL";
+            $mongoDatabase = "ESQL"; //nome del database su MongoDB
             $mongoCollection = "logs";
     
             $bulkWrite = new MongoDB\Driver\BulkWrite;

@@ -68,7 +68,6 @@ if ($_SESSION['ruolo'] != 'Docente') {
         .test-item p,
         .test-item label {
             text-align: left;
-            /* Allinea il testo a sinistra */
             margin: auto;
             font-size: small;
             font: Arial;
@@ -76,12 +75,10 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
         .test-item:hover {
             background-color: #9c9c9c;
-            /* Cambia colore al passaggio del mouse */
         }
 
         .test-item:last-child {
             margin-bottom: 0;
-            /* Rimuove il margine inferiore dall'ultimo elemento */
         }
 
         input {
@@ -104,16 +101,11 @@ if ($_SESSION['ruolo'] != 'Docente') {
 
         .test-item {
             display: inline-block;
-            /* Aggiunta di display inline-block */
             margin-left: 20px;
-            /* Aggiunta di margine a sinistra per separare i test */
             margin-right: 20px;
-            /* Aggiunta di margine a destra per separare i test */
             margin-bottom: 20px;
-            /* Aggiunta di margine inferiore per separare i test */
             padding: 10px;
             width: auto;
-            /* Modifica della larghezza del singolo test */
             height: auto;
             background-color: #f9f9f9;
             border-radius: 5px;

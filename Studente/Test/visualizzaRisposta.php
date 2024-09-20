@@ -98,7 +98,7 @@ $idTest = isset($_GET['idTest']) ? $_GET['idTest'] : "ID del test non specificat
     <h2>Risposte al Test: <?php echo htmlspecialchars($idTest); ?></h2>
     <?php
 
-    error_reporting(E_ERROR | E_PARSE); // senza questo stampa un warning se non è stata data una risposta
+    error_reporting(E_ERROR | E_PARSE); 
     global $test;
     $test = new Test();
 
